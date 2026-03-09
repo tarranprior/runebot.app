@@ -32,7 +32,7 @@ export function Invite() {
               
               <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
                 <Link
-                  href="https://runebot.app/invite"
+                  href="/invite"
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90 sm:text-base"
                 >
                   Invite to Discord
