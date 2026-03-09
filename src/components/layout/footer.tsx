@@ -16,7 +16,7 @@ const footerGroups = [
   {
     title: "Support",
     links: [
-      { label: "Community", href: "https://runebot.app/support", external: true },
+      { label: "Community", href: "/support", external: true },
       { label: "FAQ", href: "#faq" },
       { label: "Contact", href: "#contact" },
     ],
@@ -77,7 +77,7 @@ export function Footer() {
                 </Link>
 
                 <Link
-                  href="https://runebot.app/support"
+                  href="/support"
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Runebot Discord community"

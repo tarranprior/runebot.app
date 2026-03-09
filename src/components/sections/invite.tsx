@@ -40,7 +40,7 @@ export function Invite() {
                 </Link>
 
                 <Link
-                  href="https://runebot.app/support"
+                  href="/support"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-surface-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-background/80 dark:border-surface-border dark:bg-surface dark:hover:bg-surface/80 sm:text-base"
                 >
                   Join support server
@@ -65,7 +65,7 @@ export function Invite() {
 
                 <div className="mt-6">
                   <Link
-                    href="https://runebot.app/support"
+                    href="/support"
                     className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition hover:text-accent/80"
                   >
                     Visit the support server

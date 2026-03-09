@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
           "https://discord.com/oauth2/authorize?client_id=978953033989914654&permissions=2147764224&scope=bot%20applications.commands",
         permanent: false,
       },
+      {
+        source: "/support",
+        destination: "https://discord.com/invite/FWjNkNuTzv",
+        permanent: false,
+      },
     ];
   },
 };

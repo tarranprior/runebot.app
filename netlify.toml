@@ -9,3 +9,9 @@
   to = "https://discord.com/oauth2/authorize?client_id=978953033989914654&permissions=2147764224&scope=bot%20applications.commands"
   status = 302
   force = true
+
+[[redirects]]
+  from = "/support"
+  to = "https://discord.com/invite/FWjNkNuTzv"
+  status = 302
+  force = true
