@@ -4,8 +4,8 @@ import { readRootMarkdownFile } from "@/lib/legal-content";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service - RuneBot",
-  description: "Terms of service for the RuneBot website and Discord bot",
+  title: "Terms of Service — Runebot",
+  description: "Terms of Service for the Runebot application.",
 };
 
 export default async function TermsPage() {

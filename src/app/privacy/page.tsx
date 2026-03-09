@@ -4,8 +4,8 @@ import { readRootMarkdownFile } from "@/lib/legal-content";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy - RuneBot",
-  description: "Privacy policy for the RuneBot website and Discord bot",
+  title: "Privacy Policy — Runebot",
+  description: "Privacy Policy for the Runebot application.",
 };
 
 export default async function PrivacyPage() {
