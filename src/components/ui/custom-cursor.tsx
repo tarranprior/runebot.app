@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useCustomCursor } from "@/components/providers/custom-cursor-provider";
 
 export function CustomCursor() {
@@ -37,8 +36,6 @@ export function CustomCursor() {
     return null;
   }
 
-  const transformStyle = selectedCursor.flipX ? "scaleX(-1)" : undefined;
-
   return (
     <div
       className="pointer-events-none fixed left-0 top-0 z-[9999]"
@@ -47,23 +44,14 @@ export function CustomCursor() {
         top: lastPointerPosition.y - selectedCursor.hotspotY,
       }}
     >
-      <div
-        className="relative"
-        style={{
-          width: selectedCursor.width,
-          height: selectedCursor.height,
-        }}
-      >
-        <Image
-          src={selectedCursor.src}
-          alt=""
-          fill
-          className="object-contain"
-          style={{ transform: transformStyle }}
-          draggable={false}
-          priority
-        />
-      </div>
+      <img
+        src={selectedCursor.src}
+        alt=""
+        width={selectedCursor.width}
+        height={selectedCursor.height}
+        draggable={false}
+        style={{ display: "block" }}
+      />
     </div>
   );
 }
