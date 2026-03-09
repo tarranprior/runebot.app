@@ -76,7 +76,7 @@ export function Footer() {
                   <Github className="h-5 w-5" />
                 </Link>
 
-                <Link
+                <a
                   href="/support"
                   target="_blank"
                   rel="noreferrer"
@@ -84,7 +84,7 @@ export function Footer() {
                   className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-surface-border bg-background text-foreground/60 transition hover:text-accent dark:border-surface-border dark:bg-surface dark:text-foreground/60 dark:hover:text-accent"
                 >
                   <MessageCircle className="h-5 w-5" />
-                </Link>
+                </a>
               </div>
 
               <p className="mt-8 text-sm text-foreground/60 dark:text-foreground/60">

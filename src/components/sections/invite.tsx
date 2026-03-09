@@ -31,20 +31,20 @@ export function Invite() {
               </h2>
               
               <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-                <Link
+                <a
                   href="/invite"
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90 sm:text-base"
                 >
                   Invite to Discord
                   <ArrowUpRight className="h-4 w-4" />
-                </Link>
+                </a>
 
-                <Link
+                <a
                   href="/support"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-surface-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-background/80 dark:border-surface-border dark:bg-surface dark:hover:bg-surface/80 sm:text-base"
                 >
                   Join support server
-                </Link>
+                </a>
               </div>
             </div>
 
@@ -64,13 +64,13 @@ export function Invite() {
                 </p>
 
                 <div className="mt-6">
-                  <Link
+                  <a
                     href="/support"
                     className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition hover:text-accent/80"
                   >
                     Visit the support server
                     <ArrowUpRight className="h-4 w-4" />
-                  </Link>
+                  </a>
                 </div>
               </div>
 

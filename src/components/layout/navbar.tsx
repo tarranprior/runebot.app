@@ -282,13 +282,13 @@ export function Navbar() {
                       GitHub
                     </Link>
 
-                    <Link
+                    <a
                       href="/invite"
                       className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90"
                     >
                       Add to Discord
                       <ArrowUpRight className="h-4 w-4" />
-                    </Link>
+                    </a>
                   </div>
 
                   <div className="flex items-center gap-2 md:hidden">
@@ -356,14 +356,14 @@ export function Navbar() {
                   GitHub
                 </Link>
 
-                <Link
+                <a
                   href="/invite"
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-base font-semibold text-accent-foreground"
                   onClick={() => setOpen(false)}
                 >
                   Add to Discord
                   <ArrowUpRight className="h-5 w-5" />
-                </Link>
+                </a>
               </div>
             </M.nav>
           </M.div>
