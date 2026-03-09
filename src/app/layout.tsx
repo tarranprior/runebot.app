@@ -7,8 +7,8 @@ import { CustomCursorProvider } from "@/components/providers/custom-cursor-provi
 import { CustomCursor } from "@/components/ui/custom-cursor";
 
 export const metadata = {
-  title: "RuneBot",
-  description: "A modern Discord bot with utility, moderation and AI features.",
+  title: "The modern RuneScape companion for your Discord server — Runebot",
+  description: "Runebot is the modern RuneScape companion for your Discord server.",
 };
 
 export default function RootLayout({
