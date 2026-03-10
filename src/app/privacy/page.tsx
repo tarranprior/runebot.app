@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/container";
-import { LegalMarkdown } from "@/components/ui/legal-markdown";
-import { readRootMarkdownFile } from "@/lib/legal-content";
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
+import { readRootMarkdownFile } from "@/lib/markdown-content";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export default async function PrivacyPage() {
             </h1>
 
             <article>
-              <LegalMarkdown content={content} />
+              <MarkdownRenderer content={content} />
             </article>
           </div>
         </Container>

@@ -80,20 +80,26 @@ export function Navbar() {
 
   const navItems: NavItem[] = useMemo(
     () => [
-      { label: "Features", target: "features" },
-      { label: "Stats", target: "statistics" },
-      { label: "Invite", target: "invite" },
+      { label: "Features", target: "#features" },
+      { label: "Stats", target: "#statistics" },
+      { label: "Changelog", target: "changelog" },
     ],
     []
   );
 
   const handleNavClick = (e: React.MouseEvent, target: string) => {
-    if (isHomePage) {
+    const isHashTarget = target.startsWith("#");
+    
+    if (isHomePage && isHashTarget) {
+      // On homepage with hash target: scroll to section
       e.preventDefault();
       setOpen(false);
-      scrollToSection(target);
+      scrollToSection(target.slice(1)); // Remove the # for getElementById
+    } else if (!isHashTarget) {
+      // Route-based target: let Next.js handle navigation
+      setOpen(false);
     } else {
-      // Let Next.js Link handle navigation to homepage with anchor
+      // Hash target from other page: let Next.js navigate to homepage with anchor
       setOpen(false);
     }
   };
@@ -239,7 +245,7 @@ export function Navbar() {
                     {navItems.map((item) => (
                       <Link
                         key={item.target}
-                        href={`/#${item.target}`}
+                        href={`/${item.target}`}
                         onClick={(e) => handleNavClick(e, item.target)}
                         className={`cursor-pointer rounded-full px-4 py-2 text-[15px] font-medium transition ${
                           isDark
@@ -327,7 +333,7 @@ export function Navbar() {
               {navItems.map((item) => (
                 <Link
                   key={item.target}
-                  href={`/#${item.target}`}
+                  href={`/${item.target}`}
                   onClick={(e) => handleNavClick(e, item.target)}
                   className="text-left text-3xl font-semibold tracking-tight text-foreground transition hover:text-foreground/75"
                 >
@@ -336,6 +342,14 @@ export function Navbar() {
               ))}
 
               <div className="mt-8 flex flex-col gap-3">
+                <Link
+                  href="/changelog"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-surface-border bg-surface/70 px-6 py-3 text-base font-semibold text-foreground"
+                  onClick={() => setOpen(false)}
+                >
+                  Changelog
+                </Link>
+
                 <Link
                   href="#docs"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-surface-border bg-surface/70 px-6 py-3 text-base font-semibold text-foreground"
