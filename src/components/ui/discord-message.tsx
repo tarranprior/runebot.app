@@ -12,7 +12,7 @@ interface DiscordMessageProps {
 
 export function DiscordMessage({ message }: DiscordMessageProps) {
   const avatarSrc = message.authorAvatar || "/images/runebot-ico.png";
-  const [localTimestamp, setLocalTimestamp] = useState(message.timestamp || "Today at --:--");
+  const [localTimestamp, setLocalTimestamp] = useState("Today at --:--");
   const isPriceMessage = (message.embeds || []).some(
     (embed) =>
       Boolean(embed.image) &&

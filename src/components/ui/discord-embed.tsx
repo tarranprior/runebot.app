@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { DiscordEmbed as DiscordEmbedType } from "@/types/discord";
 
 interface DiscordEmbedProps {
@@ -13,6 +16,24 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
   const isPriceEmbed =
     Boolean(embed.image) &&
     inlineFields.some((field) => field.name.toLowerCase() === "buy price");
+
+  const [footerText, setFooterText] = useState(embed.footer?.text || "");
+
+  useEffect(() => {
+    const formattedTime = new Intl.DateTimeFormat(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+    }).format(new Date());
+
+    if (embed.footer?.text) {
+      const updatedText = embed.footer.text.replace(
+        /Today at \d{1,2}:\d{2}/,
+        `Today at ${formattedTime}`
+      );
+
+      setFooterText(updatedText);
+    }
+  }, [embed.footer?.text]);
 
   const getInlineFieldValue = (name: string) =>
     inlineFields.find((field) => field.name.toLowerCase() === name.toLowerCase())?.value;
@@ -207,7 +228,7 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
         </div>
 
         {embed.footer && (
-          <div className="mt-2 flex items-center gap-2 pt-2 dark:border-[#3f4147]">
+          <div className="mt-2 flex flex-col gap-0 pt-2 dark:border-[#3f4147]">
             {embed.footer.iconUrl && (
               <Image
                 src={embed.footer.iconUrl}
@@ -217,9 +238,11 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
                 className="rounded-full"
               />
             )}
-            <span className="text-[11px] text-[#747f8d] dark:text-[#b5bac1]">
-              {embed.footer.text}
-            </span>
+            <div className="space-y-0.5 text-[11px] text-[#747f8d] dark:text-[#b5bac1]">
+              {footerText.split("\n").map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+            </div>
           </div>
         )}
       </div>

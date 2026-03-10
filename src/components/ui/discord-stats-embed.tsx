@@ -62,7 +62,13 @@ export function DiscordStatsEmbed({ data }: DiscordStatsEmbedProps) {
   );
   const [activeView, setActiveView] = useState("Skills");
 
-  const footerLines = useMemo(() => data.footerText.split("\n"), [data.footerText]);
+  const footerLines = useMemo(() => {
+    const processed = data.footerText.replace(
+      /Today at \d{1,2}:\d{2}/,
+      localTimestamp
+    );
+    return processed.split("\n");
+  }, [data.footerText, localTimestamp]);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {

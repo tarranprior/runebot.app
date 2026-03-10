@@ -77,7 +77,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/ags-90d.webp",
         footer: {
-          text: "Exchange data from OSRS Exchange. For more analytics, use the buttons below.",
+          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.5 • Today at 00:00",
         },
       },
     ],
@@ -112,7 +112,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/dragon-claws-90d.webp",
         footer: {
-          text: "Exchange data from OSRS Exchange. For more analytics, use the buttons below.",
+          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.5 • Today at 00:00",
         },
       },
     ],
@@ -173,7 +173,7 @@ export const statsFeatureMock: DiscordStatsMock = {
   authorName: "RuneBot",
   authorAvatar: "/images/runebot-ico.png",
   isBot: true,
-  timestamp: "Yesterday at 23:54",
+  timestamp: "Today at 00:00",
   title: "Personal Hiscores",
   description: "Personal Hiscores for Firmwares",
   stats: {
@@ -210,7 +210,7 @@ export const statsFeatureMock: DiscordStatsMock = {
     level: 72,
     xp: 25525083,
   },
-  footerText: "Experience data from the official Hiscores API.\nRunebot v1.0.5 • Yesterday at 23:55",
+  footerText: "Experience data from the official Hiscores API\nRunebot v1.0.5 • Today at 00:00",
   buttons: ["Boss Kills", "Bounty Hunter", "Clue Scrolls"],
   accentColor: "#5865F2",
 };
