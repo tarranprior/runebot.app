@@ -33,7 +33,6 @@ export function ThemeToggle() {
   const isDark = resolvedTheme !== "light";
 
   return (
-    <Tooltip content={isDark ? "Light Mode" : "Dark Mode"}>
       <button
         type="button"
         aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
@@ -42,6 +41,5 @@ export function ThemeToggle() {
       >
         {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       </button>
-    </Tooltip>
   );
 }

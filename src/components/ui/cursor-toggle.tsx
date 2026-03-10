@@ -35,14 +35,13 @@ export function CursorToggle() {
   }
 
   return (
-    <Tooltip content={isCursorEnabled ? "Disable custom cursor" : "Enable custom cursor"}>
       <button
         type="button"
         aria-label={isCursorEnabled ? "Disable custom cursor" : "Enable custom cursor"}
         onClick={handleToggle}
         disabled={isLoadingCursor}
         className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface/70 transition hover:bg-surface ${
-          isCursorEnabled ? "text-foreground" : "text-foreground/60"
+          isCursorEnabled ? "text-foreground" : "text-foreground/100"
         } ${isLoadingCursor ? "opacity-70 cursor-wait" : ""}`}
       >
         {isLoadingCursor ? (
@@ -51,6 +50,5 @@ export function CursorToggle() {
           <MousePointer2 className="h-4 w-4" />
         )}
       </button>
-    </Tooltip>
   );
 }
