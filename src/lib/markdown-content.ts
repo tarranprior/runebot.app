@@ -7,6 +7,3 @@ export async function readRootMarkdownFile(fileName: MarkdownFile) {
   const filePath = path.join(process.cwd(), fileName);
   return readFile(filePath, "utf-8");
 }
-
-// Legacy export for backwards compatibility
-export { readRootMarkdownFile as readRootMarkdownFile };
