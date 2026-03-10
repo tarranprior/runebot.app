@@ -42,7 +42,7 @@ export function CursorToggle() {
         disabled={isLoadingCursor}
         className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface/70 transition hover:bg-surface ${
           isCursorEnabled ? "text-foreground" : "text-foreground/100"
-        } ${isLoadingCursor ? "opacity-70 cursor-wait" : ""}`}
+        } ${isLoadingCursor ? "opacity-70 cursor-wait" : "cursor-pointer"}`}
       >
         {isLoadingCursor ? (
           <Loader2 className="h-4 w-4 animate-spin" />
