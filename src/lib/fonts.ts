@@ -1,4 +1,4 @@
-import { Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, DM_Sans, JetBrains_Mono } from "next/font/google";
 
 export const discordFontJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -9,6 +9,12 @@ export const discordFontJakarta = Plus_Jakarta_Sans({
 export const discordFontDM = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+export const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 

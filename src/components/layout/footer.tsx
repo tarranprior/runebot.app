@@ -88,7 +88,7 @@ export function Footer() {
               </div>
 
               <p className="mt-8 text-sm text-foreground/60 dark:text-foreground/60">
-                © {currentYear} Runebot. Built for Discord communities.
+                © {currentYear} Runebot. Built for Discord communities. An independent project by <a href="https://tarranprior.com/" target="_blank" rel="noreferrer" className="underline hover:text-accent">Tarran Prior</a>.
               </p>
             </div>
 
