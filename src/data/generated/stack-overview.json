@@ -1,0 +1,79 @@
+{
+  "generatedAt": "2026-03-11T08:08:16.815Z",
+  "totals": {
+    "commits": 181,
+    "stars": 14,
+    "languages": 4,
+    "public": 3
+  },
+  "languages": [
+    "CSS",
+    "JavaScript",
+    "Python",
+    "TypeScript"
+  ],
+  "repos": [
+    {
+      "key": "runebot",
+      "label": "./runebot",
+      "owner": "tarranprior",
+      "repo": "runebot",
+      "status": "live",
+      "kind": "bot",
+      "isPrivate": false,
+      "stars": 12,
+      "commits": 124,
+      "languages": [
+        "Python"
+      ],
+      "createdAt": "2022-06-01T15:02:59Z",
+      "pushedAt": "2026-03-10T01:39:58Z",
+      "ageDays": 1379,
+      "lifespanDays": 1379,
+      "htmlUrl": "https://github.com/tarranprior/runebot"
+    },
+    {
+      "key": "runebot-app",
+      "label": "./runebot.app",
+      "owner": "tarranprior",
+      "repo": "runebot.app",
+      "status": "live",
+      "kind": "website",
+      "isPrivate": false,
+      "stars": 1,
+      "commits": 17,
+      "languages": [
+        "CSS",
+        "JavaScript",
+        "TypeScript"
+      ],
+      "createdAt": "2026-03-07T16:25:03Z",
+      "pushedAt": "2026-03-11T07:44:12Z",
+      "ageDays": 4,
+      "lifespanDays": 4,
+      "htmlUrl": "https://github.com/tarranprior/runebot.app"
+    },
+    {
+      "key": "runebot-org",
+      "label": "./runebot.org",
+      "owner": "tarranprior",
+      "repo": "runebot.org",
+      "status": "archived",
+      "kind": "website",
+      "isPrivate": false,
+      "stars": 1,
+      "commits": 40,
+      "languages": [
+        "JavaScript"
+      ],
+      "createdAt": "2023-04-01T22:53:02Z",
+      "pushedAt": "2026-03-08T22:36:02Z",
+      "ageDays": 1074,
+      "lifespanDays": 1072,
+      "htmlUrl": "https://github.com/tarranprior/runebot.org"
+    }
+  ],
+  "overview": {
+    "avgLifespanDays": 818
+  }
+}

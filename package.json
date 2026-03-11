@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate:stack-overview": "node --experimental-strip-types ./scripts/generate-stack-overview.mts"
   },
   "dependencies": {
     "@prisma/client": "^7.4.2",
