@@ -1,0 +1,62 @@
+name: Update the Runebot stack overview
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/generate-stack-overview.mts"
+      - "src/data/stack-config.ts"
+      - "src/lib/stack/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-stack-overview
+  cancel-in-progress: false
+
+jobs:
+  update-stack-overview:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate stack overview
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm generate:stack-overview
+
+      - name: Commit updated stack overview
+        run: |
+          if git diff --quiet -- src/data/generated/stack-overview.json; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/generated/stack-overview.json
+          git commit -m "chore(stack): update generated stack overview [skip ci]"
+          git push
