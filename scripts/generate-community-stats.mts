@@ -2,7 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { normalizeCommunityStatsPayload } from "../src/lib/community-stats/normalize.ts";
+import { normalizeCommunityStatsPayload } from "../src/lib/community-stats/normalize";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
