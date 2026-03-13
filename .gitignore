@@ -50,3 +50,6 @@ next-env.d.ts
 /app/generated/prisma
 /src/generated/prisma
 /prisma/generated
+
+# artifacts
+.artifacts/**
