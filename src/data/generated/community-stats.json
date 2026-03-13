@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-03-13T03:10:43.084Z",
+  "stats": {
+    "servers": 614,
+    "channels": 14900,
+    "users": 52636,
+    "uptimeSeconds": 134
+  },
+  "meta": {
+    "source": "runebot-runtime",
+    "version": "1.0.6-dev.1"
+  }
+}

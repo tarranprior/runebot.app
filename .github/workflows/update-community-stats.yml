@@ -1,0 +1,67 @@
+name: Update community stats
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/10 * * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/generate-community-stats.mts"
+      - "src/lib/community-stats/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-community-stats
+  cancel-in-progress: false
+
+jobs:
+  update-community-stats:
+    runs-on: self-hosted
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Prepare pnpm
+        run: corepack prepare pnpm@9 --activate
+
+      - name: Show versions
+        run: |
+          node --version
+          pnpm --version
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate community stats
+        env:
+          COMMUNITY_STATS_API_URL: ${{ secrets.COMMUNITY_STATS_API_URL }}
+          COMMUNITY_STATS_API_TOKEN: ${{ secrets.COMMUNITY_STATS_API_TOKEN }}
+        run: pnpm generate:community-stats
+
+      - name: Commit updated community stats
+        run: |
+          if git diff --quiet -- src/data/generated/community-stats.json; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/generated/community-stats.json
+          git commit -m "chore(stats): update community stats"
+          git push
