@@ -11,6 +11,9 @@
   force = true
 
 [[redirects]]
+# Vanity URL only.
+# Do not use this route with next/link or router navigation;
+# use direct external anchors in app UI to avoid RSC/CORS redirect fetch issues.
   from = "/support"
   to = "https://discord.com/invite/FWjNkNuTzv"
   status = 302

@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
+        // Vanity URL only.
+        // Do not use this route with next/link or router navigation;
+        // use direct external anchors in app UI to avoid RSC/CORS redirect fetch issues.
         source: "/support",
         destination: "https://discord.com/invite/FWjNkNuTzv",
         permanent: false,

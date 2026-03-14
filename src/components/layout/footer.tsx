@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Github, MessageCircle } from "lucide-react";
 import { Container } from "@/components/ui/container";
 
+const DISCORD_SUPPORT_INVITE_URL = "https://discord.com/invite/FWjNkNuTzv";
+
 const footerGroups = [
   {
     title: "Runebot",
@@ -16,7 +18,7 @@ const footerGroups = [
   {
     title: "Support",
     links: [
-      { label: "Community", href: "/support", external: true },
+      { label: "Community", href: DISCORD_SUPPORT_INVITE_URL, external: true },
       { label: "FAQ", href: "#faq" },
       { label: "Contact", href: "#contact" },
     ],
@@ -77,7 +79,7 @@ export function Footer() {
                 </Link>
 
                 <a
-                  href="/support"
+                  href={DISCORD_SUPPORT_INVITE_URL}
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Runebot Discord community"
@@ -103,14 +105,14 @@ export function Footer() {
                     {group.links.map((link) => (
                       <li key={link.label}>
                         {link.external ? (
-                          <Link
+                          <a
                             href={link.href}
                             target="_blank"
                             rel="noreferrer"
                             className="text-sm text-foreground/60 transition hover:text-accent dark:text-foreground/60 dark:hover:text-accent"
                           >
                             {link.label}
-                          </Link>
+                          </a>
                         ) : (
                           <Link
                             href={link.href}

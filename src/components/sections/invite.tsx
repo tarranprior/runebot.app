@@ -5,6 +5,8 @@ import { ArrowUpRight, Github, MessageCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 
+const DISCORD_SUPPORT_INVITE_URL = "https://discord.com/invite/FWjNkNuTzv";
+
 export function Invite() {
   return (
     <section
@@ -40,7 +42,9 @@ export function Invite() {
                 </a>
 
                 <a
-                  href="/support"
+                  href={DISCORD_SUPPORT_INVITE_URL}
+                  target="_blank"
+                  rel="noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-surface-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-background/80 dark:border-surface-border dark:bg-surface dark:hover:bg-surface/80 sm:text-base"
                 >
                   Join support server
@@ -65,7 +69,9 @@ export function Invite() {
 
                 <div className="mt-6">
                   <a
-                    href="/support"
+                    href={DISCORD_SUPPORT_INVITE_URL}
+                    target="_blank"
+                    rel="noreferrer"
                     className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition hover:text-accent/80"
                   >
                     Visit the support server
