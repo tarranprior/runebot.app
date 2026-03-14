@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useCustomCursor } from "@/components/providers/custom-cursor-provider";
 
 export function CustomCursor() {
-  const { isCursorEnabled, selectedCursor, lastPointerPosition } = useCustomCursor();
+  const { isCursorEnabled, displayedCursor, lastPointerPosition } = useCustomCursor();
   const [isDesktop, setIsDesktop] = useState(false);
 
   const setCursorClasses = (enabled: boolean) => {
@@ -40,7 +40,7 @@ export function CustomCursor() {
   }, [isCursorEnabled, isDesktop]);
 
   const isCursorRenderable =
-    isCursorEnabled && isDesktop && Boolean(selectedCursor) && Boolean(lastPointerPosition);
+    isCursorEnabled && isDesktop && Boolean(displayedCursor) && Boolean(lastPointerPosition);
 
   if (!isCursorRenderable || !lastPointerPosition) {
     return null;
@@ -50,15 +50,15 @@ export function CustomCursor() {
     <div
       className="pointer-events-none fixed left-0 top-0 z-[9999]"
       style={{
-        left: lastPointerPosition.x - selectedCursor.hotspotX,
-        top: lastPointerPosition.y - selectedCursor.hotspotY,
+        left: lastPointerPosition.x - displayedCursor.hotspotX,
+        top: lastPointerPosition.y - displayedCursor.hotspotY,
       }}
     >
       <img
-        src={selectedCursor.src}
+        src={displayedCursor.src}
         alt=""
-        width={selectedCursor.width}
-        height={selectedCursor.height}
+        width={displayedCursor.width}
+        height={displayedCursor.height}
         draggable={false}
         style={{ display: "block" }}
       />
