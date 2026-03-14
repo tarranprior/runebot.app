@@ -136,7 +136,7 @@ export function Features() {
                   transition={{ duration: 0.55, ease: "easeOut" }}
                   viewport={revealViewport}
                 >
-                  <div className="w-full max-w-[500px]">
+                  <div className="w-full max-w-[500px] pl-12">
                     <h3 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                       {feature.title}
                     </h3>

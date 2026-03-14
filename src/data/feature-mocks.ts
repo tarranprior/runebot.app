@@ -19,7 +19,7 @@ export const wikiLookupMocks: DiscordMessage[] = [
         ],
         thumbnail: "/images/features/3rd-age-platebody.png",
         footer: {
-          text: "Runebot v1.0.5",
+          text: "Runebot v1.0.6-dev.1",
         },
       },
     ],
@@ -43,7 +43,151 @@ export const wikiLookupMocks: DiscordMessage[] = [
         ],
         thumbnail: "/images/features/abyssal-whip.png",
         footer: {
-          text: "Runebot v1.0.5",
+          text: "Runebot v1.0.6-dev.1",
+        },
+      },
+    ],
+    buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
+  },
+  {
+    authorName: "RuneBot",
+    authorAvatar: "/images/runebot-ico.png",
+    isBot: true,
+    timestamp: "Today at 00:00",
+    embeds: [
+      {
+        embedColor: "#936E37",
+        title: "Fire cape",
+        description:
+          "The fire cape is a melee cape obtained as a reward for completing the TzHaar Fight Cave. It is the second best melee cape in the game, outclassed only by the infernal cape. In order to obtain the fire cape, players must survive all waves of TzHaar Fight Caves and defeat TzTok-Jad.",
+        fields: [
+          { name: "Released", value: "4 October 2005", inline: true },
+          { name: "Members", value: "Yes", inline: true },
+          { name: "Quest item", value: "No", inline: true },
+        ],
+        thumbnail: "/images/features/fire-cape.png",
+        footer: {
+          text: "Runebot v1.0.6-dev.1",
+        },
+      },
+    ],
+    buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
+  },
+  {
+    authorName: "RuneBot",
+    authorAvatar: "/images/runebot-ico.png",
+    isBot: true,
+    timestamp: "Today at 00:00",
+    embeds: [
+      {
+        embedColor: "#A64B1A",
+        title: "Infernal cape",
+        description:
+          "The infernal cape is the most powerful melee cape in terms of overall bonuses, awarded for defeating TzKal-Zuk in the Inferno. It surpasses its predecessor, the fire cape, boasting greater melee attack and strength bonuses, along with slightly higher defensive bonuses. In spite of this, it is still surpassed by the Ardougne cloaks 3 and 4 in stab attack and prayer bonuses, and by the mythical cape in crush attack.",
+        fields: [
+          { name: "Released", value: "1 June 2017", inline: true },
+          { name: "Members", value: "Yes", inline: true },
+          { name: "Quest item", value: "No", inline: true },
+        ],
+        thumbnail: "/images/features/infernal-cape.png",
+        footer: {
+          text: "Runebot v1.0.6-dev.1",
+        },
+      },
+    ],
+    buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
+  },
+  {
+    authorName: "RuneBot",
+    authorAvatar: "/images/runebot-ico.png",
+    isBot: true,
+    timestamp: "Today at 00:00",
+    embeds: [
+      {
+        embedColor: "#8E2B23",
+        title: "Dragon full helm",
+        description:
+          "The dragon full helm is a helmet that requires 60 Defence to equip. The dragon full helm gives better defence bonuses than its medium helm counterpart. Due to its high price, and lack of prayer or strength bonuses, it is more often used as a sign of wealth, rather than in combat.",
+        fields: [
+          { name: "Released", value: "3 July 2007", inline: true },
+          { name: "Also called", value: "DFH", inline: true },
+          { name: "Members", value: "Yes", inline: true },
+        ],
+        thumbnail: "/images/features/dragon-full-helm.png",
+        footer: {
+          text: "Runebot v1.0.6-dev.1",
+        },
+      },
+    ],
+    buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
+  },
+  {
+    authorName: "RuneBot",
+    authorAvatar: "/images/runebot-ico.png",
+    isBot: true,
+    timestamp: "Today at 00:00",
+    embeds: [
+      {
+        embedColor: "#7A6840",
+        title: "Xeric's talisman",
+        description:
+          "Xeric's talisman is an amulet that can be charged using lizardman fangs (costing 12 coins per charge) that allows the player to teleport to various locations throughout Great Kourend. The talisman was once owned by Xeric, a tyrannical ruler who reigned over Great Kourend during the Age of Strife nearly 1,030 years ago.",
+        fields: [
+          { name: "Released", value: "7 January 2016", inline: true },
+          { name: "Members", value: "Yes", inline: true },
+          { name: "Quest item", value: "No", inline: true },
+        ],
+        thumbnail: "/images/features/xerics-talisman.png",
+        footer: {
+          text: "Runebot v1.0.6-dev.1",
+        },
+      },
+    ],
+    buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
+  },
+  {
+    authorName: "RuneBot",
+    authorAvatar: "/images/runebot-ico.png",
+    isBot: true,
+    timestamp: "Today at 00:00",
+    embeds: [
+      {
+        embedColor: "#7A8A8E",
+        title: "Snowglobe helmet",
+        description:
+          "The snowglobe helmet is a cosmetic reward from the 2023 Christmas event. It can be obtained as a reward from the Christmas events that occur once per year.",
+        fields: [
+          { name: "Released", value: "12 December 2023", inline: true },
+          { name: "Members", value: "No", inline: true },
+          { name: "Quest item", value: "No", inline: true },
+        ],
+        thumbnail: "/images/features/snowglobe-helmet.png",
+        footer: {
+          text: "Runebot v1.0.6-dev.1",
+        },
+      },
+    ],
+    buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
+  },
+  {
+    authorName: "RuneBot",
+    authorAvatar: "/images/runebot-ico.png",
+    isBot: true,
+    timestamp: "Today at 00:00",
+    embeds: [
+      {
+        embedColor: "#7A4B42",
+        title: "Keris partisan of amascut",
+        description:
+          "The keris partisan of Amascut is a one-handed spear requiring Attack level 80 to wield. It is created by combining a jewel of Amascut with a keris partisan. The upgrade greatly enhances the weapon's stats when used inside the Tombs of Amascut. If fighting kalphites or scarabs, the variant gains damage bonus of 15%, down from the base weapon's 33%. It retains the 1/51 chance to deal triple damage against these targets, however.",
+        fields: [
+          { name: "Released", value: "25 June 2025", inline: true },
+          { name: "Members", value: "Yes", inline: true },
+          { name: "Quest item", value: "No", inline: true },
+        ],
+        thumbnail: "/images/features/keris-partisan-of-amascut.png",
+        footer: {
+          text: "Runebot v1.0.6-dev.1",
         },
       },
     ],
@@ -77,7 +221,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/ags-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.5 • Today at 00:00",
+          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
         },
       },
     ],
@@ -112,7 +256,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/dragon-claws-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.5 • Today at 00:00",
+          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
         },
       },
     ],
@@ -218,7 +362,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/scythe-of-vitur-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.5 • Today at 00:00",
+          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
         },
       },
     ],
@@ -253,7 +397,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/zaryte-crossbow-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.5 • Today at 00:00",
+          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
         },
       },
     ],
@@ -289,7 +433,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/elysian-spirit-shield-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.5 • Today at 00:00",
+          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
         },
       },
     ],
@@ -324,7 +468,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/osmumtens-fang-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.5 • Today at 00:00",
+          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
         },
       },
     ],
@@ -359,7 +503,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/old-school-bond-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.5 • Today at 00:00",
+          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
         },
       },
     ],
@@ -394,7 +538,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/ghrazi-rapier-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.5 • Today at 00:00",
+          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
         },
       },
     ],
@@ -492,7 +636,7 @@ export const statsFeatureMock: DiscordStatsMock = {
     level: 72,
     xp: 25525083,
   },
-  footerText: "Experience data from the official Hiscores API\nRunebot v1.0.5 • Today at 00:00",
+  footerText: "Experience data from the official Hiscores API\nRunebot v1.0.6-dev.1 • Today at 00:00",
   buttons: ["Boss Kills", "Bounty Hunter", "Clue Scrolls"],
   accentColor: "#5865F2",
 };
