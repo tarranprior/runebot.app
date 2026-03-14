@@ -50,14 +50,6 @@ function slugify(s: string): string {
     .replace(/^-|-$/g, "");
 }
 
-function formatCurrentDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}
-
 /**
  * Parse a single list-item string into its three optional parts:
  *   `{https://…}` → commitUrl
@@ -176,7 +168,7 @@ export function parseChangelog(markdown: string): ChangelogRelease[] {
     }
 
     if (!date && releases.length === 0 && version) {
-      date = formatCurrentDate(new Date());
+      date = "Undated";
     }
 
     if (date || version || items.length > 0) {

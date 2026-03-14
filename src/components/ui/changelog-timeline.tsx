@@ -27,6 +27,28 @@ const BADGE_STYLES: Record<ChangelogBadge, string> = {
 };
 
 const GRID = "grid grid-cols-[80px_20px_1fr]";
+  const INLINE_MARKDOWN_ALLOWED_ELEMENTS = [
+    "a",
+    "br",
+    "code",
+    "del",
+    "em",
+    "span",
+    "strong",
+  ] as const;
+
+  function slugifyKeyPart(value: string) {
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+  }
+
+  function getItemKeyBase(releaseId: string, item: ChangelogItem) {
+    const keySource = item.commitUrl ?? item.text ?? item.body ?? "item";
+    return `${releaseId}-${slugifyKeyPart(keySource) || "item"}`;
+  }
 
 function Badge({ type }: { type: ChangelogBadge }) {
   return (
@@ -56,13 +78,18 @@ function CommitChip({ commit }: { commit: CommitRef }) {
 function InlineMarkdown({ children }: { children: string }) {
   return (
     <ReactMarkdown
+      allowedElements={[...INLINE_MARKDOWN_ALLOWED_ELEMENTS]}
+      unwrapDisallowed
       components={{
-        p: ({ children }) => <>{children}</>,
         code: ({ children }) => (
           <code className="rounded bg-accent/10 px-1.5 py-0.5 font-mono text-[0.88em] font-medium text-accent dark:bg-accent/15">
             {children}
           </code>
         ),
+        em: ({ children }) => <em className="italic">{children}</em>,
+        del: ({ children }) => <del className="line-through">{children}</del>,
+        br: () => <br />,
+        span: ({ children }) => <span>{children}</span>,
         strong: ({ children }) => (
           <strong className="font-semibold text-foreground">{children}</strong>
         ),
@@ -173,32 +200,33 @@ function ChangeItemRow({
       </div>
 
       <div className="pb-3 pl-5">
-        <div className="flex min-w-0 items-start gap-2 text-[14.5px] leading-6 text-foreground/75">
+        <div className="flex min-w-0 items-center gap-2 text-[14.5px] leading-6 text-foreground/75">
           {item.badge && <Badge type={item.badge} />}
 
-          <span className="min-w-0 flex-1">
-            <span className="inline-flex min-w-0 max-w-full items-center">
-              <span className="min-w-0 max-w-full overflow-hidden text-ellipsis whitespace-nowrap align-middle">
+          <div className="min-w-0 flex-1">
+            <div className="inline-flex max-w-full items-center gap-1 align-middle">
+              <span className="min-w-0 truncate whitespace-nowrap align-middle">
                 <InlineMarkdown>{item.text}</InlineMarkdown>
               </span>
-            {hasBody && (
-              <button
-                type="button"
-                onClick={() => onToggle(itemKey)}
-                aria-expanded={expanded}
-                aria-controls={`${itemKey}-details`}
-                className="ml-1.5 inline-flex cursor-pointer items-center rounded p-px align-middle text-foreground/35 transition-all duration-150 hover:text-foreground/60"
-              >
-                <ChevronDown
-                  className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                    expanded ? "rotate-180" : ""
-                  }`}
-                  aria-hidden="true"
-                />
-              </button>
-            )}
-            </span>
-          </span>
+
+              {hasBody && (
+                <button
+                  type="button"
+                  onClick={() => onToggle(itemKey)}
+                  aria-expanded={expanded}
+                  aria-controls={`${itemKey}-details`}
+                  className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded text-foreground/35 transition-colors duration-150 hover:text-foreground/60 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                >
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                      expanded ? "rotate-180" : ""
+                    }`}
+                    aria-hidden="true"
+                  />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         {hasBody && expanded && (
@@ -263,18 +291,26 @@ function ReleaseSection({
 
       {release.items.length > 0 && (
         <ul>
-          {release.items.map((item, i) => {
-            const key = `${release.id}-${i}`;
-            return (
-              <ChangeItemRow
-                key={key}
-                item={item}
-                itemKey={key}
-                expanded={expandedKeys.has(key)}
-                onToggle={onToggle}
-              />
-            );
-          })}
+          {(() => {
+            const keyCounts = new Map<string, number>();
+
+            return release.items.map((item) => {
+              const baseKey = getItemKeyBase(release.id, item);
+              const count = keyCounts.get(baseKey) ?? 0;
+              keyCounts.set(baseKey, count + 1);
+              const key = count === 0 ? baseKey : `${baseKey}-${count + 1}`;
+
+              return (
+                <ChangeItemRow
+                  key={key}
+                  item={item}
+                  itemKey={key}
+                  expanded={expandedKeys.has(key)}
+                  onToggle={onToggle}
+                />
+              );
+            });
+          })()}
         </ul>
       )}
 
