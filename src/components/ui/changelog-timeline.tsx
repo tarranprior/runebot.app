@@ -206,9 +206,6 @@ function ChangeItemRow({
             id={`${itemKey}-details`}
             className="mt-2 border-l border-surface-border/80 pl-3 text-[13.5px] leading-6 text-foreground/65"
           >
-            <p className="mb-2 text-foreground/75">
-              <InlineMarkdown>{item.text}</InlineMarkdown>
-            </p>
             <RichMarkdown content={item.body as string} />
           </div>
         )}

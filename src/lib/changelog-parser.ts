@@ -181,7 +181,10 @@ export function parseChangelog(markdown: string): ChangelogRelease[] {
 
     if (date || version || items.length > 0) {
       releases.push({
-        id: slugify(version || date || `release-${releases.length}`),
+        id: slugify(
+          [version, date].filter(Boolean).join("-") ||
+            `release-${releases.length}`,
+        ),
         date,
         version,
         versionSuffix,

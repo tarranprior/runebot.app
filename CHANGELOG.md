@@ -1,6 +1,13 @@
 ## March 10/03/2026
-**Runebot v1.0.6** (Current)
+**Runebot v1.0.6-dev.1** (Development)
 
+* {https://github.com/tarranprior/runebot/commit/5c8beb79d9c3c1cceb5d19fe68ec57e001a63907} [added] ✨ Update /Runebot/: feat(api) expose public community stats endpoint
+    - add public `/community-stats` route for website consumption
+    - retain `/api/internal/community-stats` with bearer authentication (for later updates)
+    - refactor handler to share payload generation logic
+    - add request path parsing to support query strings
+    - improve API logging and error handling
+* {https://github.com/tarranprior/runebot/commit/41665c600dbc075d95230f870f16f34b0fa4ba20} [added] 🛠️ Update /Runebot/: feat(runtime) add internal stats API and runtime community metrics
 * {https://github.com/tarranprior/runebot/commit/767a138f9e1fd85bafdf64e226961f0128ec5202} [improved] ⚙️ Update /Runebot/: feat(ui) add and normalize refresh interaction behaviour across `/price` and `/stats`
     - introduce refresh button for `/price` and `/stats` embeds
     - add reusable `build_loading_button_view()` helper for interaction loading states
@@ -17,15 +24,29 @@
 
 ---
 
-## March 09, 2026
-**Runebot.app**
+## March 14, 2026
+**Runebot.app** (Current)
 
-* [notice] 🎉 Initial launch of the new Runebot website!
+* {https://github.com/tarranprior/runebot.app/commit/297172c0e05136cb2be7010f248654f6c9c12d23} [improved] ⚙️ Update /Runebot.app/: feat(stats) fetch community stats from public API
+    - replace generated JSON stats pipeline with runtime API fetch
+    - add server-only fetch helper with Next.js revalidation
+    - split Statistics component into server wrapper and client UI
+    - remove generated stats file and generator script
+    - remove GitHub Actions workflow previously used to update stats
+    - site now reads live stats from `api.runebot.app/community-stats`
+* {https://github.com/tarranprior/runebot.app/commit/eeebfa8fcdcf4d9d967fcec955843b163a6e2b14} [added] ✨ Update /Runebot.app/: feat(stats) add stats pipeline and static stats section
+
+---
+
+## March 09, 2026
+**Runebot.app** (Initial Launch)
+
+* {https://github.com/tarranprior/runebot.app/commit/21fce51be693cd3cc52c68aef612a9f83c78b06d} [notice] 🎉 Initial launch of the new Runebot website!
 
 ---
 
 ## Oct 14, 2023
-**Runebot v1.0.5**
+**Runebot v1.0.5** (Current)
 
 * [notice] 🎉 Runebot is now a verified Discord application!
 * [added] Users can now set a username with `/setrsn` (for use with `/stats` and other future updates.)
@@ -42,7 +63,6 @@ See the release notes @ [https://github.com/tarranprior/runebot/releases/tag/v1.
 ---
 
 ## June 2, 2023
-
 **Runebot v1.0.4**
 
 * [notice] We're now officially live! Invite the bot @ [https://runebot.org/](https://runebot.org/)

@@ -1,9 +1,17 @@
 import { Container } from "@/components/ui/container";
-import { ChangelogTimeline } from '@/components/ui/changelog-timeline';
+import { ChangelogTimeline } from "@/components/ui/changelog-timeline";
 import { RunebotStackOverview } from "@/components/sections/runebot-stack-overview";
 import { readRootMarkdownFile } from "@/lib/markdown-content";
-import { parseChangelog } from "@/lib/changelog-parser";
+import { parseChangelog, type ChangelogRelease } from "@/lib/changelog-parser";
 import type { Metadata } from "next";
+
+const IN_DEVELOPMENT_TITLE_PATTERN =
+  /-dev\.|-beta\.|-rc\.|\(in development\)|\(unreleased\)/i;
+
+function isInDevelopmentRelease(release: ChangelogRelease): boolean {
+  const title = [release.version, release.versionSuffix].filter(Boolean).join(" ");
+  return IN_DEVELOPMENT_TITLE_PATTERN.test(title);
+}
 
 export const metadata: Metadata = {
   title: "Changelog — Runebot",
@@ -13,6 +21,8 @@ export const metadata: Metadata = {
 export default async function ChangelogPage() {
   const markdown = await readRootMarkdownFile("CHANGELOG.md");
   const releases = parseChangelog(markdown);
+  const inDevelopmentReleases = releases.filter(isInDevelopmentRelease);
+  const releaseHistory = releases.filter((release) => !isInDevelopmentRelease(release));
 
   return (
     <div className="flex min-h-full flex-col">
@@ -31,8 +41,25 @@ export default async function ChangelogPage() {
               </p>
             </div>
 
-            {/* Timeline */}
-            <ChangelogTimeline releases={releases} />
+            {inDevelopmentReleases.length > 0 && (
+              <div className="mb-12">
+                <h2 className="text-2xl font-semibold tracking-tight text-foreground">In Development</h2>
+                <p className="mt-2 mb-6 text-sm text-foreground/50">
+                  Future releases in active development. These are available in the live version of the bot.
+                </p>
+                <ChangelogTimeline releases={inDevelopmentReleases} />
+              </div>
+            )}
+
+            {releaseHistory.length > 0 && (
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight text-foreground">Release History</h2>
+                <p className="mt-2 mb-6 text-sm text-foreground/50">
+                  Official releases to the Runebot ecosystem.
+                </p>
+                <ChangelogTimeline releases={releaseHistory} />
+              </div>
+            )}
           </div>
         </Container>
       </section>
