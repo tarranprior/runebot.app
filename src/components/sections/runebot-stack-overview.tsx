@@ -49,6 +49,34 @@ const LANGUAGE_COLORS: Record<string, { bg: string; border: string; text: string
   "Kotlin": { bg: "bg-violet-500/8", border: "border-violet-500/25", text: "text-violet-600 dark:text-violet-400" },
 };
 
+const STATUS_STYLES: Record<
+  string,
+  {
+    text: string;
+    dot: string;
+    ping?: string;
+  }
+> = {
+  live: {
+    text: "text-emerald-500/85",
+    dot: "bg-emerald-500",
+    ping: "bg-emerald-500/40",
+  },
+  archived: {
+    text: "text-foreground/45",
+    dot: "bg-foreground/35",
+  },
+  maintenance: {
+    text: "text-amber-500/85",
+    dot: "bg-amber-500",
+  },
+  degraded: {
+    text: "text-orange-500/85",
+    dot: "bg-orange-500",
+    ping: "bg-orange-500/30",
+  },
+};
+
 function CardIcon({ icon }: { icon?: OverviewCardProps["icon"] }) {
   switch (icon) {
     case "commits":
@@ -86,18 +114,23 @@ function ValueMeta({
 
   if (style === "pill") {
     return (
-      <span className={`rounded-md border border-surface-border/80 bg-background/70 px-1.5 py-0.5 text-[11px] leading-snug tabular-nums text-foreground/65 ${jetbrainsMono.className}`}>
+      <span className={`rounded-md bg-background/70 px-1.5 py-0.5 text-[11px] leading-snug tabular-nums text-foreground/65 ${jetbrainsMono.className}`}>
         {value}
       </span>
     );
   }
 
-  if (value.toLowerCase() === "live") {
+  const statusKey = value.trim().toLowerCase();
+  const statusStyle = STATUS_STYLES[statusKey];
+
+  if (statusStyle) {
     return (
-      <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-emerald-500/85">
+      <span className={`inline-flex items-center gap-1.5 text-[12px] font-medium ${statusStyle.text}`}>
         <span className="relative inline-flex h-2 w-2 shrink-0 items-center justify-center">
-          <span className="absolute inline-flex h-2 w-2 animate-ping rounded-full bg-emerald-500/40" />
-          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          {statusStyle.ping && (
+            <span className={`absolute inline-flex h-2 w-2 animate-ping rounded-full ${statusStyle.ping}`} />
+          )}
+          <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${statusStyle.dot}`} />
         </span>
         <span className="tabular-nums">{value}</span>
       </span>
