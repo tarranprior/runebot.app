@@ -17,12 +17,12 @@ permissions:
   contents: write
 
 concurrency:
-  group: update-community-stats
-  cancel-in-progress: false
+  group: update-community-stats-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   update-community-stats:
-    runs-on: self-hosted
+    runs-on: [self-hosted, linux, x64]
 
     steps:
       - name: Check out repository
