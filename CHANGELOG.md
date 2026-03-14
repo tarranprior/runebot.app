@@ -27,6 +27,12 @@
 ## March 14, 2026
 **Runebot.app** (Current)
 
+* {https://github.com/tarranprior/runebot.app/commit/a0fb333373fb075f7ac1e000368478dea179bc15} [added] ✨ Update /Runebot.app/: feat(changelog) add development section and improve timeline structure
+    - separate unreleased builds from release history
+    - add "Development" section for dev versions (i.e., `v1.0.6-dev.1`)
+    - improve changelog parser IDs for stable anchors
+    - simplify timeline rendering and remove duplicate text block
+    - update `CHANGELOG.md` entries for recent Runebot and website updates
 * {https://github.com/tarranprior/runebot.app/commit/297172c0e05136cb2be7010f248654f6c9c12d23} [improved] ⚙️ Update /Runebot.app/: feat(stats) fetch community stats from public API
     - replace generated JSON stats pipeline with runtime API fetch
     - add server-only fetch helper with Next.js revalidation
