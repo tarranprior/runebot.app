@@ -97,8 +97,8 @@ export function StatisticsClient({ stats, generatedAt }: StatisticsClientProps) 
             transition={{ duration: 0.6, ease: "easeOut" }}
             viewport={{ once: true, margin: "-80px" }}
           >
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-foreground/60 dark:text-foreground/50">
-              Trusted by thousands
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blurple/80">
+              Trusted by Thousands
             </p>
 
             <h2 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
@@ -106,7 +106,7 @@ export function StatisticsClient({ stats, generatedAt }: StatisticsClientProps) 
             </h2>
 
             <p className="mt-6 text-base leading-8 text-foreground/65 sm:text-lg">
-              Don’t just take our word for it, Runebot is already active with thousands of users across hundreds of servers.
+              Don’t just take our word for it, Runebot is already active with thousands of users across hundreds of servers and clans.
             </p>
           </motion.div>
 
@@ -140,7 +140,7 @@ export function StatisticsClient({ stats, generatedAt }: StatisticsClientProps) 
           >
             <span
               title={localUpdatedAt}
-              className="inline-flex items-center gap-2 rounded-md border border-surface-border bg-card/60 px-3 py-2 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-foreground/45 dark:border-surface-border dark:bg-card/70"
+              className="inline-flex items-center gap-2 px-3 py-2 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-foreground/45"
             >
               <span className="text-foreground/35">Last updated</span>
               <span aria-hidden="true" className="text-foreground/20">
