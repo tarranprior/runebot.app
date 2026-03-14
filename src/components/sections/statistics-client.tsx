@@ -51,9 +51,13 @@ function formatGeneratedAtLocalAbsolute(isoDate: string) {
 }
 
 export function StatisticsClient({ stats, generatedAt }: StatisticsClientProps) {
-  const [nowMs, setNowMs] = useState(() => Date.now());
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [nowMs, setNowMs] = useState(0);
 
   useEffect(() => {
+    setIsHydrated(true);
+    setNowMs(Date.now());
+
     const intervalId = window.setInterval(() => {
       setNowMs(Date.now());
     }, 60_000);
@@ -63,9 +67,21 @@ export function StatisticsClient({ stats, generatedAt }: StatisticsClientProps) 
     };
   }, []);
 
-  const relativeUpdatedAt = useMemo(() => formatGeneratedAtRelative(generatedAt, nowMs), [generatedAt, nowMs]);
+  const relativeUpdatedAt = useMemo(() => {
+    if (!isHydrated) {
+      return "recently";
+    }
 
-  const localUpdatedAt = useMemo(() => formatGeneratedAtLocalAbsolute(generatedAt), [generatedAt]);
+    return formatGeneratedAtRelative(generatedAt, nowMs);
+  }, [generatedAt, isHydrated, nowMs]);
+
+  const localUpdatedAt = useMemo(() => {
+    if (!isHydrated) {
+      return "Local time unavailable";
+    }
+
+    return formatGeneratedAtLocalAbsolute(generatedAt);
+  }, [generatedAt, isHydrated]);
 
   return (
     <>
