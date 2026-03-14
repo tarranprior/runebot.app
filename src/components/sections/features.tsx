@@ -93,22 +93,18 @@ export function Features() {
             {features.map((feature, index) => (
               <div
                 key={feature.title}
-                className={`grid items-center gap-8 overflow-hidden sm:p-8 lg:gap-10 lg:p-10 ${
-                  feature.isPrice
-                    ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]"
-                    : "lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)]"
-                } ${
+                className={`mx-auto grid w-full max-w-[1140px] items-center gap-8 overflow-hidden sm:px-8 sm:py-6 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:gap-12 lg:px-10 lg:py-8 ${
                   feature.reverse ? "lg:[&>div:first-child]:order-2" : ""
                 }`}
               >
                 <motion.div
-                  className="flex justify-center"
+                  className={`w-full ${feature.reverse ? "lg:justify-self-start" : "lg:justify-self-end"}`}
                   initial={{ opacity: 0, x: index % 2 === 0 ? 80 : -80 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, ease: "easeOut" }}
                   viewport={revealViewport}
                 >
-                  <div className="w-full max-w-[560px]">
+                  <div className={`w-full ${feature.isPrice ? "max-w-[590px]" : "max-w-[560px]"}`}>
                     {feature.visualType === "stats" && feature.statsMock ? (
                       <motion.div
                         className={`${embedFontClass} [will-change:transform,opacity]`}
@@ -134,12 +130,13 @@ export function Features() {
                 </motion.div>
 
                 <motion.div
+                  className={`w-full ${feature.reverse ? "lg:justify-self-end" : "lg:justify-self-start"}`}
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.55, ease: "easeOut" }}
                   viewport={revealViewport}
                 >
-                  <div className="mx-auto max-w-[520px]">
+                  <div className="w-full max-w-[500px]">
                     <h3 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
                       {feature.title}
                     </h3>
