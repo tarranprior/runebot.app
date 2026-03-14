@@ -72,6 +72,9 @@ body {
 }
 
 /* Custom cursor: hide native cursor everywhere when enabled */
+html.custom-cursor-enabled,
+html.custom-cursor-enabled body,
+html.custom-cursor-enabled body *,
 body.custom-cursor-enabled,
 body.custom-cursor-enabled * {
   cursor: none !important;

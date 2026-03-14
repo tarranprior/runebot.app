@@ -7,25 +7,35 @@ export function CustomCursor() {
   const { isCursorEnabled, selectedCursor, lastPointerPosition } = useCustomCursor();
   const [isDesktop, setIsDesktop] = useState(false);
 
+  const setCursorClasses = (enabled: boolean) => {
+    const html = document.documentElement;
+    const body = document.body;
+
+    if (enabled) {
+      html.classList.add("custom-cursor-enabled");
+      body.classList.add("custom-cursor-enabled");
+      return;
+    }
+
+    html.classList.remove("custom-cursor-enabled");
+    body.classList.remove("custom-cursor-enabled");
+  };
+
   useEffect(() => {
-    // Check if device has fine pointer (desktop)
     const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
     setIsDesktop(hasFinePointer);
   }, []);
 
   useEffect(() => {
     if (!isCursorEnabled || !isDesktop) {
-      document.body.style.cursor = "";
-      document.body.classList.remove("custom-cursor-enabled");
+      setCursorClasses(false);
       return;
     }
 
-    document.body.style.cursor = "none";
-    document.body.classList.add("custom-cursor-enabled");
+    setCursorClasses(true);
 
     return () => {
-      document.body.style.cursor = "";
-      document.body.classList.remove("custom-cursor-enabled");
+      setCursorClasses(false);
     };
   }, [isCursorEnabled, isDesktop]);
 
