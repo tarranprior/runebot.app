@@ -154,7 +154,7 @@ export function DiscordStatsEmbed({ data }: DiscordStatsEmbedProps) {
 
           {/* Embed */}
           <div
-            className="overflow-hidden rounded border border-[#d4d7dc] border-l-[3px] bg-[#f2f3f5] shadow-sm dark:border-[#2b2d31] dark:bg-[#2b2d31]"
+            className="overflow-hidden rounded border border-[#d4d7dc] border-l-4 bg-[#f2f3f5] shadow-sm dark:border-[#2b2d31] dark:bg-[#2b2d31]"
             style={{ borderLeftColor: accentColor }}
           >
             <div className="px-3 py-2.5">
