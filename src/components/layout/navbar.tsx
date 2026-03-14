@@ -16,6 +16,11 @@ import { useTheme } from "next-themes";
 import { Container } from "@/components/ui/container";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { CursorToggle } from "@/components/ui/cursor-toggle";
+import {
+  isSectionRoute,
+  scrollToSectionById,
+  scrollToSectionByRoute,
+} from "@/lib/section-navigation";
 
 // Localized permissive typing for motion intrinsic components used below.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,43 +28,8 @@ const M = motion as unknown as typeof motion & { div: any; nav: any };
 
 type NavItem = {
   label: string;
-  target: string;
+  href: string;
 };
-
-function smoothScrollTo(targetY: number, duration = 650) {
-  const startY = window.scrollY || document.documentElement.scrollTop || 0;
-  const distance = targetY - startY;
-  const startTime = performance.now();
-  const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-
-  const step = (currentTime: number) => {
-    const elapsed = currentTime - startTime;
-    const rawProgress = Math.min(elapsed / duration, 1);
-    const eased = easeOutCubic(rawProgress);
-
-    window.scrollTo(0, startY + distance * eased);
-
-    if (elapsed < duration) {
-      requestAnimationFrame(step);
-    }
-  };
-
-  requestAnimationFrame(step);
-}
-
-function scrollToSection(target: string) {
-  if (target === "top") {
-    smoothScrollTo(0);
-    return;
-  }
-
-  const el = document.getElementById(target);
-  if (!el) return;
-
-  const rect = el.getBoundingClientRect();
-  const targetY = rect.top + window.scrollY - 110;
-  smoothScrollTo(targetY);
-}
 
 export function Navbar() {
   const pathname = usePathname();
@@ -80,34 +50,33 @@ export function Navbar() {
 
   const navItems: NavItem[] = useMemo(
     () => [
-      { label: "Features", target: "#features" },
-      { label: "Stats", target: "#statistics" },
-      { label: "Changelog", target: "changelog" },
+      { label: "Features", href: "/features" },
+      { label: "Stats", href: "/statistics" },
+      { label: "Changelog", href: "/changelog" },
     ],
     []
   );
 
-  const handleNavClick = (e: React.MouseEvent, target: string) => {
-    const isHashTarget = target.startsWith("#");
-    
-    if (isHomePage && isHashTarget) {
-      // On homepage with hash target: scroll to section
+  const handleNavClick = (e: React.MouseEvent, href: string) => {
+    if (isHomePage && isSectionRoute(href)) {
       e.preventDefault();
       setOpen(false);
-      scrollToSection(target.slice(1)); // Remove the # for getElementById
-    } else if (!isHashTarget) {
-      // Route-based target: let Next.js handle navigation
-      setOpen(false);
-    } else {
-      // Hash target from other page: let Next.js navigate to homepage with anchor
-      setOpen(false);
+      scrollToSectionByRoute(href);
+      return;
     }
+
+    if (!isSectionRoute(href)) {
+      setOpen(false);
+      return;
+    }
+
+    setOpen(false);
   };
 
   const handleBrandClick = (e: React.MouseEvent) => {
     if (isHomePage) {
       e.preventDefault();
-      scrollToSection("top");
+      scrollToSectionById("top");
     }
     // Otherwise let Link navigate normally
   };
@@ -117,7 +86,7 @@ export function Navbar() {
     if (isHomePage && window.location.hash) {
       const hash = window.location.hash.slice(1); // Remove the #
       const timeout = setTimeout(() => {
-        scrollToSection(hash);
+        scrollToSectionById(hash);
       }, 100); // Small delay to ensure page is ready
       return () => clearTimeout(timeout);
     }
@@ -244,9 +213,9 @@ export function Navbar() {
                   <nav className="hidden items-center gap-1.5 md:flex">
                     {navItems.map((item) => (
                       <Link
-                        key={item.target}
-                        href={`/${item.target}`}
-                        onClick={(e) => handleNavClick(e, item.target)}
+                        key={item.href}
+                        href={item.href}
+                        onClick={(e) => handleNavClick(e, item.href)}
                         className={`cursor-pointer rounded-full px-4 py-2 text-[15px] font-medium transition ${
                           isDark
                             ? "text-foreground/70 hover:bg-foreground/8 hover:text-foreground"
@@ -332,9 +301,9 @@ export function Navbar() {
             >
               {navItems.map((item) => (
                 <Link
-                  key={item.target}
-                  href={`/${item.target}`}
-                  onClick={(e) => handleNavClick(e, item.target)}
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
                   className="text-left text-3xl font-semibold tracking-tight text-foreground transition hover:text-foreground/75"
                 >
                   {item.label}

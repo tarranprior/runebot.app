@@ -10,6 +10,18 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
 [[redirects]]
+  from = "/features"
+  to = "/#features"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/statistics"
+  to = "/#statistics"
+  status = 302
+  force = true
+
+[[redirects]]
   from = "/invite"
   to = "https://discord.com/oauth2/authorize?client_id=978953033989914654&permissions=2147764224&scope=bot%20applications.commands"
   status = 302

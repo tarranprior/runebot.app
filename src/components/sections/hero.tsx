@@ -1,11 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowRight, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
+import { scrollToSectionByRoute } from "@/lib/section-navigation";
 
 export function Hero() {
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
+
   return (
     <>
       <section
@@ -44,7 +49,12 @@ export function Hero() {
               </a>
 
               <Link
-                href="#features"
+                href="/features"
+                onClick={(e) => {
+                  if (!isHomePage) return;
+                  e.preventDefault();
+                  scrollToSectionByRoute("/features");
+                }}
                 className="inline-flex items-center gap-2 rounded-full border border-surface-border bg-surface/92 px-6 py-3 text-sm font-semibold text-foreground shadow-[0_8px_24px_rgba(43,44,59,0.08)] transition hover:bg-surface dark:border-white/10 dark:bg-white/5 dark:text-white dark:shadow-none dark:hover:bg-white/10 sm:text-base"
               >
                 Learn More

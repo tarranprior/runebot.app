@@ -4,6 +4,16 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/features",
+        destination: "/#features",
+        permanent: false,
+      },
+      {
+        source: "/statistics",
+        destination: "/#statistics",
+        permanent: false,
+      },
+      {
         source: "/invite",
         destination:
           "https://discord.com/oauth2/authorize?client_id=978953033989914654&permissions=2147764224&scope=bot%20applications.commands",

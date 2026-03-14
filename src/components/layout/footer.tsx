@@ -1,8 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Github, MessageCircle } from "lucide-react";
 import { Container } from "@/components/ui/container";
+import {
+  isSectionRoute,
+  scrollToSectionByRoute,
+} from "@/lib/section-navigation";
 
 const DISCORD_SUPPORT_INVITE_URL = "https://discord.com/invite/FWjNkNuTzv";
 
@@ -11,7 +16,7 @@ const footerGroups = [
     title: "Runebot",
     links: [
       { label: "About", href: "/" },
-      { label: "Features", href: "#features" },
+      { label: "Features", href: "/features" },
       { label: "Documentation", href: "#docs" },
     ],
   },
@@ -36,6 +41,9 @@ const footerGroups = [
 const currentYear = new Date().getFullYear();
 
 export function Footer() {
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
+
   return (
     <>
       <div className="block m-[-1px] overflow-hidden leading-none bg-background dark:bg-background">
@@ -116,6 +124,14 @@ export function Footer() {
                         ) : (
                           <Link
                             href={link.href}
+                            onClick={(e) => {
+                              if (!isHomePage || !isSectionRoute(link.href)) {
+                                return;
+                              }
+
+                              e.preventDefault();
+                              scrollToSectionByRoute(link.href);
+                            }}
                             className="text-sm text-foreground/60 transition hover:text-accent dark:text-foreground/60 dark:hover:text-accent"
                           >
                             {link.label}
