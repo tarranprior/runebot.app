@@ -1,4 +1,17 @@
-## March 15/03/2026
+## March 16, 2026
+**Runebot v1.0.6-dev.3**
+
+* {https://github.com/tarranprior/runebot/commit/e51f6c3d457b28e784f511f32fddb0251845b118} [notice] ⚙️ Update /Runebot/: feat(accounts) enforce max. 5 account limit
+    - add `MaximumAccountsReached` as a project exception
+    - raise an explicit exception when a user attempts to save > 5 accounts
+* {https://github.com/tarranprior/runebot/commit/df7ce9bfc4fcc40dc0be31801d8e7d7133d47702} [added] ✨ Update /Runebot/: feat(accounts) introduce account manager (beta), add account switching
+    - add an Account Manager (Beta) entrypoint to `/stats`
+    - open a dedicated ephemeral account management surface
+    - add a dropdown flow for switching the default account
+
+---
+
+## March 15, 2026
 **Runebot v1.0.6-dev.2**
 
 * {https://github.com/tarranprior/runebot/commit/5cd88fb5b437a165e9dc39541988690f66430f96} [notice] 🪲 Update /Runebot/: fix(database) restore fresh-db username fallback, prevent case-variant account duplicates
@@ -18,7 +31,7 @@
 
 ---
 
-## March 10/03/2026
+## March 10, 2026
 **Runebot v1.0.6-dev.1**
 
 * {https://github.com/tarranprior/runebot/commit/5c8beb79d9c3c1cceb5d19fe68ec57e001a63907} [added] ✨ Update /Runebot/: feat(api) expose public community stats endpoint
