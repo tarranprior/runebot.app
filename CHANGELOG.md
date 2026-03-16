@@ -1,6 +1,11 @@
 ## March 16, 2026
 **Runebot v1.0.6-dev.3**
 
+* {https://github.com/tarranprior/runebot/commit/6922dd7570cd61e2a06b374341f596d83a4ad388} [added] ✨ Update /Runebot/: feat(accounts) add account delete flow, enhance Account Manager view
+    - add refresh and delete controls to the Account Manager view
+    - add confirmation and cancel prompts to delete action
+    - remove accounts via. database helper
+    - reassign the default account automatically after deletion
 * {https://github.com/tarranprior/runebot/commit/e51f6c3d457b28e784f511f32fddb0251845b118} [notice] ⚙️ Update /Runebot/: feat(accounts) enforce max. 5 account limit
     - add `MaximumAccountsReached` as a project exception
     - raise an explicit exception when a user attempts to save > 5 accounts
@@ -31,7 +36,7 @@
 
 ---
 
-## March 10, 2026
+## March 14, 2026
 **Runebot v1.0.6-dev.1**
 
 * {https://github.com/tarranprior/runebot/commit/5c8beb79d9c3c1cceb5d19fe68ec57e001a63907} [added] ✨ Update /Runebot/: feat(api) expose public community stats endpoint
