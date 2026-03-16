@@ -1,5 +1,5 @@
 ## March 16, 2026
-**Runebot v1.0.6-dev.3**
+**Runebot v1.0.6-dev.3** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.6-dev.3) [Commit](https://github.com/tarranprior/runebot/commit/6922dd7570cd61e2a06b374341f596d83a4ad388)
 
 * {https://github.com/tarranprior/runebot/commit/6922dd7570cd61e2a06b374341f596d83a4ad388} [added] ✨ Update /Runebot/: feat(accounts) add account delete flow, enhance Account Manager view
     - add refresh and delete controls to the Account Manager view
@@ -17,7 +17,7 @@
 ---
 
 ## March 15, 2026
-**Runebot v1.0.6-dev.2**
+**Runebot v1.0.6-dev.2** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.6-dev.2) [Commit](https://github.com/tarranprior/runebot/commit/5cd88fb5b437a165e9dc39541988690f66430f96)
 
 * {https://github.com/tarranprior/runebot/commit/5cd88fb5b437a165e9dc39541988690f66430f96} [notice] 🪲 Update /Runebot/: fix(database) restore fresh-db username fallback, prevent case-variant account duplicates
     - remove completed multi-account migration runtime hook from startup
@@ -37,7 +37,7 @@
 ---
 
 ## March 14, 2026
-**Runebot v1.0.6-dev.1**
+**Runebot v1.0.6-dev.1** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.6-dev.1) [Commit](https://github.com/tarranprior/runebot/commit/5c8beb79d9c3c1cceb5d19fe68ec57e001a63907)
 
 * {https://github.com/tarranprior/runebot/commit/5c8beb79d9c3c1cceb5d19fe68ec57e001a63907} [added] ✨ Update /Runebot/: feat(api) expose public community stats endpoint
     - add public `/community-stats` route for website consumption
@@ -90,7 +90,7 @@
 ---
 
 ## Oct 14, 2023
-**Runebot v1.0.5** (Current)
+**Runebot v1.0.5** (Current) [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.5) [Commit](https://github.com/tarranprior/runebot/commit/6d7b5dbeb58cd1f1a9b5a0b82b8e5437eb5370f5)
 
 * [notice] 🎉 Runebot is now a verified Discord application!
 * [added] Users can now set a username with `/setrsn` (for use with `/stats` and other future updates.)
