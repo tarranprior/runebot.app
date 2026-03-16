@@ -1,5 +1,25 @@
+## March 15/03/2026
+**Runebot v1.0.6-dev.2**
+
+* {https://github.com/tarranprior/runebot/commit/5cd88fb5b437a165e9dc39541988690f66430f96} [notice] 🪲 Update /Runebot/: fix(database) restore fresh-db username fallback, prevent case-variant account duplicates
+    - remove completed multi-account migration runtime hook from startup
+    - prevent duplicate saved accounts when username case is different
+    - fix guild ID tuple flattening and suggestion return typing
+* {https://github.com/tarranprior/runebot/commit/89538e2f8bc1b0e49414cbb84b7619aa46d7d4a6} [improved] ✨ Update /Runebot/: feat(players) update `/setrsn` and `/unsetrsn` for multi-account behaviour
+    - align `/setrsn` to support multiple accounts per user
+    - align `/unsetrsn` to clear all saved usernames for a user
+* {https://github.com/tarranprior/runebot/commit/885bc44b4b0e30c5af2c4e00a54e28878689eb4e} [added] ✨ Update /Runebot/: feat(accounts) prepare multi-profile player schema and unset flow
+    - introduce `user_accounts` storage for multi-account player support
+    - add `default_account_id` to preserve a user's active/default profile
+    - add migration and backfill logic for existing `all_users` records
+    - enable WAL mode and foreign key support during startup
+    - introduce account lookup and default-account helpers
+* {https://github.com/tarranprior/runebot/commit/444a1dcce29efc52cb2b6770838f99a4a45fa355} [added] ✨ Update /Runebot/: feat(runelite) introduce pilot ingest for future RuneLite integrations
+
+---
+
 ## March 10/03/2026
-**Runebot v1.0.6-dev.1** (Development)
+**Runebot v1.0.6-dev.1**
 
 * {https://github.com/tarranprior/runebot/commit/5c8beb79d9c3c1cceb5d19fe68ec57e001a63907} [added] ✨ Update /Runebot/: feat(api) expose public community stats endpoint
     - add public `/community-stats` route for website consumption
@@ -25,7 +45,7 @@
 ---
 
 ## March 14, 2026
-**Runebot.app** (Current)
+**Runebot.app**
 
 * {https://github.com/tarranprior/runebot.app/commit/a0fb333373fb075f7ac1e000368478dea179bc15} [added] ✨ Update /Runebot.app/: feat(changelog) add development section and improve timeline structure
     - separate unreleased builds from release history
@@ -45,7 +65,7 @@
 ---
 
 ## March 09, 2026
-**Runebot.app** (Initial Launch)
+**Runebot.app**
 
 * {https://github.com/tarranprior/runebot.app/commit/21fce51be693cd3cc52c68aef612a9f83c78b06d} [notice] 🎉 Initial launch of the new Runebot website!
 
