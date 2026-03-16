@@ -637,6 +637,22 @@ export const statsFeatureMock: DiscordStatsMock = {
     xp: 25525083,
   },
   footerText: "Experience data from the official Hiscores API\nRunebot v1.0.6-dev.1 • Today at 00:00",
-  buttons: ["Boss Kills", "Bounty Hunter", "Clue Scrolls"],
+  buttons: [
+    "Boss Kills",
+    "Bounty Hunter",
+    "Clue Scrolls",
+    {
+      label: "Refresh",
+      kind: "action",
+      row: 2,
+      iconOnly: true,
+    },
+    {
+      label: "Account Manager (Beta)",
+      icon: "/images/features/emotes/account.png",
+      kind: "action",
+      row: 2,
+    },
+  ],
   accentColor: "#5865F2",
 };

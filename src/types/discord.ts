@@ -45,6 +45,14 @@ export interface DiscordStatsSummary {
   xp: number | string;
 }
 
+export interface DiscordStatsButton {
+  label: string;
+  icon?: string;
+  row?: number;
+  iconOnly?: boolean;
+  kind?: "view" | "action";
+}
+
 export interface DiscordStatsMock {
   authorName: string;
   authorAvatar?: string;
@@ -56,6 +64,6 @@ export interface DiscordStatsMock {
   overall: DiscordStatsSummary;
   combat: DiscordStatsSummary;
   footerText: string;
-  buttons: string[];
+  buttons: Array<string | DiscordStatsButton>;
   accentColor?: string;
 }

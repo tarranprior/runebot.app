@@ -20,19 +20,23 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
   const [footerText, setFooterText] = useState(embed.footer?.text || "");
 
   useEffect(() => {
-    const formattedTime = new Intl.DateTimeFormat(undefined, {
-      hour: "numeric",
-      minute: "2-digit",
-    }).format(new Date());
+    const frame = window.requestAnimationFrame(() => {
+      const formattedTime = new Intl.DateTimeFormat(undefined, {
+        hour: "numeric",
+        minute: "2-digit",
+      }).format(new Date());
 
-    if (embed.footer?.text) {
-      const updatedText = embed.footer.text.replace(
-        /Today at \d{1,2}:\d{2}/,
-        `Today at ${formattedTime}`
-      );
+      if (embed.footer?.text) {
+        const updatedText = embed.footer.text.replace(
+          /Today at \d{1,2}:\d{2}/,
+          `Today at ${formattedTime}`
+        );
 
-      setFooterText(updatedText);
-    }
+        setFooterText(updatedText);
+      }
+    });
+
+    return () => window.cancelAnimationFrame(frame);
   }, [embed.footer?.text]);
 
   const getInlineFieldValue = (name: string) =>
@@ -219,9 +223,9 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
               <Image
                 src={embed.thumbnail}
                 alt="Thumbnail"
-                width={isPriceEmbed ? 60 : 76}
-                height={isPriceEmbed ? 60 : 76}
-                className={isPriceEmbed ? "h-[60px] w-[60px] rounded object-contain" : "h-[76px] w-[76px] rounded object-contain"}
+                width={isPriceEmbed ? 60 : 64}
+                height={isPriceEmbed ? 60 : 64}
+                className={isPriceEmbed ? "h-[60px] w-[60px] rounded object-contain" : "h-[64px] w-[64px] rounded object-contain"}
               />
             </div>
           )}

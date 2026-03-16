@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-import { DiscordStatsMock } from "@/types/discord";
+import { DiscordStatsButton, DiscordStatsMock } from "@/types/discord";
 import { Tooltip } from "@/components/ui/tooltip";
 import { StatTooltipContent } from "@/components/ui/stat-tooltip-content";
 
@@ -89,10 +89,39 @@ export function DiscordStatsEmbed({ data }: DiscordStatsEmbedProps) {
   const accentColor = data.accentColor || "#5865F2";
   const [localTimestamp, setLocalTimestamp] = useState("Today at --:--");
 
-  const buttonViews = useMemo(
-    () => data.buttons.filter((viewName) => viewName !== "Skills"),
+  const buttons = useMemo<DiscordStatsButton[]>(
+    () =>
+      data.buttons.map((button) =>
+        typeof button === "string"
+          ? { label: button, kind: "view", row: 1 }
+          : {
+              kind: button.kind || "action",
+              row: button.row || 1,
+              ...button,
+            }
+      ),
     [data.buttons]
   );
+
+  const buttonRows = useMemo(() => {
+    const rows = new Map<number, DiscordStatsButton[]>();
+
+    buttons.forEach((button) => {
+      const row = button.row || 1;
+      const existing = rows.get(row);
+
+      if (existing) {
+        existing.push(button);
+        return;
+      }
+
+      rows.set(row, [button]);
+    });
+
+    return Array.from(rows.entries())
+      .sort(([left], [right]) => left - right)
+      .map(([, rowButtons]) => rowButtons.filter((button) => button.label !== "Skills"));
+  }, [buttons]);
 
   const [activeView, setActiveView] = useState("Skills");
 
@@ -269,25 +298,49 @@ export function DiscordStatsEmbed({ data }: DiscordStatsEmbedProps) {
           </div>
 
           {/* Buttons */}
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {buttonViews.map((viewName) => {
-              const isActive = activeView === viewName;
+          <div className="mt-2 space-y-1.5">
+            {buttonRows.map((rowButtons, rowIndex) => (
+              <div key={rowIndex} className="flex flex-wrap gap-1.5">
+                {rowButtons.map((button) => {
+                  const isViewButton = button.kind === "view";
+                  const isActive = isViewButton && activeView === button.label;
 
-              return (
-                <button
-                  key={viewName}
-                  type="button"
-                  onClick={() => setActiveView(viewName)}
-                  className={`inline-flex h-8 items-center justify-center rounded-[8px] border px-2.5 text-[12px] font-medium transition-colors ${
-                    isActive
-                      ? "border-[#4b4f56] bg-[#3f4349] text-[#f2f3f5]"
-                      : "border-[#d6d9df] bg-[#eef0f2] hover:bg-[#e2e5e9] dark:border-[#2f3338] dark:bg-[#252429] dark:text-[#e6e9ed] dark:hover:bg-[#42464b]"
-                  }`}
-                >
-                  {viewName}
-                </button>
-              );
-            })}
+                  return (
+                    <button
+                      key={`${button.row || 1}-${button.label}`}
+                      type="button"
+                      onClick={isViewButton ? () => setActiveView(button.label) : undefined}
+                      className={`inline-flex h-8 items-center justify-center rounded-[8px] border text-[12px] font-medium transition-colors ${
+                        button.iconOnly ? "w-[60px] px-0" : "px-2.5"
+                      } ${
+                        isActive
+                          ? "border-[#4b4f56] bg-[#3f4349] text-[#f2f3f5]"
+                          : "border-[#d6d9df] bg-[#eef0f2] hover:bg-[#e2e5e9] dark:border-[#2f3338] dark:bg-[#252429] dark:text-[#e6e9ed] dark:hover:bg-[#42464b]"
+                      }`}
+                      aria-label={button.label}
+                    >
+                      {button.iconOnly ? (
+                        <span className="text-[16px] leading-none" aria-hidden="true">⟳</span>
+                      ) : (
+                        <>
+                          {button.icon && (
+                            <Image
+                              src={button.icon}
+                              alt=""
+                              width={16}
+                              height={16}
+                              className="mr-1.5 h-4 w-4 object-contain"
+                              aria-hidden="true"
+                            />
+                          )}
+                          <span>{button.label}</span>
+                        </>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
       </div>
