@@ -25,6 +25,8 @@ export type ChangelogRelease = {
   version?: string;
   /** Optional suffix after the bold version label, e.g. "(Current)" */
   versionSuffix?: string;
+  /** Optional linked chips declared on the release title line, e.g. [Tag](https://...) */
+  releaseLinks?: Array<{ label: string; url: string }>;
   items: ChangelogItem[];
   /** Trailing non-list lines (may contain markdown, e.g. "See the release notes @ [link](url)") */
   notes: string[];
@@ -83,6 +85,30 @@ function parseItem(raw: string): ChangelogItem {
   return { commitUrl, badge, text: rest };
 }
 
+function parseReleaseMeta(raw: string | undefined) {
+  if (!raw) {
+    return {
+      versionSuffix: undefined,
+      releaseLinks: undefined,
+    };
+  }
+
+  const releaseLinks = Array.from(
+    raw.matchAll(/\[([^\]]+)\]\(([^)]+)\)/g),
+    (match) => ({
+      label: match[1].trim(),
+      url: match[2].trim(),
+    }),
+  );
+
+  const versionSuffix = raw.replace(/\s*\[[^\]]+\]\([^)]+\)/g, "").trim() || undefined;
+
+  return {
+    versionSuffix,
+    releaseLinks: releaseLinks.length > 0 ? releaseLinks : undefined,
+  };
+}
+
 // ─── Main parser ──────────────────────────────────────────────────────────────
 
 /**
@@ -117,6 +143,7 @@ export function parseChangelog(markdown: string): ChangelogRelease[] {
     let date = "";
     let version: string | undefined;
     let versionSuffix: string | undefined;
+    let releaseLinks: ChangelogRelease["releaseLinks"];
     const items: ChangelogItem[] = [];
     const notes: string[] = [];
     let pastItems = false;
@@ -137,7 +164,9 @@ export function parseChangelog(markdown: string): ChangelogRelease[] {
       const boldMatch = t.match(/^\*\*(.+?)\*\*(?:\s+(.*))?$/);
       if (boldMatch && !pastItems) {
         version = boldMatch[1].trim();
-        versionSuffix = boldMatch[2]?.trim() || undefined;
+        const releaseMeta = parseReleaseMeta(boldMatch[2]?.trim());
+        versionSuffix = releaseMeta.versionSuffix;
+        releaseLinks = releaseMeta.releaseLinks;
         continue;
       }
 
@@ -180,6 +209,7 @@ export function parseChangelog(markdown: string): ChangelogRelease[] {
         date,
         version,
         versionSuffix,
+        releaseLinks,
         items,
         notes,
       });

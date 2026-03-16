@@ -8,9 +8,16 @@ import type { Metadata } from "next";
 const IN_DEVELOPMENT_TITLE_PATTERN =
   /-dev\.|-beta\.|-rc\.|\(in development\)|\(unreleased\)/i;
 
+const STABLE_RELEASE_TITLE_PATTERN = /\(current\)/i;
+
 function isInDevelopmentRelease(release: ChangelogRelease): boolean {
   const title = [release.version, release.versionSuffix].filter(Boolean).join(" ");
   return IN_DEVELOPMENT_TITLE_PATTERN.test(title);
+}
+
+function isStableRelease(release: ChangelogRelease): boolean {
+  const title = [release.version, release.versionSuffix].filter(Boolean).join(" ");
+  return STABLE_RELEASE_TITLE_PATTERN.test(title);
 }
 
 export const metadata: Metadata = {
@@ -22,7 +29,12 @@ export default async function ChangelogPage() {
   const markdown = await readRootMarkdownFile("CHANGELOG.md");
   const releases = parseChangelog(markdown);
   const inDevelopmentReleases = releases.filter(isInDevelopmentRelease);
-  const releaseHistory = releases.filter((release) => !isInDevelopmentRelease(release));
+  const stableReleases = releases.filter(
+    (release) => !isInDevelopmentRelease(release) && isStableRelease(release),
+  );
+  const releaseHistory = releases.filter(
+    (release) => !isInDevelopmentRelease(release) && !isStableRelease(release),
+  );
 
   return (
     <div className="flex min-h-full flex-col">
@@ -47,7 +59,17 @@ export default async function ChangelogPage() {
                 <p className="mt-2 mb-6 text-sm text-foreground/50">
                   Future releases in active development. These are available in the live version of the bot.
                 </p>
-                <ChangelogTimeline releases={inDevelopmentReleases} />
+                <ChangelogTimeline releases={inDevelopmentReleases} expandBodiesByDefault />
+              </div>
+            )}
+
+            {stableReleases.length > 0 && (
+              <div className="mb-12">
+                <h2 className="text-2xl font-semibold tracking-tight text-foreground">Stable Releases</h2>
+                <p className="mt-2 mb-6 text-sm text-foreground/50">
+                  Current stable releases available across the Runebot ecosystem.
+                </p>
+                <ChangelogTimeline releases={stableReleases} />
               </div>
             )}
 

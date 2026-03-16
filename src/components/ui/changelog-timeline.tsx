@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { ChevronDown, GitCommitHorizontal } from "lucide-react";
+import { ChevronDown, ExternalLink, GitCommitHorizontal, Tag } from "lucide-react";
 import type {
   ChangelogBadge,
   ChangelogItem,
@@ -71,6 +71,82 @@ function CommitChip({ commit }: { commit: CommitRef }) {
     >
       <GitCommitHorizontal className="h-2.5 w-2.5 shrink-0" />
       <span className="truncate">{commit.label}</span>
+    </a>
+  );
+}
+
+function getReleaseTagText(version: string | undefined, fallbackLabel: string) {
+  if (!version) {
+    return fallbackLabel;
+  }
+
+  const versionMatch = version.match(/v[\w.-]+/i);
+  return versionMatch?.[0] ?? version;
+}
+
+function getReleaseChipMeta(
+  release: ChangelogRelease,
+  link: NonNullable<ChangelogRelease["releaseLinks"]>[number],
+) {
+  const normalizedLabel = link.label.trim().toLowerCase();
+
+  if (["tag", "tagged", "stable", "release"].includes(normalizedLabel)) {
+    return {
+      kind: "tag" as const,
+      text: getReleaseTagText(release.version, link.label),
+      title: `${link.label}: ${release.version ?? link.label}`,
+    };
+  }
+
+  if (normalizedLabel === "commit") {
+    const commitRef = parseCommitRef(link.url);
+    return {
+      kind: "commit" as const,
+      text: commitRef.label,
+      title: `Commit: ${commitRef.label}`,
+    };
+  }
+
+  return {
+    kind: "link" as const,
+    text: link.label,
+    title: link.label,
+  };
+}
+
+function ReleaseChip({
+  release,
+  label,
+  url,
+}: {
+  release: ChangelogRelease;
+  label: string;
+  url: string;
+}) {
+  const chip = getReleaseChipMeta(release, { label, url });
+
+  const chipClassName =
+    "inline-flex h-6 items-center gap-1.5 rounded-md border border-surface-border/80 bg-surface/5 px-2 text-[11px] font-medium text-foreground/62 transition hover:border-foreground/12 hover:bg-surface/0 hover:text-foreground/78 dark:border-surface-border dark:bg-surface/55 dark:text-foreground/60 dark:hover:border-white/10 dark:hover:bg-surface/80 dark:hover:text-foreground/80";
+
+  const icon =
+    chip.kind === "tag" ? (
+      <Tag className="h-3 w-3 shrink-0" strokeWidth={2} />
+    ) : chip.kind === "commit" ? (
+      <GitCommitHorizontal className="h-3 w-3 shrink-0" strokeWidth={2} />
+    ) : (
+      <ExternalLink className="h-3 w-3 shrink-0" strokeWidth={2} />
+    );
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={chip.title}
+      className={chipClassName}
+    >
+      {icon}
+      <span className="font-mono tabular-nums">{chip.text}</span>
     </a>
   );
 }
@@ -279,6 +355,14 @@ function ReleaseSection({
                     {release.versionSuffix}
                   </span>
                 )}
+                {release.releaseLinks?.map((link) => (
+                  <ReleaseChip
+                    key={`${release.id}-${link.label}-${link.url}`}
+                    release={release}
+                    label={link.label}
+                    url={link.url}
+                  />
+                ))}
               </h2>
             </>
           ) : (
@@ -315,8 +399,12 @@ function ReleaseSection({
       )}
 
       {release.notes.length > 0 && (
-        <div className="pl-[100px]">
-          <NotesMarkdown lines={release.notes} />
+        <div className={GRID}>
+          <div />
+          <div />
+          <div className="pl-5">
+            <NotesMarkdown lines={release.notes} />
+          </div>
         </div>
       )}
     </div>
@@ -325,10 +413,33 @@ function ReleaseSection({
 
 type ChangelogTimelineProps = {
   releases: ChangelogRelease[];
+  expandBodiesByDefault?: boolean;
 };
 
-export function ChangelogTimeline({ releases }: ChangelogTimelineProps) {
-  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
+function getDefaultExpandedKeys(releases: ChangelogRelease[]) {
+  const expanded = new Set<string>();
+
+  for (const release of releases) {
+    const keyCounts = new Map<string, number>();
+
+    for (const item of release.items) {
+      if (!item.body?.trim()) continue;
+
+      const baseKey = getItemKeyBase(release.id, item);
+      const count = keyCounts.get(baseKey) ?? 0;
+      keyCounts.set(baseKey, count + 1);
+      const key = count === 0 ? baseKey : `${baseKey}-${count + 1}`;
+      expanded.add(key);
+    }
+  }
+
+  return expanded;
+}
+
+export function ChangelogTimeline({ releases, expandBodiesByDefault = false }: ChangelogTimelineProps) {
+  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(() =>
+    expandBodiesByDefault ? getDefaultExpandedKeys(releases) : new Set(),
+  );
 
   const toggleItem = (key: string) => {
     setExpandedKeys((prev) => {
