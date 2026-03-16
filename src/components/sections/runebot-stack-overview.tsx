@@ -103,9 +103,9 @@ function ValueMeta({
 }) {
   if (style === "star") {
     return (
-      <span className="inline-flex items-center gap-1.5 text-amber-400/90">
-        <Star className="h-3.5 w-3.5 fill-current stroke-none" />
-        <span className={`text-[12px] font-semibold tabular-nums ${jetbrainsMono.className}`}>
+      <span className="inline-flex w-[44px] items-center justify-start gap-1.5 text-amber-400/90">
+        <Star className="h-3.5 w-3.5 shrink-0 fill-current stroke-none" />
+        <span className={`w-[3ch] text-right text-[12px] font-semibold tabular-nums ${jetbrainsMono.className}`}>
           {value}
         </span>
       </span>
