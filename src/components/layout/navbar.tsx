@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   AnimatePresence,
   motion,
@@ -20,6 +20,7 @@ import {
   isSectionRoute,
   scrollToSectionById,
   scrollToSectionByRoute,
+  SECTION_ROUTE_MAP,
 } from "@/lib/section-navigation";
 
 // Localized permissive typing for motion intrinsic components used below.
@@ -33,6 +34,7 @@ type NavItem = {
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const isHomePage = pathname === "/";
   const reduceMotion = useReducedMotion();
   const [open, setOpen] = useState(false);
@@ -65,8 +67,11 @@ export function Navbar() {
       return;
     }
 
-    if (!isSectionRoute(href)) {
+    if (!isHomePage && isSectionRoute(href)) {
+      e.preventDefault();
       setOpen(false);
+      sessionStorage.setItem("scrollTarget", SECTION_ROUTE_MAP[href]);
+      router.push("/");
       return;
     }
 
@@ -81,13 +86,20 @@ export function Navbar() {
     // Otherwise let Link navigate normally
   };
 
-  // Handle hash navigation when landing on homepage from another page
+  // Handle scroll-to-section when landing on homepage from another page
   useEffect(() => {
-    if (isHomePage && window.location.hash) {
-      const hash = window.location.hash.slice(1); // Remove the #
-      const timeout = setTimeout(() => {
-        scrollToSectionById(hash);
-      }, 100); // Small delay to ensure page is ready
+    if (!isHomePage) return;
+
+    const stored = sessionStorage.getItem("scrollTarget");
+    if (stored) {
+      sessionStorage.removeItem("scrollTarget");
+      const timeout = setTimeout(() => scrollToSectionById(stored), 100);
+      return () => clearTimeout(timeout);
+    }
+
+    if (window.location.hash) {
+      const hash = window.location.hash.slice(1);
+      const timeout = setTimeout(() => scrollToSectionById(hash), 100);
       return () => clearTimeout(timeout);
     }
   }, [isHomePage]);
