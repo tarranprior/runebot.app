@@ -1,6 +1,16 @@
 ## March 16, 2026
-**Runebot v1.0.6-dev.3** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.6-dev.3) [Commit](https://github.com/tarranprior/runebot/commit/6922dd7570cd61e2a06b374341f596d83a4ad388)
+**Runebot v1.0.6-dev.3** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.6-dev.3) [Commit](https://github.com/tarranprior/runebot/commit/8029d2fff02836508c422d3559d76cc51d1c5a2f)
 
+* {https://github.com/tarranprior/runebot/commit/8029d2fff02836508c422d3559d76cc51d1c5a2f} [notice] 🪲 Update /Runebot/: fix(price) resolve datetime namespace collision in price timestamps
+* {https://github.com/tarranprior/runebot/commit/3a5598c91927149b14e1a0397e57bf7026c5aeb3} [improved] ✨ Update /Runebot/: feat(accounts) refine `/setrsn` and deprecate `/unsetrsn`
+    - update `/setrsn` response to reflect default account
+    - guide users to Account Manager for multi-account management
+    - deregister `/unsetrsn` command registration (deprecate for removal post v1.0.6)
+    - update default activity to "/wikipedia — Runebot"
+* {https://github.com/tarranprior/runebot/commit/e0e76813dccc2ec4193a8fc14d32a0598dde83ae} [improved] ✨ Update /Runebot/: feat(accounts) update Account Manager and dropdown
+    - add account-type emojis to Account Manager dropdown options
+    - remove redundant "[default]" marker from account list
+    - align dropdown and embed visuals for cleaner account selection UX
 * {https://github.com/tarranprior/runebot/commit/6922dd7570cd61e2a06b374341f596d83a4ad388} [added] ✨ Update /Runebot/: feat(accounts) add account delete flow, enhance Account Manager view
     - add refresh and delete controls to the Account Manager view
     - add confirmation and cancel prompts to delete action
