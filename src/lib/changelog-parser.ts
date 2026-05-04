@@ -16,6 +16,17 @@ export type ChangelogItem = {
   body?: string;
 };
 
+export type ChangelogReleaseGroup = {
+  /** Slug used as the HTML anchor (`id`) for this grouped subsection */
+  id: string;
+  date: string;
+  version?: string;
+  versionSuffix?: string;
+  releaseLinks?: Array<{ label: string; url: string }>;
+  items: ChangelogItem[];
+  notes: string[];
+};
+
 export type ChangelogRelease = {
   /** Slug used as the HTML anchor (`id`) for this section */
   id: string;
@@ -28,6 +39,8 @@ export type ChangelogRelease = {
   /** Optional linked chips declared on the release title line, e.g. [Tag](https://...) */
   releaseLinks?: Array<{ label: string; url: string }>;
   items: ChangelogItem[];
+  /** Optional grouped subsections declared with `### Date` inside a release section */
+  groups?: ChangelogReleaseGroup[];
   /** Trailing non-list lines (may contain markdown, e.g. "See the release notes @ [link](url)") */
   notes: string[];
 };
@@ -50,6 +63,31 @@ function slugify(s: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
+}
+
+function toUniqueId(base: string, fallback: string, counts: Map<string, number>) {
+  const normalized = slugify(base) || fallback;
+  const count = counts.get(normalized) ?? 0;
+  counts.set(normalized, count + 1);
+  return count === 0 ? normalized : `${normalized}-${count + 1}`;
+}
+
+function createRelease(date: string): ChangelogRelease {
+  return {
+    id: "",
+    date,
+    items: [],
+    notes: [],
+  };
+}
+
+function createGroup(date: string): ChangelogReleaseGroup {
+  return {
+    id: "",
+    date,
+    items: [],
+    notes: [],
+  };
 }
 
 /**
@@ -114,11 +152,15 @@ function parseReleaseMeta(raw: string | undefined) {
 /**
  * Parse the full CHANGELOG.md string into an ordered array of releases.
  *
- * Expected markdown structure (any heading level 2–3 begins a release):
+ * Expected markdown structure:
  *
  *   ## October 14, 2023
  *
  *   **Runebot v1.0.5**
+ *
+ *   ### October 13, 2023
+ *
+ *   **Runebot v1.0.5-dev.1**
  *
  *   * {commitUrl} [added] Description
  *   * [fixed] Another change
@@ -127,55 +169,104 @@ function parseReleaseMeta(raw: string | undefined) {
  *
  *   ---
  *
- * Sections are separated by `---` horizontal rules, which is the recommended
- * format. Sections without a `---` separator are also handled via re-scanning
- * h2/h3 headings.
+ * Sections are separated by `---` horizontal rules, which is the recommended format.
+ * `##` starts a top-level release, and `###` starts a grouped subsection within the
+ * current top-level release.
  */
 export function parseChangelog(markdown: string): ChangelogRelease[] {
   // Split on horizontal rules first; each block is one release section.
   const sections = markdown.split(/\n\s*---\s*\n/);
   const releases: ChangelogRelease[] = [];
+  const releaseIdCounts = new Map<string, number>();
+
+  const finalizeRelease = (release: ChangelogRelease, releaseIndex: number) => {
+    if (!release.date && releaseIndex === 0 && release.version) {
+      release.date = "Undated";
+    }
+
+    release.id = toUniqueId(
+      [release.version, release.date].filter(Boolean).join("-"),
+      `release-${releaseIndex}`,
+      releaseIdCounts,
+    );
+
+    if (release.groups?.length) {
+      const groupIdCounts = new Map<string, number>();
+      release.groups = release.groups.map((group, groupIndex) => ({
+        ...group,
+        id: toUniqueId(
+          `${release.id}-${[group.version, group.date].filter(Boolean).join("-")}`,
+          `${release.id}-group-${groupIndex + 1}`,
+          groupIdCounts,
+        ),
+      }));
+    }
+
+    return release;
+  };
 
   for (const section of sections) {
     const lines = section.trim().split("\n");
     if (!lines.length) continue;
 
-    let date = "";
-    let version: string | undefined;
-    let versionSuffix: string | undefined;
-    let releaseLinks: ChangelogRelease["releaseLinks"];
-    const items: ChangelogItem[] = [];
-    const notes: string[] = [];
-    let pastItems = false;
+    let currentRelease: ChangelogRelease | null = null;
+    let currentGroup: ChangelogReleaseGroup | null = null;
     let currentItem: ChangelogItem | null = null;
 
     for (const line of lines) {
       const t = line.trim();
       if (!t) continue;
 
-      // Heading: ## Date  or  ### Date
-      const headingMatch = t.match(/^#{2,3}\s+(.+)$/);
+      // Heading: ## Date (top-level release) or ### Date (grouped subsection)
+      const headingMatch = t.match(/^(#{2,3})\s+(.+)$/);
       if (headingMatch) {
-        date = headingMatch[1].trim();
+        const headingLevel = headingMatch[1].length;
+        const headingDate = headingMatch[2].trim();
+
+        if (headingLevel === 2 || !currentRelease) {
+          if (currentRelease) {
+            releases.push(finalizeRelease(currentRelease, releases.length));
+          }
+          currentRelease = createRelease(headingDate);
+          currentGroup = null;
+          currentItem = null;
+          continue;
+        }
+
+        const group = createGroup(headingDate);
+        currentRelease.groups = currentRelease.groups ?? [];
+        currentRelease.groups.push(group);
+        currentGroup = group;
+        currentItem = null;
         continue;
       }
+
+      if (!currentRelease) {
+        continue;
+      }
+
+      const activeTarget = currentGroup ?? currentRelease;
 
       // Bold version label with optional suffix: **Runebot v1.0.6** (Current)
       const boldMatch = t.match(/^\*\*(.+?)\*\*(?:\s+(.*))?$/);
-      if (boldMatch && !pastItems) {
-        version = boldMatch[1].trim();
+      if (
+        boldMatch &&
+        !activeTarget.version &&
+        activeTarget.items.length === 0 &&
+        activeTarget.notes.length === 0
+      ) {
+        activeTarget.version = boldMatch[1].trim();
         const releaseMeta = parseReleaseMeta(boldMatch[2]?.trim());
-        versionSuffix = releaseMeta.versionSuffix;
-        releaseLinks = releaseMeta.releaseLinks;
+        activeTarget.versionSuffix = releaseMeta.versionSuffix;
+        activeTarget.releaseLinks = releaseMeta.releaseLinks;
         continue;
       }
 
-      // List item (unordered: * or -)
+      // List item (unordered: * or -) always belongs to the active target.
       const listMatch = line.match(/^(\s*)[*\-]\s+(.*)$/);
       if (listMatch && listMatch[1].length === 0) {
-        pastItems = true;
         const parsed = parseItem(listMatch[2]);
-        items.push(parsed);
+        activeTarget.items.push(parsed);
         currentItem = parsed;
         continue;
       }
@@ -191,28 +282,13 @@ export function parseChangelog(markdown: string): ChangelogRelease[] {
 
       // Everything else is a trailing note
       if (t) {
-        notes.push(t);
+        activeTarget.notes.push(t);
         currentItem = null;
       }
     }
 
-    if (!date && releases.length === 0 && version) {
-      date = "Undated";
-    }
-
-    if (date || version || items.length > 0) {
-      releases.push({
-        id: slugify(
-          [version, date].filter(Boolean).join("-") ||
-            `release-${releases.length}`,
-        ),
-        date,
-        version,
-        versionSuffix,
-        releaseLinks,
-        items,
-        notes,
-      });
+    if (currentRelease) {
+      releases.push(finalizeRelease(currentRelease, releases.length));
     }
   }
 

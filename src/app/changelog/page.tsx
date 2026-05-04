@@ -69,7 +69,7 @@ export default async function ChangelogPage() {
                 <p className="mt-2 mb-6 text-sm text-foreground/50">
                   Current stable releases available across the Runebot ecosystem.
                 </p>
-                <ChangelogTimeline releases={stableReleases} />
+                <ChangelogTimeline releases={stableReleases} expandBodiesByDefault />
               </div>
             )}
 
@@ -77,7 +77,7 @@ export default async function ChangelogPage() {
               <div>
                 <h2 className="text-2xl font-semibold tracking-tight text-foreground">Release History</h2>
                 <p className="mt-2 mb-6 text-sm text-foreground/50">
-                  Official releases to the Runebot ecosystem.
+                  Official release history of the Runebot ecosystem.
                 </p>
                 <ChangelogTimeline releases={releaseHistory} />
               </div>

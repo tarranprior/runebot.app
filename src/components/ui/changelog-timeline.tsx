@@ -6,6 +6,7 @@ import { ChevronDown, ExternalLink, GitCommitHorizontal, Tag } from "lucide-reac
 import type {
   ChangelogBadge,
   ChangelogItem,
+  ChangelogReleaseGroup,
   ChangelogRelease,
   CommitRef,
 } from "@/lib/changelog-parser";
@@ -27,7 +28,10 @@ const BADGE_STYLES: Record<ChangelogBadge, string> = {
 };
 
 const GRID = "grid grid-cols-[80px_20px_1fr]";
-  const INLINE_MARKDOWN_ALLOWED_ELEMENTS = [
+const TIMELINE_X_POSITION_CLASS = "left-[90px]";
+const TIMELINE_CENTER_X_CLASS = `${TIMELINE_X_POSITION_CLASS} -translate-x-1/2`;
+
+const INLINE_MARKDOWN_ALLOWED_ELEMENTS = [
     "a",
     "br",
     "code",
@@ -85,8 +89,10 @@ function getReleaseTagText(version: string | undefined, fallbackLabel: string) {
 }
 
 function getReleaseChipMeta(
-  release: ChangelogRelease,
-  link: NonNullable<ChangelogRelease["releaseLinks"]>[number],
+  release: Pick<ChangelogRelease, "version"> | Pick<ChangelogReleaseGroup, "version">,
+  link:
+    | NonNullable<ChangelogRelease["releaseLinks"]>[number]
+    | NonNullable<ChangelogReleaseGroup["releaseLinks"]>[number],
 ) {
   const normalizedLabel = link.label.trim().toLowerCase();
 
@@ -119,7 +125,7 @@ function ReleaseChip({
   label,
   url,
 }: {
-  release: ChangelogRelease;
+  release: Pick<ChangelogRelease, "version"> | Pick<ChangelogReleaseGroup, "version">;
   label: string;
   url: string;
 }) {
@@ -266,14 +272,12 @@ function ChangeItemRow({
   const hasBody = Boolean(item.body?.trim());
 
   return (
-    <li className={`${GRID} items-start`}>
+    <li className={`relative ${GRID} items-start`}>
       <div className="flex items-start justify-end pr-3 pt-[3px]">
         {commitRef ? <CommitChip commit={commitRef} /> : <span className="inline-block w-[72px]" />}
       </div>
 
-      <div className="flex justify-center pt-[7px]">
-        <div className="h-1.5 w-1.5 rounded-full bg-foreground/20" />
-      </div>
+      <div aria-hidden />
 
       <div className="pb-3 pl-5">
         <div className="flex min-w-0 items-center gap-2 text-[14.5px] leading-6 text-foreground/75">
@@ -314,6 +318,13 @@ function ChangeItemRow({
           </div>
         )}
       </div>
+
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute ${TIMELINE_CENTER_X_CLASS} top-[7px] z-10`}
+      >
+        <div className="h-2 w-2 rounded-full bg-foreground/25 ring-4 ring-background" />
+      </div>
     </li>
   );
 }
@@ -329,14 +340,64 @@ function ReleaseSection({
   expandedKeys: Set<string>;
   onToggle: (key: string) => void;
 }) {
+  const renderItems = (entry: { id: string; items: ChangelogItem[] }) => {
+    if (entry.items.length === 0) {
+      return null;
+    }
+
+    const keyCounts = new Map<string, number>();
+
+    return (
+      <ul>
+        {entry.items.map((item) => {
+          const baseKey = getItemKeyBase(entry.id, item);
+          const count = keyCounts.get(baseKey) ?? 0;
+          keyCounts.set(baseKey, count + 1);
+          const key = count === 0 ? baseKey : `${baseKey}-${count + 1}`;
+
+          return (
+            <ChangeItemRow
+              key={key}
+              item={item}
+              itemKey={key}
+              expanded={expandedKeys.has(key)}
+              onToggle={onToggle}
+            />
+          );
+        })}
+      </ul>
+    );
+  };
+
+  const renderNotes = (entry: { notes: string[] }) => {
+    if (entry.notes.length === 0) {
+      return null;
+    }
+
+    return (
+      <div className={GRID}>
+        <div />
+        <div />
+        <div className="pl-5">
+          <NotesMarkdown lines={entry.notes} />
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div id={release.id} className="scroll-mt-32 pb-12 last:pb-0">
-      <div className={`${GRID} mb-5 items-center`}>
+      <div className={`relative ${GRID} mb-5 items-center`}>
         <div />
 
-        <div className="flex justify-center">
+        <div aria-hidden />
+
+        <div
+          aria-hidden
+          className={`pointer-events-none absolute ${TIMELINE_CENTER_X_CLASS} top-1/2 z-10 -translate-y-1/2`}
+        >
           <div
-            className={`relative z-10 h-3 w-3 rounded-full border-2 bg-background transition-colors ${
+            className={`h-3 w-3 rounded-full border-2 bg-background ring-4 ring-background transition-colors ${
               isFirst ? "border-accent" : "border-foreground/30"
             }`}
           />
@@ -373,40 +434,62 @@ function ReleaseSection({
         </div>
       </div>
 
-      {release.items.length > 0 && (
-        <ul>
-          {(() => {
-            const keyCounts = new Map<string, number>();
+      {renderItems(release)}
 
-            return release.items.map((item) => {
-              const baseKey = getItemKeyBase(release.id, item);
-              const count = keyCounts.get(baseKey) ?? 0;
-              keyCounts.set(baseKey, count + 1);
-              const key = count === 0 ? baseKey : `${baseKey}-${count + 1}`;
+      {renderNotes(release)}
 
-              return (
-                <ChangeItemRow
-                  key={key}
-                  item={item}
-                  itemKey={key}
-                  expanded={expandedKeys.has(key)}
-                  onToggle={onToggle}
-                />
-              );
-            });
-          })()}
-        </ul>
-      )}
+      {release.groups?.map((group, index) => (
+        <div
+          key={group.id}
+          className={index > 0 ? "mt-8 pt-2" : "mt-6"}
+        >
+          <div className={`relative ${GRID} mb-4 items-center`}>
+            <div />
 
-      {release.notes.length > 0 && (
-        <div className={GRID}>
-          <div />
-          <div />
-          <div className="pl-5">
-            <NotesMarkdown lines={release.notes} />
+            <div aria-hidden />
+
+            <div
+              aria-hidden
+              className={`pointer-events-none absolute ${TIMELINE_CENTER_X_CLASS} top-1/2 z-10 -translate-y-1/2`}
+            >
+              <div className="h-2.5 w-2.5 rounded-full border border-foreground/25 bg-background ring-4 ring-background" />
+            </div>
+
+            <div className="pl-5">
+              {group.version ? (
+                <>
+                  <p className="mb-0.5 text-[11px] font-medium uppercase tracking-widest text-foreground/35">
+                    {group.date}
+                  </p>
+                  <h3 className="flex flex-wrap items-baseline gap-x-2 text-base font-semibold tracking-tight text-foreground/85 sm:text-lg">
+                    <span>{group.version}</span>
+                    {group.versionSuffix && (
+                      <span className="text-xs font-medium tracking-normal text-foreground/45 sm:text-sm">
+                        {group.versionSuffix}
+                      </span>
+                    )}
+                    {group.releaseLinks?.map((link) => (
+                      <ReleaseChip
+                        key={`${group.id}-${link.label}-${link.url}`}
+                        release={group}
+                        label={link.label}
+                        url={link.url}
+                      />
+                    ))}
+                  </h3>
+                </>
+              ) : (
+                <h3 className="text-base font-semibold tracking-tight text-foreground/85 sm:text-lg">
+                  {group.date}
+                </h3>
+              )}
+            </div>
           </div>
+
+          {renderItems(group)}
+          {renderNotes(group)}
         </div>
-      )}
+      ))}
     </div>
   );
 }
@@ -421,15 +504,22 @@ function getDefaultExpandedKeys(releases: ChangelogRelease[]) {
 
   for (const release of releases) {
     const keyCounts = new Map<string, number>();
+    const collect = (entry: { id: string; items: ChangelogItem[] }) => {
+      for (const item of entry.items) {
+        if (!item.body?.trim()) continue;
 
-    for (const item of release.items) {
-      if (!item.body?.trim()) continue;
+        const baseKey = getItemKeyBase(entry.id, item);
+        const count = keyCounts.get(baseKey) ?? 0;
+        keyCounts.set(baseKey, count + 1);
+        const key = count === 0 ? baseKey : `${baseKey}-${count + 1}`;
+        expanded.add(key);
+      }
+    };
 
-      const baseKey = getItemKeyBase(release.id, item);
-      const count = keyCounts.get(baseKey) ?? 0;
-      keyCounts.set(baseKey, count + 1);
-      const key = count === 0 ? baseKey : `${baseKey}-${count + 1}`;
-      expanded.add(key);
+    collect(release);
+
+    for (const group of release.groups ?? []) {
+      collect(group);
     }
   }
 
@@ -461,7 +551,10 @@ export function ChangelogTimeline({ releases, expandBodiesByDefault = false }: C
 
   return (
     <div className="relative">
-      <div className="absolute bottom-0 left-[90px] top-0 w-px bg-surface-border" />
+      <div
+        aria-hidden
+        className={`absolute bottom-0 top-0 ${TIMELINE_CENTER_X_CLASS} w-px bg-surface-border`}
+      />
 
       {releases.map((release, i) => (
         <ReleaseSection
