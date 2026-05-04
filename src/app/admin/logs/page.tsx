@@ -1,6 +1,6 @@
 import { LogsWorkspace } from "@/components/ui/logs-workspace";
 import { getLogSessions, getLogsPayload } from "@/lib/logs/fetch";
-import type { GetLogsParams, LogItem, LogLevel, LogsPayload } from "@/lib/logs/types";
+import type { GetLogsParams, LogsPayload } from "@/lib/logs/types";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -20,16 +20,6 @@ const RANGE_TO_WINDOW_MS: Record<string, number> = {
   "6h": 6 * 60 * 60 * 1000,
   "24h": 24 * 60 * 60 * 1000,
 };
-
-const LOG_LEVEL_VALUES: LogLevel[] = [
-  "DEBUG",
-  "SUCCESS",
-  "INFO",
-  "WARNING",
-  "ERROR",
-  "CRITICAL",
-  "UNKNOWN",
-];
 
 function getSingleSearchParam(value: string | string[] | undefined) {
   if (Array.isArray(value)) {
@@ -68,115 +58,23 @@ function toLogsParams(searchParams: Record<string, string | string[] | undefined
   };
 }
 
-function parseLevelSelection(levelQuery: string | undefined): Set<LogLevel> | null {
-  if (levelQuery === undefined) {
-    return null;
-  }
-
-  const normalized = levelQuery.trim();
-
-  if (!normalized) {
-    return new Set<LogLevel>();
-  }
-
-  const selected = new Set<LogLevel>();
-
-  for (const segment of normalized.split(",")) {
-    const candidate = segment.trim().toUpperCase();
-
-    if (LOG_LEVEL_VALUES.includes(candidate as LogLevel)) {
-      selected.add(candidate as LogLevel);
-    }
-  }
-
-  return selected;
-}
-
-function applyRangeToItems(items: LogItem[], range: string | undefined): LogItem[] {
+function resolveRangeBounds(range: string | undefined, now = new Date()): { startTime?: string; endTime?: string } {
   if (!range || range === "all") {
-    return items;
+    return {};
   }
 
   const windowMs = RANGE_TO_WINDOW_MS[range];
 
   if (!windowMs) {
-    return items;
+    return {};
   }
 
-  const cutoff = Date.now() - windowMs;
-  return items.filter((item) => {
-    const timestamp = Date.parse(item.timestamp);
-    return Number.isFinite(timestamp) && timestamp >= cutoff;
-  });
-}
-
-function computeLevelCounts(items: LogItem[]): Partial<Record<LogLevel, number>> {
-  const counts: Partial<Record<LogLevel, number>> = {};
-
-  for (const item of items) {
-    counts[item.level] = (counts[item.level] ?? 0) + 1;
-  }
-
-  return counts;
-}
-
-function filterBySelectedLevels(items: LogItem[], selectedLevels: Set<LogLevel> | null): LogItem[] {
-  if (selectedLevels === null) {
-    return items;
-  }
-
-  if (selectedLevels.size === 0) {
-    return [];
-  }
-
-  return items.filter((item) => selectedLevels.has(item.level));
-}
-
-async function fetchAllItemsForFallback(baseParams: GetLogsParams): Promise<{items: LogItem[]; meta?: LogsPayload["meta"]}> {
-  const pageSize = Math.min(Math.max(baseParams.pageSize ?? 50, 50), 500);
-  const collected: LogItem[] = [];
-  let resolvedMeta: LogsPayload["meta"] | undefined;
-
-  let page = 1;
-  let total = Number.POSITIVE_INFINITY;
-
-  while (collected.length < total && page <= 200) {
-    const payload = await getLogsPayload({
-      ...baseParams,
-      page,
-      pageSize,
-      level: undefined,
-      range: undefined,
-    });
-
-    total = payload.pagination.total;
-    collected.push(...payload.items);
-
-    if (resolvedMeta === undefined) {
-      resolvedMeta = payload.meta;
-    }
-
-    if (payload.items.length === 0) {
-      break;
-    }
-
-    page += 1;
-  }
-
-  return { items: collected, meta: resolvedMeta };
-}
-
-function paginateItems(items: LogItem[], requestedPage: number, pageSize: number) {
-  const total = items.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const currentPage = Math.min(Math.max(requestedPage, 1), totalPages);
-  const start = (currentPage - 1) * pageSize;
+  const end = now.getTime();
+  const start = end - windowMs;
 
   return {
-    currentPage,
-    totalPages,
-    total,
-    items: items.slice(start, start + pageSize),
+    startTime: new Date(start).toISOString(),
+    endTime: new Date(end).toISOString(),
   };
 }
 
@@ -279,62 +177,43 @@ export default async function AdminLogsPage({ searchParams }: LogsPageProps) {
       ...resolvedSearchParams,
       session_id: defaultSessionId,
     });
-    const rangeFallbackEnabled = Boolean(baseParams.range && baseParams.range !== "all");
-    const requestedPage = baseParams.page ?? 1;
-    const requestedPageSize = baseParams.pageSize ?? 50;
+    const { startTime, endTime } = resolveRangeBounds(baseParams.range);
 
     let resolvedPayload: LogsPayload;
     let currentPage: number;
     let totalPages: number;
 
-    if (rangeFallbackEnabled) {
-      const { items: allItems, meta } = await fetchAllItemsForFallback(baseParams);
-      const rangeFilteredItems = applyRangeToItems(allItems, baseParams.range);
-      const levelCounts = computeLevelCounts(rangeFilteredItems);
-      const selectedLevels = parseLevelSelection(explicitLevel?.trim());
-      const visibleItems = isAllLevelsUnchecked
-        ? []
-        : filterBySelectedLevels(rangeFilteredItems, selectedLevels);
-      const paged = paginateItems(visibleItems, requestedPage, requestedPageSize);
+    // Time range is server-driven so pagination totals and counts come from the backend window.
+    // Level/search interactions in the workspace remain local for instant filtering of loaded rows.
+    const payload = isAllLevelsUnchecked
+      ? (() => {
+          const allLevelsPayload = getLogsPayload({
+            ...baseParams,
+            page: 1,
+            level: undefined,
+            startTime,
+            endTime,
+          });
 
-      resolvedPayload = {
-        items: paged.items,
-        pagination: {
-          page: paged.currentPage,
-          pageSize: requestedPageSize,
-          total: paged.total,
-        },
-        levelCounts,
-        meta,
-      };
-
-      currentPage = paged.currentPage;
-      totalPages = paged.totalPages;
-    } else {
-      const payload = isAllLevelsUnchecked
-        ? (() => {
-            const allLevelsPayload = getLogsPayload({
-              ...baseParams,
+          return allLevelsPayload.then((result) => ({
+            ...result,
+            items: [],
+            pagination: {
               page: 1,
-              level: undefined,
-            });
+              pageSize: result.pagination.pageSize,
+              total: 0,
+            },
+          }));
+        })()
+      : getLogsPayload({
+          ...baseParams,
+          startTime,
+          endTime,
+        });
 
-            return allLevelsPayload.then((result) => ({
-              ...result,
-              items: [],
-              pagination: {
-                page: 1,
-                pageSize: result.pagination.pageSize,
-                total: 0,
-              },
-            }));
-          })()
-        : getLogsPayload(baseParams);
-
-      resolvedPayload = await payload;
-      totalPages = Math.max(1, Math.ceil(resolvedPayload.pagination.total / resolvedPayload.pagination.pageSize));
-      currentPage = resolvedPayload.pagination.page;
-    }
+    resolvedPayload = await payload;
+    totalPages = Math.max(1, Math.ceil(resolvedPayload.pagination.total / resolvedPayload.pagination.pageSize));
+    currentPage = resolvedPayload.pagination.page;
 
     return (
       <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden px-2 py-2 sm:px-3">

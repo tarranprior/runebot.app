@@ -55,7 +55,7 @@ function appendParam(params: URLSearchParams, key: string, value: string | numbe
   params.set(key, normalizedValue);
 }
 
-function buildLogsEndpoint({ page, pageSize, level, module, search, sessionId, range }: GetLogsParams) {
+function buildLogsEndpoint({ page, pageSize, level, module, search, sessionId, startTime, endTime }: GetLogsParams) {
   const url = new URL(getLogsApiUrl());
 
   appendParam(url.searchParams, "page", page);
@@ -64,8 +64,8 @@ function buildLogsEndpoint({ page, pageSize, level, module, search, sessionId, r
   appendParam(url.searchParams, "module", module);
   appendParam(url.searchParams, "search", search);
   appendParam(url.searchParams, "session_id", sessionId);
-  // Bot /logs does not yet enforce range filtering, so frontend fallback handles range windows.
-  appendParam(url.searchParams, "range", range);
+  appendParam(url.searchParams, "start_time", startTime);
+  appendParam(url.searchParams, "end_time", endTime);
 
   return url.toString();
 }

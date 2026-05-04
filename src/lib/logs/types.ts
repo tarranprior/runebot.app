@@ -57,5 +57,7 @@ export type GetLogsParams = {
   module?: string;
   search?: string;
   sessionId?: string;
+  startTime?: string;
+  endTime?: string;
   range?: string;
 };
