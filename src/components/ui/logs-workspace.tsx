@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Check,
@@ -17,6 +17,7 @@ import {
   X,
   Square,
 } from "lucide-react";
+import { LoadingOverlay } from "@/components/ui/loading-overlay";
 import { LogsTimeline } from "@/components/ui/logs-timeline";
 import { LOG_LEVEL_FILTER_THEME } from "@/lib/logs/level-theme";
 import { cn } from "@/lib/utils";
@@ -195,11 +196,13 @@ function PaginationLink({
   disabled,
   children,
   ariaLabel,
+  onNavigate,
 }: {
   href: string;
   disabled: boolean;
   children: React.ReactNode;
   ariaLabel?: string;
+  onNavigate?: () => void;
 }) {
   const className =
     "inline-flex h-7 cursor-pointer items-center rounded-sm px-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground/58 transition hover:bg-black/[0.045] hover:text-foreground/82 dark:hover:bg-white/[0.06]";
@@ -213,7 +216,19 @@ function PaginationLink({
   }
 
   return (
-    <Link className={className} href={href} aria-label={ariaLabel}>
+    <Link
+      className={className}
+      href={href}
+      aria-label={ariaLabel}
+      onClick={(e) => {
+        // Only trigger loading for plain left-clicks; let modifier-key variants
+        // (new tab, new window, etc.) proceed without showing the overlay.
+        if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {
+          return;
+        }
+        onNavigate?.();
+      }}
+    >
       {children}
     </Link>
   );
@@ -259,6 +274,8 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+  const [isNavigating, setIsNavigating] = useState(false);
   const allLevelKeys = LEVEL_FILTERS.map((filter) => filter.key);
 
   // ─── Local filter state (no route navigation) ────────────────────────────
@@ -282,6 +299,7 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
       prevPayloadRef.current = payload;
       setEnabledLevels(parseEnabledLevels());
       setLastUpdated(new Date());
+      setIsNavigating(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payload]);
@@ -379,6 +397,13 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
     Boolean((searchParams.get("module") ?? "").trim()) ||
     hasExplicitLevelFilter;
 
+  const isServerLoading = isPending || isNavigating;
+
+  function startServerTransition(action: () => void) {
+    setIsNavigating(true);
+    startTransition(action);
+  }
+
   function handleToggleLevel(level: LevelFilterKey) {
     setEnabledLevels((current) => {
       const next = new Set(current);
@@ -393,19 +418,41 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
   }
 
   function handleSelectSession(sessionId: string) {
+    if (sessionId === selectedSessionId) {
+      return;
+    }
+
     const params = new URLSearchParams(searchParams.toString());
     params.set("session_id", sessionId);
     params.delete("page");
     const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
+    startServerTransition(() => {
+      router.push(query ? `${pathname}?${query}` : pathname);
+    });
   }
 
   function handleSelectRange(nextRange: TimeRangePreset) {
+    if (nextRange === selectedRange) {
+      return;
+    }
+
     const params = new URLSearchParams(searchParams.toString());
     params.set("range", nextRange);
     params.delete("page");
     const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
+    startServerTransition(() => {
+      router.push(query ? `${pathname}?${query}` : pathname);
+    });
+  }
+
+  function handleRefresh() {
+    startServerTransition(() => {
+      router.refresh();
+    });
+  }
+
+  function handlePaginationNavigate() {
+    setIsNavigating(true);
   }
 
   return (
@@ -529,33 +576,45 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
               <ToolButton icon={Download} label="Export" disabled />
               <button
                 type="button"
-                onClick={() => router.refresh()}
-                className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md bg-black/[0.035] px-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground/62 transition hover:bg-black/[0.07] hover:text-foreground/84 dark:bg-white/[0.04] dark:hover:bg-white/[0.09]"
+                onClick={handleRefresh}
+                disabled={isServerLoading}
+                className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md bg-black/[0.035] px-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground/62 transition hover:bg-black/[0.07] hover:text-foreground/84 dark:bg-white/[0.04] dark:hover:bg-white/[0.09] disabled:cursor-not-allowed disabled:opacity-50"
                 title="Refresh logs from server"
               >
-                <RefreshCw className="h-3.5 w-3.5" />
+                <RefreshCw className={cn("h-3.5 w-3.5", isServerLoading && "animate-spin")} />
                 Refresh
               </button>
             </div>
           </div>
 
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-            <LogsTimeline
-              items={filteredItems}
-              emptyStateVariant={hasScopedQuery ? "filtered" : "global"}
-            />
+          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+            {/* Server-driven transitions keep current rows visible; level/search stay local and instant. */}
+            <div
+              className={cn(
+                "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden transition-[filter,opacity] duration-200",
+                isServerLoading && "opacity-70 blur-[1px]",
+              )}
+              aria-busy={isServerLoading}
+            >
+              <LogsTimeline
+                items={filteredItems}
+                emptyStateVariant={hasScopedQuery ? "filtered" : "global"}
+              />
+            </div>
+
+            <LoadingOverlay active={isServerLoading} />
           </div>
 
           <div className="flex items-center justify-between gap-3 px-2 py-1 text-[10px] text-foreground/60 dark:text-foreground/45">
             <div className="flex min-w-[180px] flex-col gap-px text-left">
               <span className="text-[12px] font-semibold text-foreground/70 dark:text-foreground/55">
-                <span className="text-foreground/75 dark:text-foreground/65">Showing</span>{" "}
+                <span className="text-foreground/75 dark:text-foreground/65">Displaying</span>{" "}
                 <span className="text-foreground/55 dark:text-foreground/45">
-                  {filteredItems.length} of {payload.items.length} loaded
+                  {filteredItems.length} of {payload.items.length}
                 </span>
               </span>
               <span className="text-[10px] text-foreground/38 dark:text-foreground/32">
-                Updated{" "}
+                Last Update:{" "}
                 {lastUpdated.toLocaleTimeString(undefined, {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -570,6 +629,7 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
                 href={pagination.previousHref}
                 disabled={!pagination.hasPreviousPage}
                 ariaLabel="Previous page"
+                onNavigate={handlePaginationNavigate}
               >
                 <ChevronLeft className="h-4 w-4" aria-hidden="true" />
               </PaginationLink>
@@ -615,6 +675,12 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
                         <Link
                           key={`page-${page}`}
                           href={buildPaginationHref(page)}
+                          onClick={(e) => {
+                            if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {
+                              return;
+                            }
+                            handlePaginationNavigate();
+                          }}
                           className="inline-flex h-6 min-w-[20px] items-center justify-center rounded-sm px-1.5 text-[10px] font-medium text-foreground/55 hover:bg-foreground/10 hover:text-foreground/75 dark:text-foreground/45 dark:hover:bg-foreground/15 dark:hover:text-foreground/70 cursor-pointer"
                           aria-label={`Go to page ${page}`}
                         >
@@ -647,6 +713,7 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
                 href={pagination.nextHref}
                 disabled={!pagination.hasNextPage}
                 ariaLabel="Next page"
+                onNavigate={handlePaginationNavigate}
               >
                 <ChevronRight className="h-4 w-4" aria-hidden="true" />
               </PaginationLink>
