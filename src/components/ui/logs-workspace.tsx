@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Check,
@@ -12,6 +12,7 @@ import {
   Download,
   FileText,
   Filter,
+  RefreshCw,
   Search,
   X,
   Square,
@@ -259,22 +260,104 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
   const router = useRouter();
   const searchParams = useSearchParams();
   const allLevelKeys = LEVEL_FILTERS.map((filter) => filter.key);
-  const selectedRange = normalizeTimeRange(searchParams.get("range"));
 
-  const enabledLevels = useMemo(() => {
+  // ─── Local filter state (no route navigation) ────────────────────────────
+
+  const parseEnabledLevels = (): LevelFilterKey[] => {
     const rawValue = searchParams.get("level");
-
-    if (rawValue === null) {
-      return allLevelKeys;
-    }
-
+    if (rawValue === null) return allLevelKeys;
     return rawValue
       .split(",")
-      .map((value) => value.trim().toLowerCase())
-      .filter((value): value is (typeof allLevelKeys)[number] => allLevelKeys.includes(value as (typeof allLevelKeys)[number]));
-  }, [allLevelKeys, searchParams]);
+      .map((v) => v.trim().toLowerCase())
+      .filter((v): v is LevelFilterKey => allLevelKeys.includes(v as LevelFilterKey));
+  };
 
-  const hasExplicitLevelFilter = searchParams.get("level") !== null;
+  const [enabledLevels, setEnabledLevels] = useState<LevelFilterKey[]>(parseEnabledLevels);
+
+  // Re-sync level selection when a server refetch delivers a new payload
+  // (e.g. after session/range change). We only do this when payload identity changes.
+  const prevPayloadRef = useRef(payload);
+  useEffect(() => {
+    if (payload !== prevPayloadRef.current) {
+      prevPayloadRef.current = payload;
+      setEnabledLevels(parseEnabledLevels());
+      setLastUpdated(new Date());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [payload]);
+
+  const selectedRange = normalizeTimeRange(searchParams.get("range"));
+
+  // ─── Search ───────────────────────────────────────────────────────────────
+
+  const [searchInput, setSearchInput] = useState(() => searchParams.get("search") ?? "");
+  const deferredSearch = useDeferredValue(searchInput);
+
+  // ─── Last-updated timestamp ───────────────────────────────────────────────
+
+  const [lastUpdated, setLastUpdated] = useState<Date>(() => new Date());
+
+  // Also stamp on first mount
+  const mountedRef = useRef(false);
+  useEffect(() => {
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      setLastUpdated(new Date());
+    }
+  }, []);
+
+  // ─── Stable level counts from unfiltered payload ──────────────────────────
+
+  const stableLevelCounts = useMemo(
+    () => payload.levelCounts,
+    // intentionally only recompute when payload changes, not on local filter changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [payload],
+  );
+
+  // ─── Client-side filtered items ───────────────────────────────────────────
+
+  const filteredItems = useMemo(() => {
+    const term = deferredSearch.trim().toLowerCase();
+    const allEnabled = enabledLevels.length === allLevelKeys.length;
+
+    return payload.items.filter((item) => {
+      // Level filter
+      if (!allEnabled && !enabledLevels.includes(item.level.toLowerCase() as LevelFilterKey)) {
+        return false;
+      }
+
+      // Search filter: check common visible/important fields
+      if (term) {
+        const metaString = item.metadata ? JSON.stringify(item.metadata).toLowerCase() : "";
+        const exceptionString = item.exception
+          ? (typeof item.exception === "string"
+              ? item.exception
+              : JSON.stringify(item.exception)
+            ).toLowerCase()
+          : "";
+
+        const matches =
+          item.message.toLowerCase().includes(term) ||
+          item.module.toLowerCase().includes(term) ||
+          item.logger.toLowerCase().includes(term) ||
+          item.level.toLowerCase().includes(term) ||
+          item.function.toLowerCase().includes(term) ||
+          (item.traceId?.toLowerCase().includes(term) ?? false) ||
+          (item.sessionId?.toLowerCase().includes(term) ?? false) ||
+          metaString.includes(term) ||
+          exceptionString.includes(term);
+
+        if (!matches) return false;
+      }
+
+      return true;
+    });
+  }, [payload.items, enabledLevels, allLevelKeys.length, deferredSearch]);
+
+  // ─── Derived helpers ──────────────────────────────────────────────────────
+
+  const hasExplicitLevelFilter = enabledLevels.length < allLevelKeys.length;
 
   function buildPaginationHref(page: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -291,55 +374,22 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
     return query ? `${pathname}?${query}` : pathname;
   }
 
-  const [searchInput, setSearchInput] = useState(() => searchParams.get("search") ?? "");
   const hasScopedQuery =
-    Boolean((searchParams.get("search") ?? "").trim()) ||
+    Boolean(deferredSearch.trim()) ||
     Boolean((searchParams.get("module") ?? "").trim()) ||
     hasExplicitLevelFilter;
 
-  useEffect(() => {
-    const nextSearch = searchParams.get("search") ?? "";
-    
-    setSearchInput((currentSearch) =>
-      currentSearch === nextSearch ? currentSearch : nextSearch,
-    );
-  }, [searchParams]);
-
-  function handleSearchCommit(value: string) {
-    const params = new URLSearchParams(searchParams.toString());
-    const trimmed = value.trim();
-
-    if (trimmed) {
-      params.set("search", trimmed);
-    } else {
-      params.delete("search");
-    }
-
-    params.delete("page");
-    const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
-  }
-
   function handleToggleLevel(level: LevelFilterKey) {
-    const params = new URLSearchParams(searchParams.toString());
-    const nextLevels = new Set(enabledLevels);
-
-    if (nextLevels.has(level)) {
-      nextLevels.delete(level);
-    } else {
-      nextLevels.add(level);
-    }
-
-    if (nextLevels.size === allLevelKeys.length) {
-      params.delete("level");
-    } else {
-      const orderedLevels = allLevelKeys.filter((key) => nextLevels.has(key)).map((key) => key.toUpperCase());
-      params.set("level", orderedLevels.join(","));
-    }
-
-    params.delete("page");
-    const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
+    setEnabledLevels((current) => {
+      const next = new Set(current);
+      if (next.has(level)) {
+        next.delete(level);
+      } else {
+        next.add(level);
+      }
+      // Keep canonical order matching LEVEL_FILTERS
+      return allLevelKeys.filter((key) => next.has(key));
+    });
   }
 
   function handleSelectSession(sessionId: string) {
@@ -440,7 +490,7 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
                 <LevelFilterChip
                   key={filter.key}
                   label={filter.label}
-                  count={payload.levelCounts[filter.key.toUpperCase() as LogLevel] ?? 0}
+                  count={stableLevelCounts[filter.key.toUpperCase() as LogLevel] ?? 0}
                   active={enabledLevels.includes(filter.key)}
                   activeClassName={filter.activeClassName}
                   onClick={() => handleToggleLevel(filter.key)}
@@ -448,6 +498,7 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
               ))}
             </div>
 
+            {/* Search — Escape still blurs; Enter is a no-op (filtering is live) */}
             <div className="flex h-8 min-w-[240px] flex-1 items-center gap-2 rounded-md bg-background px-2.5 text-[12px] text-foreground/42 ring-1 ring-black/10 dark:bg-background/70 dark:text-foreground/50 dark:ring-white/12">
               <Search className="h-3.5 w-3.5 shrink-0 text-foreground/36" />
               <input
@@ -455,7 +506,6 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSearchCommit(e.currentTarget.value);
                   if (e.key === "Escape") e.currentTarget.blur();
                 }}
                 placeholder="Search messages, modules, or functions..."
@@ -464,7 +514,7 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
               {searchInput && (
                 <button
                   type="button"
-                  onClick={() => { setSearchInput(""); handleSearchCommit(""); }}
+                  onClick={() => { setSearchInput(""); }}
                   className="shrink-0 cursor-pointer text-foreground/36 transition hover:text-foreground/72"
                   aria-label="Clear search"
                 >
@@ -477,21 +527,43 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
               <TimeRangeMenu value={selectedRange} onSelect={handleSelectRange} />
               <ToolButton icon={Filter} label="Filter" disabled />
               <ToolButton icon={Download} label="Export" disabled />
+              <button
+                type="button"
+                onClick={() => router.refresh()}
+                className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-md bg-black/[0.035] px-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground/62 transition hover:bg-black/[0.07] hover:text-foreground/84 dark:bg-white/[0.04] dark:hover:bg-white/[0.09]"
+                title="Refresh logs from server"
+              >
+                <RefreshCw className="h-3.5 w-3.5" />
+                Refresh
+              </button>
             </div>
           </div>
 
           <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <LogsTimeline
-              items={payload.items}
+              items={filteredItems}
               emptyStateVariant={hasScopedQuery ? "filtered" : "global"}
             />
           </div>
 
           <div className="flex items-center justify-between gap-3 px-2 py-1 text-[10px] text-foreground/60 dark:text-foreground/45">
-            <span className="min-w-[140px] text-left text-[12px] font-semibold text-foreground/70 dark:text-foreground/55">
-              <span className="text-foreground/75 dark:text-foreground/65">Total Rows:</span>{" "}
-              <span className="text-foreground/55 dark:text-foreground/45">{payload.pagination.total}</span>
-            </span>
+            <div className="flex min-w-[180px] flex-col gap-px text-left">
+              <span className="text-[12px] font-semibold text-foreground/70 dark:text-foreground/55">
+                <span className="text-foreground/75 dark:text-foreground/65">Showing</span>{" "}
+                <span className="text-foreground/55 dark:text-foreground/45">
+                  {filteredItems.length} of {payload.items.length} loaded
+                </span>
+              </span>
+              <span className="text-[10px] text-foreground/38 dark:text-foreground/32">
+                Updated{" "}
+                {lastUpdated.toLocaleTimeString(undefined, {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                  hour12: false,
+                })}
+              </span>
+            </div>
 
             <div className="flex items-center gap-2">
               <PaginationLink
