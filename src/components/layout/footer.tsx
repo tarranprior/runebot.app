@@ -44,6 +44,10 @@ export function Footer() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
 
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <>
       <div className="block m-[-1px] overflow-hidden leading-none bg-background dark:bg-background">

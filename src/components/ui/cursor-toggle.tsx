@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { MousePointer2, Loader2 } from "lucide-react";
 import { useCustomCursor } from "@/components/providers/custom-cursor-provider";
-import { Tooltip } from "@/components/ui/tooltip";
 
 export function CursorToggle() {
   const { isCursorEnabled, isLoadingCursor, setCursorEnabled } = useCustomCursor();

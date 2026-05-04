@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -16,6 +16,7 @@ import { useTheme } from "next-themes";
 import { Container } from "@/components/ui/container";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { CursorToggle } from "@/components/ui/cursor-toggle";
+import { PRIMARY_NAV_ITEMS } from "@/lib/navigation";
 import {
   isSectionRoute,
   scrollToSectionById,
@@ -26,11 +27,6 @@ import {
 // Localized permissive typing for motion intrinsic components used below.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const M = motion as unknown as typeof motion & { div: any; nav: any };
-
-type NavItem = {
-  label: string;
-  href: string;
-};
 
 export function Navbar() {
   const pathname = usePathname();
@@ -50,14 +46,7 @@ export function Navbar() {
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
-  const navItems: NavItem[] = useMemo(
-    () => [
-      { label: "Features", href: "/features" },
-      { label: "Stats", href: "/statistics" },
-      { label: "Changelog", href: "/changelog" },
-    ],
-    []
-  );
+  const navItems = PRIMARY_NAV_ITEMS;
 
   const handleNavClick = (e: React.MouseEvent, href: string) => {
     if (isHomePage && isSectionRoute(href)) {
@@ -83,10 +72,8 @@ export function Navbar() {
       e.preventDefault();
       scrollToSectionById("top");
     }
-    // Otherwise let Link navigate normally
   };
 
-  // Handle scroll-to-section when landing on homepage from another page
   useEffect(() => {
     if (!isHomePage) return;
 
@@ -165,6 +152,8 @@ export function Navbar() {
     // Scrolled: stronger shadows
     return isDark ? "0 10px 30px rgba(0,0,0,0.30)" : "0 10px 30px rgba(29,30,40,0.15)";
   });
+
+  if (pathname.startsWith("/admin")) return null;
 
   return (
     <>

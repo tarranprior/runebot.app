@@ -72,26 +72,6 @@
 
 ---
 
-## March 14, 2026
-**Runebot.app**
-
-* {https://github.com/tarranprior/runebot.app/commit/a0fb333373fb075f7ac1e000368478dea179bc15} [added] ✨ Update /Runebot.app/: feat(changelog) add development section and improve timeline structure
-    - separate unreleased builds from release history
-    - add "Development" section for dev versions (i.e., `v1.0.6-dev.1`)
-    - improve changelog parser IDs for stable anchors
-    - simplify timeline rendering and remove duplicate text block
-    - update `CHANGELOG.md` entries for recent Runebot and website updates
-* {https://github.com/tarranprior/runebot.app/commit/297172c0e05136cb2be7010f248654f6c9c12d23} [improved] ⚙️ Update /Runebot.app/: feat(stats) fetch community stats from public API
-    - replace generated JSON stats pipeline with runtime API fetch
-    - add server-only fetch helper with Next.js revalidation
-    - split Statistics component into server wrapper and client UI
-    - remove generated stats file and generator script
-    - remove GitHub Actions workflow previously used to update stats
-    - site now reads live stats from `api.runebot.app/community-stats`
-* {https://github.com/tarranprior/runebot.app/commit/eeebfa8fcdcf4d9d967fcec955843b163a6e2b14} [added] ✨ Update /Runebot.app/: feat(stats) add stats pipeline and static stats section
-
----
-
 ## March 09, 2026
 **Runebot.app**
 
