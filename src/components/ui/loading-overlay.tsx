@@ -29,9 +29,9 @@ export function LoadingOverlay({
   return (
     <div
       className={cn(
-        "pointer-events-none z-10 flex items-center justify-center bg-background/40 backdrop-blur-[2px] transition-opacity duration-150",
+        "z-10 flex items-center justify-center bg-background/40 backdrop-blur-[2px] transition-opacity duration-150",
         isOverlay ? "absolute inset-0" : "flex-1",
-        active ? "opacity-100" : "opacity-0",
+        active ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
         className,
       )}
       aria-hidden={!active}
