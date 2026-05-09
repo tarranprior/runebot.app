@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { LogSession } from "@/lib/logs/types";
+import { useAdminShellLoading } from "./admin-shell.client";
 
 type SecondaryLink = {
   label: string;
@@ -51,6 +52,7 @@ export function AdminSecondarySidebar({ sessions, selectedSessionId }: AdminSeco
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { startExternalLoading } = useAdminShellLoading();
   const [sessionSearch, setSessionSearch] = useState("");
 
   const filteredSessions = useMemo(() => {
@@ -65,6 +67,9 @@ export function AdminSecondarySidebar({ sessions, selectedSessionId }: AdminSeco
 
   function handleSelectSession(sessionId: string) {
     if (sessionId === selectedSessionId) return;
+
+    startExternalLoading();
+
     const params = new URLSearchParams(searchParams.toString());
     params.set("session_id", sessionId);
     params.delete("page");

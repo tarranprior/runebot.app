@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { LoadingOverlay } from "@/components/ui/loading-overlay";
 import { LogsTimeline } from "@/components/ui/logs-timeline";
+import { useAdminShellLoading } from "@/components/admin/admin-shell.client";
 import { LOG_LEVEL_FILTER_THEME } from "@/lib/logs/level-theme";
 import { cn } from "@/lib/utils";
 import type { LogLevel, LogsPayload } from "@/lib/logs/types";
@@ -256,6 +257,7 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { externalLoading } = useAdminShellLoading();
   const [isPending, startTransition] = useTransition();
   const [isNavigating, setIsNavigating] = useState(false);
   const allLevelKeys = LEVEL_FILTERS.map((filter) => filter.key);
@@ -378,7 +380,7 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
     Boolean((searchParams.get("module") ?? "").trim()) ||
     hasExplicitLevelFilter;
 
-  const isServerLoading = isPending || isNavigating;
+  const isServerLoading = isPending || isNavigating || externalLoading;
 
   function startServerTransition(action: () => void) {
     setIsNavigating(true);
