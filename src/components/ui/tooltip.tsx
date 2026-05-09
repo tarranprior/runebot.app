@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, ReactNode, cloneElement, isValidElement } from "react";
+import { useState, useRef, useEffect, useCallback, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 
@@ -174,20 +174,41 @@ export function Tooltip({
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
+    let cancelled = false;
+
+    queueMicrotask(() => {
+      if (!cancelled) {
+        setMounted(true);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Reset positionReady when visibility changes
   useEffect(() => {
+    let cancelled = false;
+
     if (!isVisible) {
-      setPositionReady(false);
+      queueMicrotask(() => {
+        if (!cancelled) {
+          setPositionReady(false);
+        }
+      });
+
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
       }
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, [isVisible]);
 
-  const calculateAndSetPosition = () => {
+  const calculateAndSetPosition = useCallback(() => {
     if (!triggerRef.current || !tooltipRef.current || disabled) return;
 
     const triggerRect = triggerRef.current.getBoundingClientRect();
@@ -205,7 +226,7 @@ export function Tooltip({
 
     setPosition(newPosition);
     setPositionReady(true);
-  };
+  }, [disabled, placement]);
 
   // Calculate position once tooltip mounts and is visible
   useEffect(() => {
@@ -224,7 +245,7 @@ export function Tooltip({
         }
       };
     }
-  }, [isVisible, positionReady, disabled, placement]);
+  }, [isVisible, positionReady, calculateAndSetPosition]);
 
   const handleMouseEnter = () => {
     if (disabled) return;
@@ -268,7 +289,7 @@ export function Tooltip({
         window.removeEventListener("scroll", handleResize, true);
       };
     }
-  }, [isVisible, positionReady]);
+  }, [isVisible, positionReady, calculateAndSetPosition]);
 
   useEffect(() => {
     return () => {
@@ -333,38 +354,8 @@ export function Tooltip({
     </>
   );
 
-  // When asChild is true, clone the child and add event handlers directly
-  if (asChild && isValidElement(children)) {
-    const child = children as React.ReactElement<any>;
-    const trigger = cloneElement(child, {
-      ref: triggerRef,
-      onMouseEnter: (e: React.MouseEvent) => {
-        handleMouseEnter();
-        child.props.onMouseEnter?.(e);
-      },
-      onMouseLeave: (e: React.MouseEvent) => {
-        handleMouseLeave();
-        child.props.onMouseLeave?.(e);
-      },
-      onFocus: (e: React.FocusEvent) => {
-        handleFocus();
-        child.props.onFocus?.(e);
-      },
-      onBlur: (e: React.FocusEvent) => {
-        handleBlur();
-        child.props.onBlur?.(e);
-      },
-    });
+  const triggerClassName = asChild ? "inline-flex" : "inline-block";
 
-    return (
-      <>
-        {trigger}
-        {mounted && createPortal(tooltipContent, document.body)}
-      </>
-    );
-  }
-
-  // Default: wrap in a div
   return (
     <>
       <div
@@ -373,7 +364,7 @@ export function Tooltip({
         onMouseLeave={handleMouseLeave}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        className="inline-block"
+        className={triggerClassName}
       >
         {children}
       </div>
