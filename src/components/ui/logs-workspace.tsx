@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useDeferredValue, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Check,
@@ -13,8 +12,8 @@ import {
   Filter,
   RefreshCw,
   Search,
-  X,
   Square,
+  X,
 } from "lucide-react";
 import { LoadingOverlay } from "@/components/ui/loading-overlay";
 import { LogsTimeline } from "@/components/ui/logs-timeline";
@@ -25,15 +24,8 @@ import type { LogLevel, LogsPayload } from "@/lib/logs/types";
 
 type LogsWorkspaceProps = {
   payload: LogsPayload;
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    previousHref: string;
-    nextHref: string;
-    hasPreviousPage: boolean;
-    hasNextPage: boolean;
-    pageSize: number;
-  };
+  initialPage: number;
+  initialPageSize: number;
 };
 
 const LEVEL_FILTERS = [
@@ -174,46 +166,30 @@ function ToolButton({
   );
 }
 
-function PaginationLink({
-  href,
+function PaginationButton({
   disabled,
   children,
   ariaLabel,
-  onNavigate,
+  onClick,
 }: {
-  href: string;
   disabled: boolean;
   children: React.ReactNode;
   ariaLabel?: string;
-  onNavigate?: () => void;
+  onClick?: () => void;
 }) {
   const className =
     "inline-flex h-7 cursor-pointer items-center rounded-sm px-2.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground/58 transition hover:bg-black/[0.045] hover:text-foreground/82 dark:hover:bg-white/[0.06]";
 
-  if (disabled) {
-    return (
-      <span className={`${className} cursor-not-allowed opacity-35`} aria-disabled="true" aria-label={ariaLabel}>
-        {children}
-      </span>
-    );
-  }
-
   return (
-    <Link
-      className={className}
-      href={href}
+    <button
+      type="button"
+      disabled={disabled}
+      className={cn(className, disabled && "cursor-not-allowed opacity-35")}
       aria-label={ariaLabel}
-      onClick={(e) => {
-        // Only trigger loading for plain left-clicks; let modifier-key variants
-        // (new tab, new window, etc.) proceed without showing the overlay.
-        if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {
-          return;
-        }
-        onNavigate?.();
-      }}
+      onClick={onClick}
     >
       {children}
-    </Link>
+    </button>
   );
 }
 
@@ -253,7 +229,18 @@ function LevelFilterChip({
   );
 }
 
-export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
+function parseEnabledLevels(value: string | null, allLevelKeys: readonly LevelFilterKey[]): LevelFilterKey[] {
+  if (value === null) {
+    return [...allLevelKeys];
+  }
+
+  return value
+    .split(",")
+    .map((v) => v.trim().toLowerCase())
+    .filter((v): v is LevelFilterKey => allLevelKeys.includes(v as LevelFilterKey));
+}
+
+export function LogsWorkspace({ payload, initialPage, initialPageSize }: LogsWorkspaceProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -262,121 +249,118 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
   const [isNavigating, setIsNavigating] = useState(false);
   const allLevelKeys = LEVEL_FILTERS.map((filter) => filter.key);
 
-  // ─── Local filter state (no route navigation) ────────────────────────────
-
-  const parseEnabledLevels = (): LevelFilterKey[] => {
-    const rawValue = searchParams.get("level");
-    if (rawValue === null) return allLevelKeys;
-    return rawValue
-      .split(",")
-      .map((v) => v.trim().toLowerCase())
-      .filter((v): v is LevelFilterKey => allLevelKeys.includes(v as LevelFilterKey));
-  };
-
-  const [enabledLevels, setEnabledLevels] = useState<LevelFilterKey[]>(parseEnabledLevels);
-
-  // Re-sync level selection when a server refetch delivers a new payload
-  // (e.g. after session/range change). We only do this when payload identity changes.
-  const prevPayloadRef = useRef(payload);
-  useEffect(() => {
-    if (payload !== prevPayloadRef.current) {
-      prevPayloadRef.current = payload;
-      setEnabledLevels(parseEnabledLevels());
-      setLastUpdated(new Date());
-      setIsNavigating(false);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [payload]);
-
   const selectedRange = normalizeTimeRange(searchParams.get("range"));
 
-  // ─── Search ───────────────────────────────────────────────────────────────
+  const [enabledLevels, setEnabledLevels] = useState<LevelFilterKey[]>(() =>
+    parseEnabledLevels(searchParams.get("level"), allLevelKeys),
+  );
 
   const [searchInput, setSearchInput] = useState(() => searchParams.get("search") ?? "");
-  const deferredSearch = useDeferredValue(searchInput);
-
-  // ─── Last-updated timestamp ───────────────────────────────────────────────
+  const [debouncedSearch, setDebouncedSearch] = useState(() => (searchParams.get("search") ?? "").trim());
+  const [currentPage, setCurrentPage] = useState(() => Math.max(1, initialPage));
+  const [pageSize] = useState(() => Math.max(1, initialPageSize));
 
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // Set real timestamp on first mount (avoids hydration mismatch)
   const mountedRef = useRef(false);
   useEffect(() => {
+    let cancelled = false;
+
     if (!mountedRef.current) {
       mountedRef.current = true;
-      setLastUpdated(new Date());
+      queueMicrotask(() => {
+        if (!cancelled) {
+          setLastUpdated(new Date());
+        }
+      });
     }
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // ─── Stable level counts from unfiltered payload ──────────────────────────
+  const prevPayloadRef = useRef(payload);
+  useEffect(() => {
+    let cancelled = false;
+
+    if (payload !== prevPayloadRef.current) {
+      prevPayloadRef.current = payload;
+      queueMicrotask(() => {
+        if (!cancelled) {
+          setLastUpdated(new Date());
+          setIsNavigating(false);
+          setCurrentPage(1);
+        }
+      });
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [payload]);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedSearch(searchInput.trim());
+      setCurrentPage(1);
+    }, 300);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [searchInput]);
 
   const stableLevelCounts = useMemo(
     () => payload.levelCounts,
-    // intentionally only recompute when payload changes, not on local filter changes
     [payload],
   );
 
-  // ─── Client-side filtered items ───────────────────────────────────────────
-
   const filteredItems = useMemo(() => {
-    const term = deferredSearch.trim().toLowerCase();
+    const term = debouncedSearch.toLowerCase();
     const allEnabled = enabledLevels.length === allLevelKeys.length;
 
     return payload.items.filter((item) => {
-      // Level filter
       if (!allEnabled && !enabledLevels.includes(item.level.toLowerCase() as LevelFilterKey)) {
         return false;
       }
 
-      // Search filter: check common visible/important fields
-      if (term) {
-        const metaString = item.metadata ? JSON.stringify(item.metadata).toLowerCase() : "";
-        const exceptionString = item.exception
-          ? (typeof item.exception === "string"
-              ? item.exception
-              : JSON.stringify(item.exception)
-            ).toLowerCase()
-          : "";
-
-        const matches =
-          item.message.toLowerCase().includes(term) ||
-          item.module.toLowerCase().includes(term) ||
-          item.logger.toLowerCase().includes(term) ||
-          item.level.toLowerCase().includes(term) ||
-          item.function.toLowerCase().includes(term) ||
-          (item.traceId?.toLowerCase().includes(term) ?? false) ||
-          (item.sessionId?.toLowerCase().includes(term) ?? false) ||
-          metaString.includes(term) ||
-          exceptionString.includes(term);
-
-        if (!matches) return false;
+      if (!term) {
+        return true;
       }
 
-      return true;
-    });
-  }, [payload.items, enabledLevels, allLevelKeys.length, deferredSearch]);
+      const metaString = item.metadata ? JSON.stringify(item.metadata).toLowerCase() : "";
+      const exceptionString = item.exception
+        ? (typeof item.exception === "string"
+            ? item.exception
+            : JSON.stringify(item.exception)
+          ).toLowerCase()
+        : "";
 
-  // ─── Derived helpers ──────────────────────────────────────────────────────
+      return (
+        item.message.toLowerCase().includes(term) ||
+        item.module.toLowerCase().includes(term) ||
+        item.logger.toLowerCase().includes(term) ||
+        item.level.toLowerCase().includes(term) ||
+        item.function.toLowerCase().includes(term) ||
+        (item.traceId?.toLowerCase().includes(term) ?? false) ||
+        (item.sessionId?.toLowerCase().includes(term) ?? false) ||
+        metaString.includes(term) ||
+        exceptionString.includes(term)
+      );
+    });
+  }, [allLevelKeys.length, debouncedSearch, enabledLevels, payload.items]);
+
+  const totalLocalPages = Math.max(1, Math.ceil(filteredItems.length / pageSize));
+  const clampedCurrentPage = Math.min(currentPage, totalLocalPages);
+
+  const pageStart = (clampedCurrentPage - 1) * pageSize;
+  const pageEnd = pageStart + pageSize;
+  const visibleItems = filteredItems.slice(pageStart, pageEnd);
 
   const hasExplicitLevelFilter = enabledLevels.length < allLevelKeys.length;
-
-  function buildPaginationHref(page: number) {
-    const params = new URLSearchParams(searchParams.toString());
-
-    if (page <= 1) {
-      params.delete("page");
-    } else {
-      params.set("page", String(page));
-    }
-
-    params.set("page_size", String(pagination.pageSize));
-
-    const query = params.toString();
-    return query ? `${pathname}?${query}` : pathname;
-  }
-
   const hasScopedQuery =
-    Boolean(deferredSearch.trim()) ||
+    Boolean(debouncedSearch) ||
     Boolean((searchParams.get("module") ?? "").trim()) ||
     hasExplicitLevelFilter;
 
@@ -395,8 +379,10 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
       } else {
         next.add(level);
       }
-      // Keep canonical order matching LEVEL_FILTERS
-      return allLevelKeys.filter((key) => next.has(key));
+
+      const ordered = allLevelKeys.filter((key) => next.has(key));
+      setCurrentPage(1);
+      return ordered;
     });
   }
 
@@ -420,15 +406,10 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
     });
   }
 
-  function handlePaginationNavigate() {
-    setIsNavigating(true);
-  }
-
   return (
     <div className="flex h-full min-h-0 w-full flex-col overflow-hidden">
       <div className="flex min-h-0 flex-1 overflow-hidden pt-3">
         <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-visible">
-          {/* Toolbar belongs to the main workspace column only. */}
           <div className="flex shrink-0 flex-wrap items-center gap-2 pb-2 pt-1">
             <div className="flex min-w-0 flex-wrap items-center gap-1.5">
               {LEVEL_FILTERS.map((filter) => (
@@ -443,7 +424,6 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
               ))}
             </div>
 
-            {/* Search — Escape still blurs; Enter is a no-op (filtering is live) */}
             <div className="flex h-8 min-w-[240px] flex-1 items-center gap-2 rounded-md bg-background px-2.5 text-[12px] text-foreground/42 ring-1 ring-black/10 transition focus-within:ring-2 focus-within:ring-blurple/30 dark:bg-background/70 dark:text-foreground/50 dark:ring-white/12">
               <Search className="h-3.5 w-3.5 shrink-0 text-foreground/36" />
               <input
@@ -459,7 +439,7 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
               {searchInput && (
                 <button
                   type="button"
-                  onClick={() => { setSearchInput(""); }}
+                  onClick={() => setSearchInput("")}
                   className="shrink-0 cursor-pointer text-foreground/36 transition hover:text-foreground/72"
                   aria-label="Clear search"
                 >
@@ -486,7 +466,6 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
           </div>
 
           <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-            {/* Server-driven transitions keep current rows visible; level/search stay local and instant. */}
             <div
               className={cn(
                 "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden transition-[filter,opacity] duration-200",
@@ -495,7 +474,7 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
               aria-busy={isServerLoading}
             >
               <LogsTimeline
-                items={filteredItems}
+                items={visibleItems}
                 emptyStateVariant={hasScopedQuery ? "filtered" : "global"}
               />
             </div>
@@ -505,13 +484,13 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
 
           <div className="flex items-center justify-between gap-3 px-2 py-1 text-[10px] text-foreground/60 dark:text-foreground/45">
             <div className="flex min-w-[180px] flex-col gap-px text-left">
-              <span className="text-[12px] font-semibold text-foreground/70 dark:text-foreground/55">
+              <span className="text-[12px] text-foreground/70 dark:text-foreground/55">
                 <span className="text-foreground/75 dark:text-foreground/65">Displaying</span>{" "}
-                <span className="text-foreground/55 dark:text-foreground/45">
-                  {filteredItems.length} of {payload.items.length}
+                <span className="text-foreground/55 dark:text-foreground/65">
+                  {visibleItems.length} of {filteredItems.length}
                 </span>
               </span>
-              <span className="text-[10px] text-foreground/38 dark:text-foreground/32">
+              <span className="text-[10px] text-foreground/75 dark:text-foreground/65">
                 Last Update:{" "}
                 {lastUpdated
                   ? lastUpdated.toLocaleTimeString(undefined, {
@@ -525,28 +504,31 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
             </div>
 
             <div className="flex items-center gap-2">
-              <PaginationLink
-                href={pagination.previousHref}
-                disabled={!pagination.hasPreviousPage}
+              <PaginationButton
+                disabled={clampedCurrentPage <= 1}
                 ariaLabel="Previous page"
-                onNavigate={handlePaginationNavigate}
+                onClick={() => setCurrentPage((current) => Math.max(1, current - 1))}
               >
                 <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-              </PaginationLink>
+              </PaginationButton>
 
               <div className="flex items-center gap-1 px-1">
                 {(() => {
-                  const current = pagination.currentPage;
-                  const total = pagination.totalPages;
                   const items: React.ReactNode[] = [];
-                  const start = Math.max(1, current - 2);
-                  const end = Math.min(total, current + 2);
+                  const start = Math.max(1, clampedCurrentPage - 2);
+                  const end = Math.min(totalLocalPages, clampedCurrentPage + 2);
 
                   if (start > 1) {
                     items.push(
-                      <span key="page-1" className="px-1.5 text-[10px] text-foreground/55 dark:text-foreground/45">
+                      <button
+                        key="page-1"
+                        type="button"
+                        onClick={() => setCurrentPage(1)}
+                        className="px-1.5 text-[10px] text-foreground/55 transition hover:text-foreground/75 dark:text-foreground/45"
+                        aria-label="Go to page 1"
+                      >
                         1
-                      </span>,
+                      </button>,
                     );
                     if (start > 2) {
                       items.push(
@@ -558,13 +540,13 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
                   }
 
                   for (let page = start; page <= end; page += 1) {
-                    const isCurrent = page === current;
+                    const isCurrent = page === clampedCurrentPage;
 
                     if (isCurrent) {
                       items.push(
                         <span
                           key={`page-${page}`}
-                          className="inline-flex h-6 min-w-[20px] items-center justify-center rounded-sm px-1.5 text-[10px] font-semibold bg-foreground/10 text-foreground/80 dark:bg-foreground/10 dark:text-foreground/80"
+                          className="inline-flex h-6 min-w-[20px] items-center justify-center rounded-sm bg-foreground/10 px-1.5 text-[10px] font-semibold text-foreground/80 dark:bg-foreground/10 dark:text-foreground/80"
                           aria-current="page"
                         >
                           {page}
@@ -572,26 +554,21 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
                       );
                     } else {
                       items.push(
-                        <Link
+                        <button
                           key={`page-${page}`}
-                          href={buildPaginationHref(page)}
-                          onClick={(e) => {
-                            if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) {
-                              return;
-                            }
-                            handlePaginationNavigate();
-                          }}
-                          className="inline-flex h-6 min-w-[20px] items-center justify-center rounded-sm px-1.5 text-[10px] font-medium text-foreground/55 hover:bg-foreground/10 hover:text-foreground/75 dark:text-foreground/45 dark:hover:bg-foreground/15 dark:hover:text-foreground/70 cursor-pointer"
+                          type="button"
+                          onClick={() => setCurrentPage(page)}
+                          className="inline-flex h-6 min-w-[20px] cursor-pointer items-center justify-center rounded-sm px-1.5 text-[10px] font-medium text-foreground/55 transition hover:bg-foreground/10 hover:text-foreground/75 dark:text-foreground/45 dark:hover:bg-foreground/15 dark:hover:text-foreground/70"
                           aria-label={`Go to page ${page}`}
                         >
                           {page}
-                        </Link>,
+                        </button>,
                       );
                     }
                   }
 
-                  if (end < total) {
-                    if (end < total - 1) {
+                  if (end < totalLocalPages) {
+                    if (end < totalLocalPages - 1) {
                       items.push(
                         <span key="ellipsis-end" className="px-1 text-[10px] text-foreground/40 dark:text-foreground/35">
                           …
@@ -599,9 +576,15 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
                       );
                     }
                     items.push(
-                      <span key={`page-${total}`} className="px-1.5 text-[10px] text-foreground/55 dark:text-foreground/45">
-                        {total}
-                      </span>,
+                      <button
+                        key={`page-${totalLocalPages}`}
+                        type="button"
+                        onClick={() => setCurrentPage(totalLocalPages)}
+                        className="px-1.5 text-[10px] text-foreground/55 transition hover:text-foreground/75 dark:text-foreground/45"
+                        aria-label={`Go to page ${totalLocalPages}`}
+                      >
+                        {totalLocalPages}
+                      </button>,
                     );
                   }
 
@@ -609,14 +592,13 @@ export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
                 })()}
               </div>
 
-              <PaginationLink
-                href={pagination.nextHref}
-                disabled={!pagination.hasNextPage}
+              <PaginationButton
+                disabled={clampedCurrentPage >= totalLocalPages}
                 ariaLabel="Next page"
-                onNavigate={handlePaginationNavigate}
+                onClick={() => setCurrentPage((current) => Math.min(totalLocalPages, current + 1))}
               >
                 <ChevronRight className="h-4 w-4" aria-hidden="true" />
-              </PaginationLink>
+              </PaginationButton>
             </div>
 
             <div className="flex min-w-[200px] items-center justify-end gap-3 text-right text-[12px] font-medium text-foreground/60 dark:text-foreground/50">

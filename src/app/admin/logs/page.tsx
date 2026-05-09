@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   description: "Internal observability and development log stream for Runebot.",
 };
 
+const WORKING_SET_SIZE = 500;
+const DEFAULT_VISIBLE_PAGE_SIZE = 50;
+
 const RANGE_TO_WINDOW_MS: Record<string, number> = {
   "15m": 15 * 60 * 1000,
   "30m": 30 * 60 * 1000,
@@ -79,40 +82,6 @@ function resolveRangeBounds(range: string | undefined, now = new Date()): { star
   };
 }
 
-function buildLogsHref(
-  searchParams: Record<string, string | string[] | undefined>,
-  overrides: Record<string, string | number | undefined>,
-) {
-  const params = new URLSearchParams();
-
-  for (const [key, value] of Object.entries(searchParams)) {
-    if (Array.isArray(value)) {
-      for (const entry of value) {
-        if (entry !== undefined) {
-          params.append(key, entry);
-        }
-      }
-      continue;
-    }
-
-    if (value !== undefined && (value !== "" || key === "level")) {
-      params.set(key, value);
-    }
-  }
-
-  for (const [key, value] of Object.entries(overrides)) {
-    if (value === undefined || (value === "" && key !== "level")) {
-      params.delete(key);
-      continue;
-    }
-
-    params.set(key, String(value));
-  }
-
-  const query = params.toString();
-  return query ? `/admin/logs?${query}` : "/admin/logs";
-}
-
 function ErrorState({ message }: { message: string }) {
   return (
     <div className="px-6 py-10 text-center">
@@ -147,8 +116,8 @@ export default async function AdminLogsPage({ searchParams }: LogsPageProps) {
 
   const selectedSessionId = getSingleSearchParam(resolvedSearchParams.session_id)?.trim() || undefined;
   const defaultSessionId = selectedSessionId || sessions[0]?.id;
-  const explicitLevel = getSingleSearchParam(resolvedSearchParams.level);
-  const isAllLevelsUnchecked = explicitLevel !== undefined && explicitLevel.trim() === "";
+  const initialLocalPage = parsePositiveInteger(getSingleSearchParam(resolvedSearchParams.page), 1);
+  const initialLocalPageSize = parsePositiveInteger(getSingleSearchParam(resolvedSearchParams.page_size), DEFAULT_VISIBLE_PAGE_SIZE);
 
   if (!selectedSessionId && defaultSessionId) {
     const params = new URLSearchParams();
@@ -174,9 +143,6 @@ export default async function AdminLogsPage({ searchParams }: LogsPageProps) {
   }
 
   let resolvedPayload: LogsPayload;
-  let currentPage: number;
-  let totalPages: number;
-
   try {
     const baseParams = toLogsParams({
       ...resolvedSearchParams,
@@ -184,37 +150,15 @@ export default async function AdminLogsPage({ searchParams }: LogsPageProps) {
     });
     const { startTime, endTime } = resolveRangeBounds(baseParams.range);
 
-    // Time range is server-driven so pagination totals and counts come from the backend window.
-    // Level/search interactions in the workspace remain local for instant filtering of loaded rows.
-    const payload = isAllLevelsUnchecked
-      ? (() => {
-          const allLevelsPayload = getLogsPayload({
-            ...baseParams,
-            page: 1,
-            level: undefined,
-            startTime,
-            endTime,
-          });
-
-          return allLevelsPayload.then((result) => ({
-            ...result,
-            items: [],
-            pagination: {
-              page: 1,
-              pageSize: result.pagination.pageSize,
-              total: 0,
-            },
-          }));
-        })()
-      : getLogsPayload({
-          ...baseParams,
-          startTime,
-          endTime,
-        });
-
-    resolvedPayload = await payload;
-    totalPages = Math.max(1, Math.ceil(resolvedPayload.pagination.total / resolvedPayload.pagination.pageSize));
-    currentPage = resolvedPayload.pagination.page;
+    resolvedPayload = await getLogsPayload({
+      ...baseParams,
+      page: 1,
+      pageSize: WORKING_SET_SIZE,
+      level: undefined,
+      search: undefined,
+      startTime,
+      endTime,
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown logs fetch error.";
 
@@ -234,21 +178,8 @@ export default async function AdminLogsPage({ searchParams }: LogsPageProps) {
           <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
             <LogsWorkspace
               payload={resolvedPayload}
-              pagination={{
-                currentPage,
-                totalPages,
-                previousHref: buildLogsHref(resolvedSearchParams, {
-                  page: currentPage - 1,
-                  page_size: resolvedPayload.pagination.pageSize,
-                }),
-                nextHref: buildLogsHref(resolvedSearchParams, {
-                  page: currentPage + 1,
-                  page_size: resolvedPayload.pagination.pageSize,
-                }),
-                hasPreviousPage: currentPage > 1,
-                hasNextPage: currentPage < totalPages,
-                pageSize: resolvedPayload.pagination.pageSize,
-              }}
+              initialPage={initialLocalPage}
+              initialPageSize={initialLocalPageSize}
             />
           </div>
         </div>
