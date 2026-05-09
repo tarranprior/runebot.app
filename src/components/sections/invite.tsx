@@ -64,7 +64,7 @@ export function Invite() {
 
                 <p className="mt-3 text-sm leading-7 text-foreground/60 sm:text-base">
                   Join the support community and ask about setup, new features, commands,
-                  or anything else you'd like support with.
+                  or anything else you’d like support with.
                 </p>
 
                 <div className="mt-6">

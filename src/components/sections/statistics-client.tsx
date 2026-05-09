@@ -55,14 +55,23 @@ export function StatisticsClient({ stats, generatedAt }: StatisticsClientProps) 
   const [nowMs, setNowMs] = useState(0);
 
   useEffect(() => {
-    setIsHydrated(true);
-    setNowMs(Date.now());
+    let cancelled = false;
+
+    queueMicrotask(() => {
+      if (cancelled) {
+        return;
+      }
+
+      setIsHydrated(true);
+      setNowMs(Date.now());
+    });
 
     const intervalId = window.setInterval(() => {
       setNowMs(Date.now());
     }, 60_000);
 
     return () => {
+      cancelled = true;
       window.clearInterval(intervalId);
     };
   }, []);

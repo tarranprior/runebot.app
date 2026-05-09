@@ -10,7 +10,6 @@ import {
   ChevronRight,
   Clock3,
   Download,
-  FileText,
   Filter,
   RefreshCw,
   Search,
@@ -21,12 +20,10 @@ import { LoadingOverlay } from "@/components/ui/loading-overlay";
 import { LogsTimeline } from "@/components/ui/logs-timeline";
 import { LOG_LEVEL_FILTER_THEME } from "@/lib/logs/level-theme";
 import { cn } from "@/lib/utils";
-import type { LogLevel, LogsPayload, LogSession } from "@/lib/logs/types";
+import type { LogLevel, LogsPayload } from "@/lib/logs/types";
 
 type LogsWorkspaceProps = {
   payload: LogsPayload;
-  sessions: LogSession[];
-  selectedSessionId: string | null;
   pagination: {
     currentPage: number;
     totalPages: number;
@@ -37,21 +34,6 @@ type LogsWorkspaceProps = {
     pageSize: number;
   };
 };
-
-function formatSessionPrimaryLabel(session: LogSession) {
-  return session.fileName ?? session.id;
-}
-
-function formatSessionSecondaryLabel(session: LogSession) {
-  if (session.isCurrent) {
-    return "Current session";
-  }
-
-  const shortId = session.id.length > 16
-    ? `${session.id.slice(0, 8)}…${session.id.slice(-6)}`
-    : session.id;
-  return shortId;
-}
 
 const LEVEL_FILTERS = [
   { key: "debug", ...LOG_LEVEL_FILTER_THEME.debug },
@@ -270,7 +252,7 @@ function LevelFilterChip({
   );
 }
 
-export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination }: LogsWorkspaceProps) {
+export function LogsWorkspace({ payload, pagination }: LogsWorkspaceProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -313,9 +295,9 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
 
   // ─── Last-updated timestamp ───────────────────────────────────────────────
 
-  const [lastUpdated, setLastUpdated] = useState<Date>(() => new Date());
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // Also stamp on first mount
+  // Set real timestamp on first mount (avoids hydration mismatch)
   const mountedRef = useRef(false);
   useEffect(() => {
     if (!mountedRef.current) {
@@ -329,7 +311,6 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
   const stableLevelCounts = useMemo(
     () => payload.levelCounts,
     // intentionally only recompute when payload changes, not on local filter changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [payload],
   );
 
@@ -417,20 +398,6 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
     });
   }
 
-  function handleSelectSession(sessionId: string) {
-    if (sessionId === selectedSessionId) {
-      return;
-    }
-
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("session_id", sessionId);
-    params.delete("page");
-    const query = params.toString();
-    startServerTransition(() => {
-      router.push(query ? `${pathname}?${query}` : pathname);
-    });
-  }
-
   function handleSelectRange(nextRange: TimeRangePreset) {
     if (nextRange === selectedRange) {
       return;
@@ -457,78 +424,7 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
 
   return (
     <div className="flex h-full min-h-0 w-full flex-col overflow-hidden">
-      <div className="flex min-h-0 flex-1 gap-5 overflow-hidden pt-3">
-        <aside className="hidden w-56 shrink-0 lg:flex lg:flex-col">
-
-          <div className="scrollbar-discord flex min-h-0 flex-col gap-1 overflow-y-auto pr-1">
-            {sessions.length === 0 ? (
-              <div className="px-2 py-2 text-[10px] uppercase tracking-[0.06em] text-foreground/40">
-                No sessions yet
-              </div>
-            ) : (
-              sessions.map((session) => {
-                const isActive = session.id === selectedSessionId;
-
-                return (
-                  <button
-                    key={session.id}
-                    type="button"
-                    onClick={() => handleSelectSession(session.id)}
-                    className={cn(
-                      "rounded-md flex cursor-pointer items-start gap-2 px-2 py-1.5 text-left transition-colors",
-                      isActive
-                        ? "bg-indigo-500/[0.09] text-foreground/88 dark:bg-indigo-400/[0.12]"
-                        : "text-foreground/66 hover:bg-indigo-500/[0.04] dark:hover:bg-indigo-400/[0.07]",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "mt-0.5 h-5 w-[2px] shrink-0 rounded-full",
-                        session.isCurrent
-                          ? "bg-emerald-500/90"
-                          : isActive
-                            ? "bg-indigo-500/90 dark:bg-indigo-300/90"
-                            : "bg-foreground/16",
-                      )}
-                      aria-hidden="true"
-                    />
-                    <FileText
-                      className={cn(
-                        "mt-0.5 h-3.5 w-3.5 shrink-0",
-                        isActive ? "text-indigo-500/85 dark:text-indigo-300/85" : "text-foreground/34",
-                      )}
-                      aria-hidden="true"
-                    />
-                    <span className="min-w-0 flex-1">
-                      <span
-                        className={cn(
-                          "block truncate text-[11px] font-medium tracking-[0.01em]",
-                          isActive ? "text-foreground/92" : "text-foreground/82",
-                        )}
-                      >
-                        {formatSessionPrimaryLabel(session)}
-                      </span>
-                      <span
-                        className={cn(
-                          "mt-0.5 block truncate text-xs tracking-[0.03em]",
-                          isActive ? "text-foreground/58" : "text-foreground/38",
-                        )}
-                      >
-                        <span className="mr-1 text-[9px] uppercase tracking-[0.12em] text-foreground/44">
-                          ID
-                        </span>
-                        <span className="font-mono text-[11px] tracking-[0.02em] text-inherit">
-                          {formatSessionSecondaryLabel(session)}
-                        </span>
-                      </span>
-                    </span>
-                  </button>
-                );
-              })
-            )}
-          </div>
-        </aside>
-
+      <div className="flex min-h-0 flex-1 overflow-hidden pt-3">
         <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-visible">
           {/* Toolbar belongs to the main workspace column only. */}
           <div className="flex shrink-0 flex-wrap items-center gap-2 pb-2 pt-1">
@@ -546,7 +442,7 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
             </div>
 
             {/* Search — Escape still blurs; Enter is a no-op (filtering is live) */}
-            <div className="flex h-8 min-w-[240px] flex-1 items-center gap-2 rounded-md bg-background px-2.5 text-[12px] text-foreground/42 ring-1 ring-black/10 dark:bg-background/70 dark:text-foreground/50 dark:ring-white/12">
+            <div className="flex h-8 min-w-[240px] flex-1 items-center gap-2 rounded-md bg-background px-2.5 text-[12px] text-foreground/42 ring-1 ring-black/10 transition focus-within:ring-2 focus-within:ring-blurple/30 dark:bg-background/70 dark:text-foreground/50 dark:ring-white/12">
               <Search className="h-3.5 w-3.5 shrink-0 text-foreground/36" />
               <input
                 type="text"
@@ -615,12 +511,14 @@ export function LogsWorkspace({ payload, sessions, selectedSessionId, pagination
               </span>
               <span className="text-[10px] text-foreground/38 dark:text-foreground/32">
                 Last Update:{" "}
-                {lastUpdated.toLocaleTimeString(undefined, {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                  hour12: false,
-                })}
+                {lastUpdated
+                  ? lastUpdated.toLocaleTimeString(undefined, {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: false,
+                    })
+                  : "--:--:--"}
               </span>
             </div>
 

@@ -1,5 +1,7 @@
 import { DiscordMessage, DiscordStatsMock } from "@/types/discord";
 
+const VERSION_TEXT = "1.0.7-dev.1";
+
 export const wikiLookupMocks: DiscordMessage[] = [
   {
     authorName: "RuneBot",
@@ -19,7 +21,7 @@ export const wikiLookupMocks: DiscordMessage[] = [
         ],
         thumbnail: "/images/features/3rd-age-platebody.png",
         footer: {
-          text: "Runebot v1.0.6-dev.1",
+          text: `Runebot v${VERSION_TEXT}`,
         },
       },
     ],
@@ -43,7 +45,7 @@ export const wikiLookupMocks: DiscordMessage[] = [
         ],
         thumbnail: "/images/features/abyssal-whip.png",
         footer: {
-          text: "Runebot v1.0.6-dev.1",
+          text: `Runebot v${VERSION_TEXT}`,
         },
       },
     ],
@@ -67,7 +69,7 @@ export const wikiLookupMocks: DiscordMessage[] = [
         ],
         thumbnail: "/images/features/fire-cape.png",
         footer: {
-          text: "Runebot v1.0.6-dev.1",
+          text: `Runebot v${VERSION_TEXT}`,
         },
       },
     ],
@@ -91,7 +93,7 @@ export const wikiLookupMocks: DiscordMessage[] = [
         ],
         thumbnail: "/images/features/infernal-cape.png",
         footer: {
-          text: "Runebot v1.0.6-dev.1",
+          text: `Runebot v${VERSION_TEXT}`,
         },
       },
     ],
@@ -115,7 +117,7 @@ export const wikiLookupMocks: DiscordMessage[] = [
         ],
         thumbnail: "/images/features/dragon-full-helm.png",
         footer: {
-          text: "Runebot v1.0.6-dev.1",
+          text: `Runebot v${VERSION_TEXT}`,
         },
       },
     ],
@@ -139,7 +141,7 @@ export const wikiLookupMocks: DiscordMessage[] = [
         ],
         thumbnail: "/images/features/xerics-talisman.png",
         footer: {
-          text: "Runebot v1.0.6-dev.1",
+          text: `Runebot v${VERSION_TEXT}`,
         },
       },
     ],
@@ -163,7 +165,7 @@ export const wikiLookupMocks: DiscordMessage[] = [
         ],
         thumbnail: "/images/features/snowglobe-helmet.png",
         footer: {
-          text: "Runebot v1.0.6-dev.1",
+          text: `Runebot v${VERSION_TEXT}`,
         },
       },
     ],
@@ -187,7 +189,7 @@ export const wikiLookupMocks: DiscordMessage[] = [
         ],
         thumbnail: "/images/features/keris-partisan-of-amascut.png",
         footer: {
-          text: "Runebot v1.0.6-dev.1",
+          text: `Runebot v${VERSION_TEXT}`,
         },
       },
     ],
@@ -221,7 +223,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/ags-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
+          text: `Exchange data from the official Grand Exchange API\nRunebot v${VERSION_TEXT} • Today at 00:00`,
         },
       },
     ],
@@ -256,7 +258,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/dragon-claws-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
+          text: `Exchange data from the official Grand Exchange API\nRunebot v${VERSION_TEXT} • Today at 00:00`,
         },
       },
     ],
@@ -291,7 +293,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/tumekens-shadow-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
+          text: `Exchange data from the official Grand Exchange API\nRunebot v${VERSION_TEXT} • Today at 00:00`,
         },
       },
     ],
@@ -327,7 +329,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/twisted-bow-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
+          text: `Exchange data from the official Grand Exchange API\nRunebot v${VERSION_TEXT} • Today at 00:00`,
         },
       },
     ],
@@ -362,7 +364,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/scythe-of-vitur-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
+          text: `Exchange data from the official Grand Exchange API\nRunebot v${VERSION_TEXT} • Today at 00:00`,
         },
       },
     ],
@@ -397,7 +399,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/zaryte-crossbow-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
+          text: `Exchange data from the official Grand Exchange API\nRunebot v${VERSION_TEXT} • Today at 00:00`,
         },
       },
     ],
@@ -433,7 +435,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/elysian-spirit-shield-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
+          text: `Exchange data from the official Grand Exchange API\nRunebot v${VERSION_TEXT} • Today at 00:00`,
         },
       },
     ],
@@ -468,7 +470,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/osmumtens-fang-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
+          text: `Exchange data from the official Grand Exchange API\nRunebot v${VERSION_TEXT} • Today at 00:00`,
         },
       },
     ],
@@ -503,7 +505,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/old-school-bond-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
+          text: `Exchange data from the official Grand Exchange API\nRunebot v${VERSION_TEXT} • Today at 00:00`,
         },
       },
     ],
@@ -538,7 +540,7 @@ export const priceLookupMocks: DiscordMessage[] = [
         ],
         image: "/images/features/ghrazi-rapier-180d.webp",
         footer: {
-          text: "Exchange data from the official Grand Exchange API\nRunebot v1.0.6-dev.1 • Today at 00:00",
+          text: `Exchange data from the official Grand Exchange API\nRunebot v${VERSION_TEXT} • Today at 00:00`,
         },
       },
     ],
@@ -636,7 +638,7 @@ export const statsFeatureMock: DiscordStatsMock = {
     level: 72,
     xp: 25525083,
   },
-  footerText: "Experience data from the official Hiscores API\nRunebot v1.0.6-dev.1 • Today at 00:00",
+  footerText: `Experience data from the official Hiscores API\nRunebot v${VERSION_TEXT} • Today at 00:00`,
   buttons: [
     "Boss Kills",
     "Bounty Hunter",

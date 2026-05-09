@@ -1,4 +1,5 @@
 import { LogsWorkspace } from "@/components/ui/logs-workspace";
+import { AdminShell } from "@/components/admin/admin-shell.client";
 import { getLogSessions, getLogsPayload } from "@/lib/logs/fetch";
 import type { GetLogsParams, LogsPayload } from "@/lib/logs/types";
 import type { Metadata } from "next";
@@ -128,7 +129,7 @@ function ErrorState({ message }: { message: string }) {
 
 export default async function AdminLogsPage({ searchParams }: LogsPageProps) {
   const resolvedSearchParams = (await searchParams) ?? {};
-  let sessions;
+  let sessions: Awaited<ReturnType<typeof getLogSessions>>;
 
   try {
     sessions = await getLogSessions();
@@ -172,16 +173,16 @@ export default async function AdminLogsPage({ searchParams }: LogsPageProps) {
     redirect(`/admin/logs?${params.toString()}`);
   }
 
+  let resolvedPayload: LogsPayload;
+  let currentPage: number;
+  let totalPages: number;
+
   try {
     const baseParams = toLogsParams({
       ...resolvedSearchParams,
       session_id: defaultSessionId,
     });
     const { startTime, endTime } = resolveRangeBounds(baseParams.range);
-
-    let resolvedPayload: LogsPayload;
-    let currentPage: number;
-    let totalPages: number;
 
     // Time range is server-driven so pagination totals and counts come from the backend window.
     // Level/search interactions in the workspace remain local for instant filtering of loaded rows.
@@ -214,15 +215,25 @@ export default async function AdminLogsPage({ searchParams }: LogsPageProps) {
     resolvedPayload = await payload;
     totalPages = Math.max(1, Math.ceil(resolvedPayload.pagination.total / resolvedPayload.pagination.pageSize));
     currentPage = resolvedPayload.pagination.page;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown logs fetch error.";
 
     return (
+      <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center px-4">
+        <div className="w-full max-w-2xl">
+          <ErrorState message={message} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <AdminShell sessions={sessions} selectedSessionId={defaultSessionId ?? null}>
       <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden px-2 py-2 sm:px-3">
         <div className="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
           <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
             <LogsWorkspace
               payload={resolvedPayload}
-              sessions={sessions}
-              selectedSessionId={defaultSessionId ?? null}
               pagination={{
                 currentPage,
                 totalPages,
@@ -242,16 +253,6 @@ export default async function AdminLogsPage({ searchParams }: LogsPageProps) {
           </div>
         </div>
       </div>
-    );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown logs fetch error.";
-
-    return (
-      <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center px-4">
-        <div className="w-full max-w-2xl">
-          <ErrorState message={message} />
-        </div>
-      </div>
-    );
-  }
+    </AdminShell>
+  );
 }

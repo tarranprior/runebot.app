@@ -22,8 +22,20 @@ export function CustomCursor() {
   };
 
   useEffect(() => {
+    let cancelled = false;
     const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
-    setIsDesktop(hasFinePointer);
+
+    queueMicrotask(() => {
+      if (cancelled) {
+        return;
+      }
+
+      setIsDesktop(hasFinePointer);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {

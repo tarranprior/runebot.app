@@ -158,7 +158,7 @@ export function Features() {
             viewport={revealViewport}
           >
             <p className="text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              But wait, there's more!
+              But wait, there’s more!
             </p>
 
             <div className="mt-8">

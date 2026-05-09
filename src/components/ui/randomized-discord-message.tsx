@@ -23,15 +23,37 @@ export function RandomizedDiscordMessage({ mockDataset }: RandomizedDiscordMessa
   }, [message]);
 
   useLayoutEffect(() => {
+    let cancelled = false;
+
     if (mockDataset.length === 0) {
-      setMessage(null);
-      setIsReady(true);
-      return;
+      queueMicrotask(() => {
+        if (cancelled) {
+          return;
+        }
+
+        setMessage(null);
+        setIsReady(true);
+      });
+
+      return () => {
+        cancelled = true;
+      };
     }
 
     const selected = getRandomItem(mockDataset);
-    setMessage(selected);
-    setIsReady(false);
+
+    queueMicrotask(() => {
+      if (cancelled) {
+        return;
+      }
+
+      setMessage(selected);
+      setIsReady(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [mockDataset]);
 
   useLayoutEffect(() => {
@@ -39,12 +61,20 @@ export function RandomizedDiscordMessage({ mockDataset }: RandomizedDiscordMessa
       return;
     }
 
+    let active = true;
+
     if (imageSources.length === 0) {
-      setIsReady(true);
-      return;
+      queueMicrotask(() => {
+        if (active) {
+          setIsReady(true);
+        }
+      });
+
+      return () => {
+        active = false;
+      };
     }
 
-    let active = true;
     let loadedCount = 0;
 
     const revealWhenReady = () => {

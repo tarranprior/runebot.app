@@ -18,4 +18,6 @@ export const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export default null;
+const fontsModule = null;
+
+export default fontsModule;

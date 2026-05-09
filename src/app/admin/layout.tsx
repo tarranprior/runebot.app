@@ -38,7 +38,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex w-full items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <Link href="/" className="flex flex-col leading-none text-left">
-                <span className="text-[22px] font-semibold tracking-tight text-foreground">Runebot Logs</span>
+                <span className="text-[22px] font-semibold tracking-tight text-foreground">Runebot</span>
               </Link>
 
               <nav className="hidden items-center gap-1.5 md:flex">
