@@ -66,6 +66,7 @@ export function CustomCursor() {
         top: lastPointerPosition.y - displayedCursor.hotspotY,
       }}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={displayedCursor.src}
         alt=""
