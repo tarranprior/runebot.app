@@ -193,6 +193,9 @@ function PaginationButton({
   );
 }
 
+const PAGE_NUMBER_BUTTON_CLASSNAME =
+  "inline-flex h-6 min-w-[20px] cursor-pointer items-center justify-center rounded-sm px-1.5 text-[10px] font-medium text-foreground/55 transition hover:bg-foreground/10 hover:text-foreground/75 dark:text-foreground/45 dark:hover:bg-foreground/15 dark:hover:text-foreground/70";
+
 function LevelFilterChip({
   label,
   count,
@@ -524,7 +527,7 @@ export function LogsWorkspace({ payload, initialPage, initialPageSize }: LogsWor
                         key="page-1"
                         type="button"
                         onClick={() => setCurrentPage(1)}
-                        className="px-1.5 text-[10px] text-foreground/55 transition hover:text-foreground/75 dark:text-foreground/45"
+                        className={PAGE_NUMBER_BUTTON_CLASSNAME}
                         aria-label="Go to page 1"
                       >
                         1
@@ -558,7 +561,7 @@ export function LogsWorkspace({ payload, initialPage, initialPageSize }: LogsWor
                           key={`page-${page}`}
                           type="button"
                           onClick={() => setCurrentPage(page)}
-                          className="inline-flex h-6 min-w-[20px] cursor-pointer items-center justify-center rounded-sm px-1.5 text-[10px] font-medium text-foreground/55 transition hover:bg-foreground/10 hover:text-foreground/75 dark:text-foreground/45 dark:hover:bg-foreground/15 dark:hover:text-foreground/70"
+                          className={PAGE_NUMBER_BUTTON_CLASSNAME}
                           aria-label={`Go to page ${page}`}
                         >
                           {page}
@@ -580,7 +583,7 @@ export function LogsWorkspace({ payload, initialPage, initialPageSize }: LogsWor
                         key={`page-${totalLocalPages}`}
                         type="button"
                         onClick={() => setCurrentPage(totalLocalPages)}
-                        className="px-1.5 text-[10px] text-foreground/55 transition hover:text-foreground/75 dark:text-foreground/45"
+                        className={PAGE_NUMBER_BUTTON_CLASSNAME}
                         aria-label={`Go to page ${totalLocalPages}`}
                       >
                         {totalLocalPages}
