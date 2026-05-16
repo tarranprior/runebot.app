@@ -1,6 +1,7 @@
 export type LogTokenKind =
   | "operation"
   | "subject"
+  | "domain"
   | "source"
   | "service"
   | "user"
@@ -19,6 +20,8 @@ const OPERATION_CLASSNAME =
   "mx-[1px] inline-flex items-center rounded-[5px] bg-sky-400/16 px-1.5 py-0.5 text-[0.92em] font-semibold text-sky-700 dark:bg-sky-400/22 dark:text-sky-200";
 const SUBJECT_CLASSNAME =
   "mx-[1px] inline-flex items-center rounded-[5px] bg-amber-400/18 px-1.5 py-0.5 text-[0.92em] font-semibold text-amber-700 dark:bg-amber-400/24 dark:text-amber-200";
+const DOMAIN_CLASSNAME =
+  "mx-[1px] inline-flex items-center rounded-[5px] bg-violet-400/16 px-1.5 py-0.5 text-[0.92em] font-semibold text-violet-700 dark:bg-violet-400/22 dark:text-violet-200";
 const SOURCE_CLASSNAME =
   "mx-[1px] inline-flex items-center rounded-[5px] bg-emerald-400/18 px-1.5 py-0.5 text-[0.92em] font-semibold text-emerald-700 dark:bg-emerald-400/24 dark:text-emerald-200";
 const SERVICE_CLASSNAME =
@@ -29,12 +32,15 @@ const GENERIC_CLASSNAME =
   "mx-[1px] inline-flex items-center rounded-[5px] bg-muted px-1.5 py-0.5 text-[0.92em] font-semibold text-foreground/82";
 
 export const LOG_TOKEN_THEME: Record<string, LogTokenPresentation> = {
+  // identity/user tokens
   user: {
     kind: "user",
     label: "user",
     title: "User token",
     className: USER_CLASSNAME,
   },
+
+  // command/action operations
   lookup: {
     kind: "operation",
     label: "lookup",
@@ -59,6 +65,14 @@ export const LOG_TOKEN_THEME: Record<string, LogTokenPresentation> = {
     title: "Search operation",
     className: OPERATION_CLASSNAME,
   },
+  set: {
+    kind: "operation",
+    label: "set",
+    title: "Set operation",
+    className: OPERATION_CLASSNAME,
+  },
+
+  // account operations
   account_manager: {
     kind: "operation",
     label: "account_manager",
@@ -95,12 +109,28 @@ export const LOG_TOKEN_THEME: Record<string, LogTokenPresentation> = {
     title: "Default account selection operation",
     className: OPERATION_CLASSNAME,
   },
-  set: {
+
+  // parser/runtime operations
+  load_page: {
     kind: "operation",
-    label: "set",
-    title: "Set operation",
+    label: "load_page",
+    title: "Load page operation",
     className: OPERATION_CLASSNAME,
   },
+  parse_price_data: {
+    kind: "operation",
+    label: "parse_price_data",
+    title: "Parse price data operation",
+    className: OPERATION_CLASSNAME,
+  },
+  parse_hiscores: {
+    kind: "operation",
+    label: "parse_hiscores",
+    title: "Parse hiscores operation",
+    className: OPERATION_CLASSNAME,
+  },
+
+  // subjects/entities
   username: {
     kind: "subject",
     label: "username",
@@ -125,42 +155,40 @@ export const LOG_TOKEN_THEME: Record<string, LogTokenPresentation> = {
     title: "Resolved search term",
     className: SUBJECT_CLASSNAME,
   },
-  resolved_page_title: {
-    kind: "subject",
-    label: "resolved_page_title",
-    title: "Resolved page title",
-    className: SUBJECT_CLASSNAME,
-  },
-  default_account: {
-    kind: "source",
-    label: "default_account",
-    title: "Default account resolution source",
-    className: SOURCE_CLASSNAME,
-  },
-  load_page: {
-    kind: "operation",
-    label: "load_page",
-    title: "Load page operation",
-    className: OPERATION_CLASSNAME,
-  },
-  parse_price_data: {
-    kind: "operation",
-    label: "parse_price_data",
-    title: "Parse price data operation",
-    className: OPERATION_CLASSNAME,
-  },
-  parse_hiscores: {
-    kind: "operation",
-    label: "parse_hiscores",
-    title: "Parse hiscores operation",
-    className: OPERATION_CLASSNAME,
-  },
   page_title: {
     kind: "subject",
     label: "page_title",
     title: "Page title",
     className: SUBJECT_CLASSNAME,
   },
+  resolved_page_title: {
+    kind: "subject",
+    label: "resolved_page_title",
+    title: "Resolved page title",
+    className: SUBJECT_CLASSNAME,
+  },
+  item_id: {
+    kind: "subject",
+    label: "item_id",
+    title: "Item ID",
+    className: SUBJECT_CLASSNAME,
+  },
+
+  // resolution/UI sources
+  default_account: {
+    kind: "source",
+    label: "default_account",
+    title: "Default account resolution source",
+    className: SOURCE_CLASSNAME,
+  },
+  dropdown: {
+    kind: "source",
+    label: "dropdown",
+    title: "Dropdown source",
+    className: SOURCE_CLASSNAME,
+  },
+
+  // external parser/API services
   wiki_page: {
     kind: "service",
     label: "wiki_page",
@@ -179,6 +207,28 @@ export const LOG_TOKEN_THEME: Record<string, LogTokenPresentation> = {
     title: "Hiscores API source",
     className: SERVICE_CLASSNAME,
   },
+
+  // lifecycle/debug domains
+  guild: {
+    kind: "domain",
+    label: "guild",
+    title: "Guild lifecycle domain",
+    className: DOMAIN_CLASSNAME,
+  },
+  guild_join: {
+    kind: "operation",
+    label: "guild_join",
+    title: "Guild join operation",
+    className: OPERATION_CLASSNAME,
+  },
+  guild_remove: {
+    kind: "operation",
+    label: "guild_remove",
+    title: "Guild remove operation",
+    className: OPERATION_CLASSNAME,
+  },
+
+  // special interaction tokens
   defer: {
     kind: "defer",
     label: "defer",
@@ -197,12 +247,8 @@ export const LOG_TOKEN_THEME: Record<string, LogTokenPresentation> = {
     title: "Follow up send operation",
     className: OPERATION_CLASSNAME,
   },
-  dropdown: {
-    kind: "source",
-    label: "dropdown",
-    title: "Dropdown source",
-    className: SOURCE_CLASSNAME,
-  },
+
+  // fallback generic tokens
   unknown: {
     kind: "generic",
     label: "unknown",
