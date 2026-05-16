@@ -11,8 +11,14 @@ import type { LogItem, LogLevel } from "@/lib/logs/types";
 import { LOG_LEVEL_TEXT_STYLES } from "@/lib/logs/level-theme";
 import { LOG_TOKEN_THEME } from "@/lib/logs/token-theme";
 
-const COLUMN_COUNT = 6;
-const GRID_TEMPLATE = "160px 138px minmax(220px,1.6fr) minmax(420px,3.4fr) 120px 70px";
+const COLUMN_COUNT = 7;
+const GRID_TEMPLATE = "160px 64px 138px minmax(220px,1.4fr) minmax(420px,3.2fr) 110px 60px";
+const ID_HEADER_CLASSNAME = "px-1";
+const ID_CELL_CLASSNAME =
+  `flex items-center justify-center whitespace-nowrap px-1 py-1.5 self-center text-[11px] tabular-nums text-foreground/52 ${jetbrainsMono.className}`;
+const SOURCE_HEADER_CLASSNAME = "px-2";
+const SOURCE_CELL_CLASSNAME =
+  `flex min-w-0 items-center justify-start px-2 py-1.5 self-center text-[12px] text-foreground/58 ${jetbrainsMono.className}`;
 
 function formatTimestamp(isoTimestamp: string) {
   const timestamp = Date.parse(isoTimestamp);
@@ -58,7 +64,6 @@ function isSlashCommandBoundaryAfter(value: string | undefined) {
 
   return /[\s).,!?;:\]}"'`]/.test(value);
 }
-
 
 // Legacy slash-command renderer (unchanged, used as fallback)
 function renderMessageWithSlashCommands(message: string) {
@@ -402,7 +407,7 @@ function SeverityLabel({ level }: { level: LogLevel }) {
       )}
     >
       <Icon className="h-3.5 w-3.5 shrink-0 stroke-[2.25]" aria-hidden="true" />
-      {formatLevelLabel(level)}
+      <span>{formatLevelLabel(level)}</span>
     </span>
   );
 }
@@ -580,6 +585,14 @@ function LogsRow({
 
         <div
           role="cell"
+          title={item.id}
+          className={ID_CELL_CLASSNAME}
+        >
+          {item.id}
+        </div>
+
+        <div
+          role="cell"
           className={`whitespace-nowrap px-2 py-1.5 self-center text-[12px] text-foreground/58 ${jetbrainsMono.className}`}
         >
           <span title={timestamp.title}>{timestamp.label}</span>
@@ -606,14 +619,14 @@ function LogsRow({
         <div
           role="cell"
           title={item.source ?? undefined}
-          className={`truncate px-2 py-1.5 self-center text-[12px] text-foreground/58 ${jetbrainsMono.className}`}
+          className={SOURCE_CELL_CLASSNAME}
         >
-          {formatSourceLabel(item.source)}
+          <span className="truncate">{formatSourceLabel(item.source)}</span>
         </div>
 
         <div
           role="cell"
-          className={`whitespace-nowrap px-2 py-1.5 text-center self-center text-[12px] text-foreground/62 ${jetbrainsMono.className}`}
+          className={`flex items-center justify-center whitespace-nowrap px-2 py-1.5 self-center text-[12px] text-foreground/62 ${jetbrainsMono.className}`}
         >
           {item.line ?? "-"}
         </div>
@@ -628,15 +641,23 @@ function LogsRow({
 
 function HeaderCell({
   children,
+  align = "start",
   className = "",
 }: {
   children: React.ReactNode;
+  align?: "start" | "center" | "end";
   className?: string;
 }) {
   return (
     <div
       role="columnheader"
-      className={`whitespace-nowrap px-2 py-1.5 text-left text-[10px] uppercase tracking-[0.14em] text-foreground/44 ${className}`}
+      className={cn(
+        "flex items-center whitespace-nowrap px-2 py-1.5 text-[10px] uppercase tracking-[0.14em] text-foreground/44",
+        align === "start" && "justify-start text-left",
+        align === "center" && "justify-center text-center",
+        align === "end" && "justify-end text-right",
+        className,
+      )}
     >
       {children}
     </div>
@@ -685,15 +706,16 @@ export function LogsTimeline({ items, emptyStateVariant = "global" }: LogsTimeli
   return (
     <div className="flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden">
       <div className="min-h-0 w-full flex-1 overflow-x-auto">
-          <div className="flex h-full min-h-0 w-full min-w-[980px] flex-col" role="table" aria-label="Logs table">
+          <div className="flex h-full min-h-0 w-full min-w-[1172px] flex-col" role="table" aria-label="Logs table">
             <div className="shrink-0 border-b border-black/[0.07] bg-background/72 backdrop-blur-md dark:border-white/[0.11] dark:bg-background/72">
               <div role="row" className="grid w-full" style={{ gridTemplateColumns: GRID_TEMPLATE }}>
-                <HeaderCell>Level</HeaderCell>
-                <HeaderCell>Time</HeaderCell>
-                <HeaderCell>Context</HeaderCell>
-                <HeaderCell>Message</HeaderCell>
-                <HeaderCell>Source</HeaderCell>
-                <HeaderCell className="text-center">Line</HeaderCell>
+                <HeaderCell align="start">Level</HeaderCell>
+                <HeaderCell align="center" className={ID_HEADER_CLASSNAME}>ID</HeaderCell>
+                <HeaderCell align="start">Time</HeaderCell>
+                <HeaderCell align="start">Context</HeaderCell>
+                <HeaderCell align="start">Message</HeaderCell>
+                <HeaderCell align="start" className={SOURCE_HEADER_CLASSNAME}>Source</HeaderCell>
+                <HeaderCell align="center">Line</HeaderCell>
               </div>
             </div>
 

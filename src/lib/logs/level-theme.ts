@@ -34,6 +34,6 @@ export const LOG_LEVEL_FILTER_THEME = {
   error: {
     label: "Error",
     activeClassName:
-      "bg-[#3f49c7] text-white dark:bg-[#5a66ef] dark:text-white",
+      "bg-[#5865f2]/50 text-[#2f3aa3] dark:bg-[#5865f2]/42 dark:text-[#e8eaff]",
   },
 } as const;
