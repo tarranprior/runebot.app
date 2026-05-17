@@ -19,7 +19,7 @@ export function Hero() {
 
         <Container className="relative z-10">
           <motion.div
-            className="mx-auto flex max-w-4xl flex-col items-start py-16 sm:py-20 lg:py-24"
+            className="mx-auto flex max-w-4xl flex-col items-start py-8 sm:py-10 lg:py-12"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
