@@ -1,6 +1,19 @@
-## May 4, 2026
-**Runebot v1.0.7-dev.1** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.7-dev.1) [Commit](https://github.com/tarranprior/runebot/commit/2a00261400f04252291609d95d9b660ad7daf402)
+## May 17, 2026
+**Runebot v1.0.7-dev.1** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.7-dev.1) [Commit](https://github.com/tarranprior/runebot/commit/6e2ee80e01e37712b4c81ec3f8e0931358b1d19d)
 
+* {https://github.com/tarranprior/runebot/commit/2c3eb721994c1afb0a52339cfd6638119c40f7ab} [notice] 🪲 Update /Runebot/: fix(logging) make internal log ingest idempotent
+* {https://github.com/tarranprior/runebot/commit/73a525372feba0852460b5f0c92570f51755c6bb} [notice] 🪲 Update /Runebot/: fix(logging) harden internal log SQLite connections
+    - apply `busy_timeout` consistently across internal log database connections
+    - keep WAL setup scoped to schema initialisation
+* {https://github.com/tarranprior/runebot/commit/2bdff0b894effbffbbe504f1a0d1159a63b2f2a9} [notice] 🪲 Update /Runebot/: fix(api) structure internal API failure logs
+    - handle client disconnects during JSON response writes as structured warnings
+    - add structured context to internal API timeout, persistence, and query failure logs
+* {https://github.com/tarranprior/runebot/commit/b56c250dae621f493f6fb454bd299671a5866b98} [added] ⚙️ Update /Runebot/: feat(logging) add guild lifecycle visibility
+    - add structured guild join and remove lifecycle logs
+    - capture safe guild metadata, counts, locale, features, and bot permission snapshots
+    - preserve tokenized lifecycle messages for dashboard parsing
+    - log guild persistence failures with structured exception metadata and traceback
+* {https://github.com/tarranprior/runebot/commit/7b51ece8e077ad3c94f9431eb2bd9368b5421621} [added] ⚙️ Update /Runebot/: feat(logging) add native time range filters to logs API
 * {https://github.com/tarranprior/runebot/commit/2a00261400f04252291609d95d9b660ad7daf402} [added] ⚙️ Update /Runebot/: feat(logging) introduce initial internal logging pipeline
     - add structured Loguru-based logging with internal API ingestion and SQLite persistence
     - add first-class `trace_id` and `session_id` fields for correlating logs across command flows and bot sessions
