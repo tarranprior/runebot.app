@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Github, MessageCircle } from "lucide-react";
+import { Github, MessageCircle, Shield } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import {
   isSectionRoute,
@@ -99,6 +99,15 @@ export function Footer() {
                 >
                   <MessageCircle className="h-5 w-5" />
                 </a>
+
+                <Link
+                  href="/admin"
+                  aria-label="Admin"
+                  title="Admin"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-surface-border bg-background text-foreground/60 transition hover:text-accent dark:border-surface-border dark:bg-surface dark:text-foreground/60 dark:hover:text-accent"
+                >
+                  <Shield className="h-5 w-5" />
+                </Link>
               </div>
 
               <p className="mt-8 text-sm text-foreground/60 dark:text-foreground/60">
