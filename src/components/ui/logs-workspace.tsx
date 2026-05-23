@@ -265,33 +265,20 @@ export function LogsWorkspace({ payload, initialPage, initialPageSize }: LogsWor
 
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const mountedRef = useRef(false);
-  useEffect(() => {
-    let cancelled = false;
-
-    if (!mountedRef.current) {
-      mountedRef.current = true;
-      queueMicrotask(() => {
-        if (!cancelled) {
-          setLastUpdated(new Date());
-        }
-      });
-    }
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   const prevPayloadRef = useRef(payload);
   useEffect(() => {
     let cancelled = false;
+
+    queueMicrotask(() => {
+      if (!cancelled) {
+        setLastUpdated(new Date());
+      }
+    });
 
     if (payload !== prevPayloadRef.current) {
       prevPayloadRef.current = payload;
       queueMicrotask(() => {
         if (!cancelled) {
-          setLastUpdated(new Date());
           setIsNavigating(false);
           setCurrentPage(1);
         }
