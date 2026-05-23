@@ -5,6 +5,7 @@ import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import { Container } from "@/components/ui/container";
 import { CursorToggle } from "@/components/ui/cursor-toggle";
+import { SiteNotice } from "@/components/ui/site-notice";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { docsSource } from "@/lib/docs-source";
 import { PRIMARY_NAV_ITEMS, PROJECT_GITHUB_URL } from "@/lib/navigation";
@@ -81,6 +82,15 @@ export default function DocsRouteLayout({ children }: { children: ReactNode }) {
           </DocsLayout>
         </RootProvider>
       </div>
+
+      <SiteNotice
+        noticeId="privacy-policy-2026-05-17"
+        title="🔔 Changes to Privacy Policy"
+        message="We've recently updated Runebot's Privacy Policy. You can review the changes [here](/privacy)."
+        actionLabel="Read Privacy Policy"
+        actionUrl="/privacy"
+        dismissLabel="OK"
+      />
     </div>
   );
 }

@@ -192,6 +192,19 @@
   color: var(--color-fd-accent-foreground);
 }
 
+.docsShell :global(#nd-subnav button:not(:disabled)),
+.docsShell :global([data-sidebar-panel] button:not(:disabled)),
+.docsShell :global(#nd-sidebar button:not(:disabled)),
+.docsShell :global(#nd-sidebar-mobile button:not(:disabled)),
+.docsShell :global(#nd-sidebar a),
+.docsShell :global(#nd-sidebar-mobile a),
+.docsShell :global(button[data-search]:not(:disabled)),
+.docsShell :global(button[data-search-full]:not(:disabled)),
+.docsShell :global(#nd-sidebar [role="button"]),
+.docsShell :global(#nd-sidebar-mobile [role="button"]) {
+  cursor: pointer;
+}
+
 .docsShell :global(article) {
   color: var(--color-fd-foreground);
 }
