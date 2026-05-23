@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -66,6 +67,7 @@ export function SiteNotice({
 }: SiteNoticeProps) {
   const [mounted, setMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const pathname = usePathname();
 
   // Defer state initialization to avoid hydration mismatch
   useEffect(() => {
@@ -81,7 +83,11 @@ export function SiteNotice({
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [noticeId]);
+  }, [noticeId, pathname]);
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const handleDismiss = () => {
     try {
@@ -101,13 +107,13 @@ export function SiteNotice({
     <AnimatePresence mode="wait">
       {isVisible && (
         <motion.div
-          className={cn("fixed bottom-0 left-0 right-0 z-40 w-full px-4 py-4 sm:px-6 sm:py-6", className)}
+          className={cn("pointer-events-none fixed bottom-0 left-0 right-0 z-40 w-full px-4 py-4 sm:px-6 sm:py-6", className)}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="mx-auto flex w-full max-w-4xl flex-col gap-3 overflow-hidden rounded-[28px] border border-[rgba(29,30,40,0.12)] bg-[rgba(243,243,246,0.86)] px-5 py-4 shadow-[0_10px_30px_rgba(29,30,40,0.15)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:border-[rgba(255,255,255,0.10)] dark:bg-[rgba(17,17,19,0.82)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.30)]">
+          <div className="pointer-events-auto mx-auto flex w-full max-w-4xl flex-col gap-3 overflow-hidden rounded-[28px] border border-[rgba(29,30,40,0.12)] bg-[rgba(243,243,246,0.86)] px-5 py-4 shadow-[0_10px_30px_rgba(29,30,40,0.15)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:border-[rgba(255,255,255,0.10)] dark:bg-[rgba(17,17,19,0.82)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.30)]">
             {/* Content */}
             <div className="flex-1">
               <h3 className="text-base font-semibold text-foreground">
