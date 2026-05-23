@@ -13,9 +13,13 @@
 # testing
 /coverage
 
+# editor
+.vscode/settings.json
+
 # next.js
 /.next/
 /out/
+/.source/
 
 # production
 /build
