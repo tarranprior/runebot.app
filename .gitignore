@@ -57,3 +57,6 @@ next-env.d.ts
 
 # artifacts
 .artifacts/**
+
+# local-only docs authoring examples (kitchen sink, scratch pages)
+/content/docs/_scratch/

@@ -8,6 +8,7 @@ import { CursorToggle } from "@/components/ui/cursor-toggle";
 import { SiteNotice } from "@/components/ui/site-notice";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { docsSource } from "@/lib/docs-source";
+import { withDevTree } from "@/lib/docs-dev-tree";
 import { PRIMARY_NAV_ITEMS, PROJECT_GITHUB_URL } from "@/lib/navigation";
 import styles from "./docs-shell.module.css";
 
@@ -72,7 +73,7 @@ export default function DocsRouteLayout({ children }: { children: ReactNode }) {
       <div className={styles.docsViewport}>
         <RootProvider>
           <DocsLayout
-            tree={docsSource.getPageTree()}
+            tree={withDevTree(docsSource.getPageTree())}
             githubUrl={PROJECT_GITHUB_URL}
             nav={{
               title: "Runebot Docs",
