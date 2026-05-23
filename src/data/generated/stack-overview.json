@@ -1,14 +1,15 @@
 {
-  "generatedAt": "2026-05-23T08:28:07.080Z",
+  "generatedAt": "2026-05-23T21:11:58.236Z",
   "totals": {
-    "commits": 394,
+    "commits": 398,
     "stars": 14,
-    "languages": 4,
+    "languages": 5,
     "public": 3
   },
   "languages": [
     "CSS",
     "JavaScript",
+    "MDX",
     "Python",
     "TypeScript"
   ],
@@ -41,14 +42,15 @@
       "kind": "website",
       "isPrivate": false,
       "stars": 1,
-      "commits": 163,
+      "commits": 167,
       "languages": [
         "CSS",
         "JavaScript",
+        "MDX",
         "TypeScript"
       ],
       "createdAt": "2026-03-07T16:25:03Z",
-      "pushedAt": "2026-05-23T03:28:00Z",
+      "pushedAt": "2026-05-23T21:11:40Z",
       "ageDays": 77,
       "lifespanDays": 77,
       "htmlUrl": "https://github.com/tarranprior/runebot.app"
@@ -68,7 +70,7 @@
       ],
       "createdAt": "2023-04-01T22:53:02Z",
       "pushedAt": "2026-03-08T22:36:02Z",
-      "ageDays": 1147,
+      "ageDays": 1148,
       "lifespanDays": 1072,
       "htmlUrl": "https://github.com/tarranprior/runebot.org"
     }
