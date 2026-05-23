@@ -59,7 +59,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
               <ThemeToggle />
 
               <Link
-                href="/#docs"
+                href="/docs"
                 className="inline-flex items-center gap-2 rounded-full border border-surface-border bg-surface/70 px-4 py-2.5 text-sm font-medium text-foreground/80 transition hover:bg-surface hover:text-foreground"
               >
                 <BookOpen className="h-4 w-4" />

@@ -163,7 +163,7 @@ export function Features() {
 
             <div className="mt-8">
               <Link
-                href="#docs"
+                href="/docs"
                 className="inline-flex items-center gap-2 rounded-full border border-surface-border bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent/90 dark:bg-white dark:text-[#1d1e28] dark:hover:bg-white/90 sm:text-base"
               >
                 <BookOpen className="h-4 w-4" />
