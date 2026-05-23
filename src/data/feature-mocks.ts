@@ -1,6 +1,6 @@
 import { DiscordMessage, DiscordStatsMock } from "@/types/discord";
 
-const VERSION_TEXT = "1.0.7-dev.1";
+const VERSION_TEXT = "1.0.7-dev.2";
 
 export const wikiLookupMocks: DiscordMessage[] = [
   {

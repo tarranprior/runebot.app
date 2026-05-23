@@ -24,7 +24,6 @@ import {
   SECTION_ROUTE_MAP,
 } from "@/lib/section-navigation";
 
-// Localized permissive typing for motion intrinsic components used below.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const M = motion as unknown as typeof motion & { div: any; nav: any };
 
@@ -128,32 +127,24 @@ export function Navbar() {
 
   const bg = useTransform(t, (v) => {
     if (v < 0.12) {
-      // At top: fully transparent in both modes for hero integration
       return "rgba(0,0,0,0)";
     }
-    // Scrolled: light mode uses light surface, dark mode uses dark surface
     return isDark ? "rgba(17,17,19,0.82)" : "rgba(243,243,246,0.86)";
   });
 
   const borderColor = useTransform(t, (v) => {
     if (v < 0.12) {
-      // At top: fully transparent in both modes
       return "rgba(0,0,0,0)";
     }
-    // Scrolled: light mode uses dark border, dark mode uses white border
     return isDark ? "rgba(255,255,255,0.10)" : "rgba(29,30,40,0.12)";
   });
 
   const shadow = useTransform(t, (v) => {
     if (v < 0.12) {
-      // At top: no shadow in both modes
       return "0 0 0 rgba(0,0,0,0)";
     }
-    // Scrolled: stronger shadows
     return isDark ? "0 10px 30px rgba(0,0,0,0.30)" : "0 10px 30px rgba(29,30,40,0.15)";
   });
-
-  if (pathname.startsWith("/admin")) return null;
 
   return (
     <>
@@ -233,7 +224,7 @@ export function Navbar() {
                     <ThemeToggle />
 
                     <Link
-                      href="#docs"
+                      href="/docs"
                       className={`inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium transition ${
                         isDark
                           ? "border-surface-border bg-surface/70 text-foreground/80 hover:bg-surface hover:text-foreground"
@@ -322,15 +313,7 @@ export function Navbar() {
 
               <div className="mt-8 flex flex-col gap-3">
                 <Link
-                  href="/changelog"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-surface-border bg-surface/70 px-6 py-3 text-base font-semibold text-foreground"
-                  onClick={() => setOpen(false)}
-                >
-                  Changelog
-                </Link>
-
-                <Link
-                  href="#docs"
+                  href="/docs"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-surface-border bg-surface/70 px-6 py-3 text-base font-semibold text-foreground"
                   onClick={() => setOpen(false)}
                 >

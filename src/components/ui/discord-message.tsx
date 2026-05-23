@@ -54,8 +54,9 @@ export function DiscordMessage({ message }: DiscordMessageProps) {
               {message.authorName}
             </span>
             {message.isBot && (
-              <span className="rounded bg-[#5865f2] px-1.5 py-[2px] text-[10px] font-bold text-white">
-                ✓ APP
+              <span className="inline-flex h-5 items-center rounded-md bg-[#5865f2] px-1.5 text-[10px] font-semibold leading-none text-white">
+                <span className="translate-y-[-0.5px] text-[9px] font-bold leading-none">✓</span>
+                <span className="ms-0.5 leading-none">APP</span>
               </span>
             )}
             <span className="text-[11px] text-[#747f8d] dark:text-[#949ba4]">{localTimestamp}</span>

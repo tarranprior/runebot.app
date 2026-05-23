@@ -1,11 +1,9 @@
+import "fumadocs-ui/style.css";
 import "./globals.css";
 
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-import { SiteNotice } from "@/components/ui/site-notice";
-import { ThemeProvider } from "@/components/providers/theme-provider";
 import { CustomCursorProvider } from "@/components/providers/custom-cursor-provider";
 import { CustomCursor } from "@/components/ui/custom-cursor";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 export const metadata = {
   title: "The modern RuneScape companion for your Discord server — Runebot",
@@ -21,17 +19,7 @@ export default function RootLayout({
         <ThemeProvider>
           <CustomCursorProvider>
             <CustomCursor />
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <SiteNotice
-              noticeId="privacy-policy-2026-05-17"
-              title="🔔 Changes to Privacy Policy"
-              message="We've recently updated Runebot's Privacy Policy. You can review the changes [here](/privacy)."
-              actionLabel="Read Privacy Policy"
-              actionUrl="/privacy"
-              dismissLabel="OK"
-            />
+            {children}
           </CustomCursorProvider>
         </ThemeProvider>
       </body>
