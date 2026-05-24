@@ -5,6 +5,8 @@ import { ArrowUpRight, Github, MessageCircle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 
+import { DISCORD_INVITE_URL } from "@/lib/navigation";
+
 const DISCORD_SUPPORT_INVITE_URL = "https://discord.com/invite/FWjNkNuTzv";
 
 export function Invite() {
@@ -34,7 +36,9 @@ export function Invite() {
               
               <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
                 <a
-                  href="/invite"
+                  href={DISCORD_INVITE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90 sm:text-base"
                 >
                   Invite to Discord
