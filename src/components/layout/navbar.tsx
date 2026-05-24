@@ -16,7 +16,7 @@ import { useTheme } from "next-themes";
 import { Container } from "@/components/ui/container";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { CursorToggle } from "@/components/ui/cursor-toggle";
-import { PRIMARY_NAV_ITEMS, DISCORD_INVITE_URL } from "@/lib/navigation";
+import { PRIMARY_NAV_ITEMS, DISCORD_INVITE_PATH } from "@/lib/navigation";
 import {
   isSectionRoute,
   scrollToSectionById,
@@ -250,7 +250,7 @@ export function Navbar() {
                     </Link>
 
                     <a
-                      href={DISCORD_INVITE_URL}
+                      href={DISCORD_INVITE_PATH}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90"
@@ -326,7 +326,7 @@ export function Navbar() {
                 </Link>
 
                 <a
-                  href={DISCORD_INVITE_URL}
+                  href={DISCORD_INVITE_PATH}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-base font-semibold text-accent-foreground"

@@ -6,7 +6,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { scrollToSectionByRoute } from "@/lib/section-navigation";
-import { DISCORD_INVITE_URL } from "@/lib/navigation";
+import { DISCORD_INVITE_PATH } from "@/lib/navigation";
 
 export function Hero() {
   const pathname = usePathname();
@@ -43,7 +43,7 @@ export function Hero() {
 
             <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <a
-                href={DISCORD_INVITE_URL}
+                href={DISCORD_INVITE_PATH}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90 sm:text-base"
