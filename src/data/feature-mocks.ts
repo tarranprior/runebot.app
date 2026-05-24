@@ -1,11 +1,13 @@
 import { DiscordMessage, DiscordStatsMock } from "@/types/discord";
 
+const AUTHOR_NAME = "Runebot";
+const AUTHOR_AVATAR = "/images/runebot-ico.png";
 const VERSION_TEXT = "1.0.7-dev.2";
 
 export const wikiLookupMocks: DiscordMessage[] = [
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -28,8 +30,8 @@ export const wikiLookupMocks: DiscordMessage[] = [
     buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -52,8 +54,8 @@ export const wikiLookupMocks: DiscordMessage[] = [
     buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -76,8 +78,8 @@ export const wikiLookupMocks: DiscordMessage[] = [
     buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -100,8 +102,8 @@ export const wikiLookupMocks: DiscordMessage[] = [
     buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -124,8 +126,8 @@ export const wikiLookupMocks: DiscordMessage[] = [
     buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -148,8 +150,8 @@ export const wikiLookupMocks: DiscordMessage[] = [
     buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -172,8 +174,8 @@ export const wikiLookupMocks: DiscordMessage[] = [
     buttons: [{ label: "Visit Page ↗", variant: "secondary" }],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -199,8 +201,8 @@ export const wikiLookupMocks: DiscordMessage[] = [
 
 export const priceLookupMocks: DiscordMessage[] = [
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -234,8 +236,8 @@ export const priceLookupMocks: DiscordMessage[] = [
     ],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -269,8 +271,8 @@ export const priceLookupMocks: DiscordMessage[] = [
     ],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -304,8 +306,8 @@ export const priceLookupMocks: DiscordMessage[] = [
     ],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -340,8 +342,8 @@ export const priceLookupMocks: DiscordMessage[] = [
     ],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -375,8 +377,8 @@ export const priceLookupMocks: DiscordMessage[] = [
     ],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -410,8 +412,8 @@ export const priceLookupMocks: DiscordMessage[] = [
     ],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -446,8 +448,8 @@ export const priceLookupMocks: DiscordMessage[] = [
     ],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -481,8 +483,8 @@ export const priceLookupMocks: DiscordMessage[] = [
     ],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -516,8 +518,8 @@ export const priceLookupMocks: DiscordMessage[] = [
     ],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -554,8 +556,8 @@ export const priceLookupMocks: DiscordMessage[] = [
 
 export const utilityMocks: DiscordMessage[] = [
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -575,8 +577,8 @@ export const utilityMocks: DiscordMessage[] = [
     ],
   },
   {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
@@ -598,8 +600,8 @@ export const utilityMocks: DiscordMessage[] = [
 ];
 
 export const statsFeatureMock: DiscordStatsMock = {
-  authorName: "RuneBot",
-  authorAvatar: "/images/runebot-ico.png",
+  authorName: AUTHOR_NAME,
+  authorAvatar: AUTHOR_AVATAR,
   isBot: true,
   timestamp: "Today at 00:00",
   title: "Personal Hiscores",

@@ -1,11 +1,13 @@
 import { DiscordMessage } from "@/types/discord";
 
+const AUTHOR_NAME = "Runebot";
+const AUTHOR_AVATAR = "/images/runebot-ico.png";
 const DOCS_VERSION_TEXT = "1.0.7-dev.2";
 
 export const docsEmbedMockRegistry = {
   "player-not-found": {
-    authorName: "RuneBot",
-    authorAvatar: "/images/runebot-ico.png",
+    authorName: AUTHOR_NAME,
+    authorAvatar: AUTHOR_AVATAR,
     isBot: true,
     timestamp: "Today at 00:00",
     embeds: [
