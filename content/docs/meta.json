@@ -1,4 +1,4 @@
 {
   "title": "Runebot Docs",
-  "pages": ["index", "setup"]
+  "pages": ["index", "setup", "commands", "troubleshooting"]
 }
