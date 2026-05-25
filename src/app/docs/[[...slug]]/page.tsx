@@ -4,6 +4,7 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
+  PageLastUpdate,
 } from "fumadocs-ui/layouts/docs/page";
 import { docsMdxComponents } from "@/components/docs/mdx-components";
 import { docsSource } from "@/lib/docs-source";
@@ -31,6 +32,7 @@ export default async function DocsPageRoute({ params }: DocsPageProps) {
       <DocsBody>
         <MdxContent components={docsMdxComponents} />
       </DocsBody>
+      {page.data.lastModified && <PageLastUpdate date={page.data.lastModified} />}
     </DocsPage>
   );
 }
