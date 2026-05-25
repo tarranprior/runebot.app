@@ -72,16 +72,36 @@ export function DiscordMessage({ message }: DiscordMessageProps) {
                 const selectField = (embed.fields || []).find(
                   (field) => !field.inline && field.name === "Select Menu"
                 );
-                const selectOptions = selectField ? selectField.value.split("\n") : [];
+                const selectOptions = selectField
+                  ? selectField.value.split("\n").map((s) => s.trim()).filter(Boolean)
+                  : [];
                 const selectPlaceholder = selectOptions[0] || "Select an option.";
-                const selectItems = selectOptions.slice(1);
+                const rawSelectItems = selectOptions.slice(1);
+                const isAccountManager =
+                  embed.variant === "account-manager" || embed.title === "Account Manager (Beta)";
+
+                const selectItems = isAccountManager
+                  ? rawSelectItems.map((s) => {
+                      if (s.includes("(Ironman)")) {
+                        return { label: s, iconSrc: "/images/features/emotes/ironman_helmet.png" };
+                      }
+
+                      return s;
+                    })
+                  : rawSelectItems;
 
                 return (
                   <div key={index}>
                     <DiscordEmbed embed={embed} />
 
                     {selectField && (
-                      <DiscordSelect placeholder={selectPlaceholder} options={selectItems} />
+                      <DiscordSelect
+                        placeholder={selectPlaceholder}
+                        options={selectItems}
+                        compactMenu={isAccountManager}
+                        defaultOpen={isAccountManager}
+                        disableAutoOpen={isAccountManager}
+                      />
                     )}
                   </div>
                 );

@@ -18,6 +18,8 @@ export interface DiscordEmbed {
     iconUrl?: string;
     url?: string;
   };
+  titleIconUrl?: string;
+  variant?: "generic" | "price" | "account-manager" | "error";
   title?: string;
   url?: string;
   description?: string;

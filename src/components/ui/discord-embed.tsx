@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { DiscordEmbed as DiscordEmbedType } from "@/types/discord";
+import { InlineCode, SlashMention } from "@/components/ui/discord-inline";
 
 interface DiscordEmbedProps {
   embed: DiscordEmbedType;
@@ -13,9 +14,14 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
   const inlineFields = (embed.fields || []).filter((field) => field.inline);
   const blockFields = (embed.fields || []).filter((field) => !field.inline);
   const detailFields = blockFields.filter((field) => field.name !== "Select Menu");
+
   const isPriceEmbed =
-    Boolean(embed.image) &&
-    inlineFields.some((field) => field.name.toLowerCase() === "buy price");
+    embed.variant === "price" ||
+    (Boolean(embed.image) &&
+      inlineFields.some((field) => field.name.toLowerCase() === "buy price"));
+
+  const isAccountManagerEmbed =
+    embed.variant === "account-manager" || embed.title === "Account Manager (Beta)";
 
   const [footerText, setFooterText] = useState(embed.footer?.text || "");
 
@@ -47,6 +53,99 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
   const todayStats = ["Today"];
   const rangeStats = ["30 Days", "90 Days", "180 Days"];
 
+  const renderInline = (text: string, context?: string) => {
+    const nodes: Array<React.ReactNode> = [];
+    const re = /`([^`]+)`|\*\*([^*]+)\*\*/g;
+    let lastIndex = 0;
+    let keyIdx = 0;
+    let m: RegExpExecArray | null;
+
+    while ((m = re.exec(text)) !== null) {
+      if (m.index > lastIndex) {
+        nodes.push(text.slice(lastIndex, m.index));
+      }
+
+      if (m[1]) {
+        const content = m[1];
+        const isSlash = content.trim().startsWith("/");
+        const isUsage = context?.includes("**Usage:**");
+
+        nodes.push(
+          isSlash && !isUsage ? (
+            <SlashMention key={`slash-${keyIdx++}`}>{content}</SlashMention>
+          ) : (
+            <InlineCode key={`code-${keyIdx++}`}>{content}</InlineCode>
+          )
+        );
+      } else if (m[2]) {
+        nodes.push(
+          <strong
+            key={`bold-${keyIdx++}`}
+            className="font-semibold text-[#2e3338] dark:text-[#f2f3f5]"
+          >
+            {m[2]}
+          </strong>
+        );
+      }
+
+      lastIndex = re.lastIndex;
+    }
+
+    if (lastIndex < text.length) {
+      nodes.push(text.slice(lastIndex));
+    }
+
+    return nodes;
+  };
+
+  const renderDescription = () => {
+    if (!embed.description) return null;
+
+    const description = embed.description.replace(/\\n/g, "\n");
+
+    if (!description.includes("\n")) {
+      return (
+        <p
+          className={`${
+            isPriceEmbed ? "mb-2" : "mb-2.5"
+          } text-[13px] leading-[1.4] text-[#4f5660] dark:text-[#dbdee1]`}
+        >
+          {renderInline(description, description)}
+        </p>
+      );
+    }
+
+    const blocks = description
+      .trim()
+      .split(/\n{2,}/)
+      .map((block) => block.trim())
+      .filter(Boolean);
+
+    return (
+      <div className="mb-2.5 space-y-3 text-[13px] leading-[1.4] text-[#4f5660] dark:text-[#dbdee1]">
+        {blocks.map((block, blockIdx) => {
+          const lines = block
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean);
+
+          return (
+            <div
+              key={blockIdx}
+              className={isAccountManagerEmbed ? "space-y-0" : "space-y-0.5"}
+            >
+              {lines.map((line, lineIdx) => (
+                <div key={lineIdx} className="leading-[17px]">
+                  {renderInline(line, block)}
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div
       className={`overflow-hidden rounded border border-[#d4d7dc] border-l-4 bg-[#f2f3f5] dark:border-[#1f2127] dark:bg-[#2b2d31] ${
@@ -74,17 +173,41 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
 
         <div className={`flex items-start ${isPriceEmbed ? "w-full gap-1" : "gap-3"}`}>
           <div className="flex-1">
-            {embed.title && (
-              <h4 className="mb-1 text-[14px] font-semibold leading-tight text-[#2e3338] dark:text-[#f2f3f5]">
-                {embed.title}
-              </h4>
-            )}
+            {embed.title &&
+              (embed.titleIconUrl ? (
+                isAccountManagerEmbed ? (
+                  <div className="mb-2 flex h-4 items-center gap-1.5 leading-none">
+                    <span
+                      aria-hidden="true"
+                      className="block h-4 w-4 shrink-0 bg-contain bg-center bg-no-repeat"
+                      style={{ backgroundImage: `url("${embed.titleIconUrl}")` }}
+                    />
 
-            {embed.description && (
-              <p className={`${isPriceEmbed ? "mb-2" : "mb-2.5"} text-[13px] leading-[1.4] text-[#4f5660] dark:text-[#dbdee1]`}>
-                {embed.description}
-              </p>
-            )}
+                    <h4 className="m-0 text-[14px] font-semibold leading-4 text-[#2e3338] dark:text-[#f2f3f5]">
+                      {embed.title}
+                    </h4>
+                  </div>
+                ) : (
+                  <div className="mb-1 flex items-center gap-1.5">
+                    <Image
+                      src={embed.titleIconUrl}
+                      alt=""
+                      width={16}
+                      height={16}
+                      className="h-4 w-4 shrink-0 object-contain"
+                    />
+                    <h4 className="m-0 text-[14px] font-semibold leading-tight text-[#2e3338] dark:text-[#f2f3f5]">
+                      {embed.title}
+                    </h4>
+                  </div>
+                )
+              ) : (
+                <h4 className="mb-1 text-[14px] font-semibold leading-tight text-[#2e3338] dark:text-[#f2f3f5]">
+                  {embed.title}
+                </h4>
+              ))}
+
+            {renderDescription()}
 
             {isPriceEmbed ? (
               <div className="mb-3 space-y-2.5">
@@ -182,7 +305,9 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
                     <div className="text-xs font-semibold uppercase tracking-[0.03em] text-[#747f8d] dark:text-[#b5bac1]">
                       {field.name}
                     </div>
-                    <div className="mt-0.5 text-[12px] text-[#4f5660] dark:text-[#dbdee1]">{field.value}</div>
+                    <div className="mt-0.5 text-[12px] text-[#4f5660] dark:text-[#dbdee1]">
+                      {field.value}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -191,10 +316,10 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
             {embed.image && (
               <div
                 className={`w-full overflow-hidden rounded ${
-                    isPriceEmbed
-                        ? "mt-2.5 -mx-1 bg-transparent border-0"
-                        : "mt-2 border border-[#d4d7dc] bg-[#eceff1] dark:border-[#202227] dark:bg-[#25272c]"
-                    }`}
+                  isPriceEmbed
+                    ? "mt-2.5 -mx-1 bg-transparent border-0"
+                    : "mt-2 border border-[#d4d7dc] bg-[#eceff1] dark:border-[#202227] dark:bg-[#25272c]"
+                }`}
               >
                 {isPriceEmbed ? (
                   <div className="relative w-full aspect-[16/6.4]">
@@ -225,14 +350,24 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
                 alt="Thumbnail"
                 width={isPriceEmbed ? 60 : 64}
                 height={isPriceEmbed ? 60 : 64}
-                className={isPriceEmbed ? "h-[60px] w-[60px] rounded object-contain" : "h-[64px] w-[64px] rounded object-contain"}
+                className={
+                  isPriceEmbed
+                    ? "h-[60px] w-[60px] rounded object-contain"
+                    : "h-[64px] w-[64px] rounded object-contain"
+                }
               />
             </div>
           )}
         </div>
 
         {embed.footer && (
-          <div className="mt-2 flex flex-col gap-0 pt-2 dark:border-[#3f4147]">
+          <div
+            className={
+              isAccountManagerEmbed
+                ? "mt-3 flex flex-col gap-0 p-0 dark:border-[#3f4147]"
+                : "mt-2 flex flex-col gap-0 pt-2 dark:border-[#3f4147]"
+            }
+          >
             {embed.footer.iconUrl && (
               <Image
                 src={embed.footer.iconUrl}
@@ -244,7 +379,13 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
             )}
             <div className="space-y-0.5 text-[11px] text-[#747f8d] dark:text-[#b5bac1]">
               {footerText.split("\n").map((line) => (
-                <p key={line}>{line}</p>
+                isAccountManagerEmbed ? (
+                  <p key={line} className="m-0 leading-[14px]">
+                    {line}
+                  </p>
+                ) : (
+                  <p key={line}>{line}</p>
+                )
               ))}
             </div>
           </div>
