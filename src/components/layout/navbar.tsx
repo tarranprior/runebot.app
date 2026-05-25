@@ -11,12 +11,13 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { Menu, X, BookOpen, Github, ArrowUpRight } from "lucide-react";
+import { Menu, X, BookOpen, Github } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Container } from "@/components/ui/container";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { CursorToggle } from "@/components/ui/cursor-toggle";
 import { PRIMARY_NAV_ITEMS, DISCORD_INVITE_PATH } from "@/lib/navigation";
+import ExternalLinkIcon from "@/components/ui/external-link-icon";
 import {
   isSectionRoute,
   scrollToSectionById,
@@ -247,6 +248,7 @@ export function Navbar() {
                     >
                       <Github className="h-4 w-4" />
                       GitHub
+                      <ExternalLinkIcon className="h-4 w-4 text-foreground/60" />
                     </Link>
 
                     <a
@@ -256,7 +258,7 @@ export function Navbar() {
                       className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90"
                     >
                       Add to Discord
-                      <ArrowUpRight className="h-4 w-4" />
+                      <ExternalLinkIcon className="h-4 w-4" />
                     </a>
                   </div>
 
@@ -323,6 +325,7 @@ export function Navbar() {
                 >
                   <Github className="h-5 w-5" />
                   GitHub
+                  <ExternalLinkIcon className="h-5 w-5 text-foreground/60" />
                 </Link>
 
                 <a
@@ -333,7 +336,7 @@ export function Navbar() {
                   onClick={() => setOpen(false)}
                 >
                   Add to Discord
-                  <ArrowUpRight className="h-5 w-5" />
+                  <ExternalLinkIcon className="h-5 w-5" />
                 </a>
               </div>
             </M.nav>

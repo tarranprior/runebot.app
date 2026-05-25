@@ -8,8 +8,11 @@ import { Steps, Step } from "fumadocs-ui/components/steps";
 import { Files, Folder, File } from "fumadocs-ui/components/files";
 import { InlineTOC } from "fumadocs-ui/components/inline-toc";
 import { TypeTable } from "fumadocs-ui/components/type-table";
+import { Card as DefaultCard } from "fumadocs-ui/components/card";
+import ExternalLinkIcon from "@/components/ui/external-link-icon";
 
 import { DocsEmbedPreview } from "@/components/docs/docs-embed-preview";
+import DocsInviteButton from "@/components/docs/docs-invite-button";
 import { DocsStatsPreview } from "@/components/docs/docs-stats-preview";
 import { DocsPricePreview } from "@/components/docs/docs-price-preview";
 import { DocsWikiPreview } from "@/components/docs/docs-wiki-preview";
@@ -29,6 +32,26 @@ const preventKbdWrap = (children: React.ReactNode): React.ReactNode => {
 };
 
 type KbdProps = React.ComponentPropsWithoutRef<"kbd">;
+type DefaultCardProps = React.ComponentProps<typeof DefaultCard>;
+type CardPropsWithTarget = DefaultCardProps & { target?: string };
+
+function CardWrapper(props: CardPropsWithTarget) {
+  const { href, target } = props;
+  const isExternal =
+    target === "_blank" ||
+    (typeof href === "string" && (href.startsWith("http") || href.startsWith("https") || href === "/invite"));
+
+  return (
+    <div className="relative">
+      <DefaultCard {...props} />
+      {isExternal ? (
+        <span className="absolute right-4 top-4 text-foreground/60">
+          <ExternalLinkIcon className="h-4 w-4 text-foreground/60" />
+        </span>
+      ) : null}
+    </div>
+  );
+}
 
 export const docsMdxComponents: MDXComponents = {
   ...defaultMdxComponents,
@@ -68,4 +91,6 @@ export const docsMdxComponents: MDXComponents = {
   DocsWikiPreview,
   DocsErrorPreview,
   DocsAccountManagerPreview,
+  Card: CardWrapper,
+  DocsInviteButton,
 };

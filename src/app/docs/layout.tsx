@@ -10,6 +10,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { docsSource } from "@/lib/docs-source";
 import { withDevTree } from "@/lib/docs-dev-tree";
 import { PRIMARY_NAV_ITEMS, PROJECT_GITHUB_URL, DISCORD_INVITE_PATH } from "@/lib/navigation";
+import ExternalLinkIcon from "@/components/ui/external-link-icon";
 import styles from "./docs-shell.module.css";
 
 export default function DocsRouteLayout({ children }: { children: ReactNode }) {
@@ -57,15 +58,17 @@ export default function DocsRouteLayout({ children }: { children: ReactNode }) {
               >
                 <Github className="h-4 w-4" />
                 GitHub
+                <ExternalLinkIcon className="h-4 w-4 text-foreground/60" />
               </Link>
 
               <a
                 href={DISCORD_INVITE_PATH}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90"
+                className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90"
               >
                 Add to Discord
+                <ExternalLinkIcon className="h-4 w-4" />
               </a>
             </div>
           </div>

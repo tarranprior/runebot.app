@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Github, MessageCircle, Sparkles } from "lucide-react";
+import { Github, MessageCircle, Sparkles } from "lucide-react";
+import InviteButton from "@/components/ui/invite-button";
+import ExternalLinkIcon from "@/components/ui/external-link-icon";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
-
-import { DISCORD_INVITE_PATH } from "@/lib/navigation";
 
 const DISCORD_SUPPORT_INVITE_URL = "https://discord.com/invite/FWjNkNuTzv";
 
@@ -35,15 +35,7 @@ export function Invite() {
               </h2>
               
               <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-                <a
-                  href={DISCORD_INVITE_PATH}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90 sm:text-base"
-                >
-                  Invite to Discord
-                  <ArrowUpRight className="h-4 w-4" />
-                </a>
+                <InviteButton label="Invite to Discord" className="px-6 py-3 justify-center text-sm sm:text-base font-semibold" />
 
                 <a
                   href={DISCORD_SUPPORT_INVITE_URL}
@@ -52,6 +44,7 @@ export function Invite() {
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-surface-border bg-background px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-background/80 dark:border-surface-border dark:bg-surface dark:hover:bg-surface/80 sm:text-base"
                 >
                   Join support server
+                  <ExternalLinkIcon className="h-4 w-4 text-foreground/60" />
                 </a>
               </div>
             </div>
@@ -79,7 +72,7 @@ export function Invite() {
                     className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition hover:text-accent/80"
                   >
                     Visit the support server
-                    <ArrowUpRight className="h-4 w-4" />
+                    <ExternalLinkIcon className="h-4 w-4" />
                   </a>
                 </div>
               </div>
@@ -105,7 +98,7 @@ export function Invite() {
                     className="inline-flex items-center gap-2 text-sm font-semibold text-accent transition hover:text-accent/80"
                   >
                     Star the GitHub repository
-                    <ArrowUpRight className="h-4 w-4" />
+                    <ExternalLinkIcon className="h-4 w-4" />
                   </Link>
                 </div>
               </div>
