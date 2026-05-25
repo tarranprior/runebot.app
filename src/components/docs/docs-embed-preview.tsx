@@ -3,9 +3,11 @@ import { DiscordMessage } from "@/components/ui/discord-message";
 
 type DocsEmbedPreviewProps = {
   id: string;
+  className?: string;
+  ephemeral?: boolean;
 };
 
-export function DocsEmbedPreview({ id }: DocsEmbedPreviewProps) {
+export function DocsEmbedPreview({ id, className = "", ephemeral = false }: DocsEmbedPreviewProps) {
   const message = getDocsEmbedMock(id);
 
   if (!message) {
@@ -16,5 +18,29 @@ export function DocsEmbedPreview({ id }: DocsEmbedPreviewProps) {
     );
   }
 
-  return <DiscordMessage message={message} />;
+  if (ephemeral) {
+    return (
+      <div className={`mx-auto w-full ${className}`}>
+        {/* Backdrop uses the same horizontal padding as site Container so it lines up with codeblocks */}
+        <div className="w-full bg-[#5865F2]/10 px-4 sm:px-6 lg:px-8 py-3 relative overflow-hidden">
+          {/* thin straight left bar flush with the backdrop's left edge and full height */}
+          <div className="absolute left-0 inset-y-0 w-px bg-[#5865F2] rounded-none" />
+
+          <div className="max-w-[520px]">
+            <DiscordMessage message={message} />
+          </div>
+
+          <div className="mt-2 ml-[calc(40px_+_0.75rem)] text-[11px] text-fd-muted-foreground">
+            Only you can see this · <span className="text-[#5865F2]">Dismiss message</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={className}>
+      <DiscordMessage message={message} />
+    </div>
+  );
 }

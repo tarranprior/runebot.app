@@ -4,6 +4,15 @@ import { createMDX } from "fumadocs-mdx/next";
 const withMDX = createMDX();
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "oldschool.runescape.wiki",
+        pathname: "/images/**",
+      },
+    ],
+  },
   async redirects() {
     return [
       {

@@ -79,3 +79,23 @@ body.custom-cursor-enabled,
 body.custom-cursor-enabled * {
   cursor: none !important;
 }
+
+/* Ensure raw <kbd> elements in docs prose never break across lines and look like chips */
+#nd-docs-layout article kbd,
+#nd-page article kbd,
+[data-pagefind-body] kbd {
+  display: inline-flex !important;
+  align-items: center;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  hyphens: none !important;
+  vertical-align: baseline;
+
+  border-radius: 6px;
+  border: 1px solid rgba(88, 101, 242, 0.12);
+  padding: 0.125rem 0.375rem;
+  font-size: 0.85em;
+  font-weight: 500;
+  line-height: 1;
+}
