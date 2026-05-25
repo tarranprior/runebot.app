@@ -78,7 +78,8 @@ export default function DocsRouteLayout({ children }: { children: ReactNode }) {
             tree={withDevTree(docsSource.getPageTree())}
             githubUrl={PROJECT_GITHUB_URL}
             nav={{
-              title: "Runebot Docs",
+              title: <span className="runebot-docs-brand">Runebot Docs</span>,
+              url: "/docs",
             }}
           >
             {children}

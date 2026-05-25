@@ -297,3 +297,24 @@
 .docsShell :global(article .shadow-sm) {
   box-shadow: none;
 }
+
+/* Scoped override for the docs sidebar brand/title.
+   - Avoid nested anchors by keeping `nav.title` as non-anchor content (span).
+   - Remove the square hover/highlight block for the sidebar brand anchor only
+     using a narrow `:has()` match so other sidebar link hover states remain. */
+.docsShell :global(.runebot-docs-brand) {
+  display: inline;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Target the sidebar anchor that wraps the brand (Fumadocs renders the outer <a>). */
+.docsShell :global(#nd-sidebar a:has(.runebot-docs-brand)),
+.docsShell :global(#nd-sidebar a:has(.runebot-docs-brand):hover),
+.docsShell :global(#nd-sidebar a:has(.runebot-docs-brand):focus) {
+  background: transparent !important;
+  color: var(--color-fd-foreground) !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
