@@ -21,6 +21,7 @@ interface DiscordSelectProps {
   defaultOpen?: boolean;
   disableAutoOpen?: boolean;
   disabled?: boolean;
+  onSelect?: (opt: { label: string; iconSrc?: string } | string) => void;
 }
 
 const optionListVariants = {
@@ -48,6 +49,7 @@ export function DiscordSelect({
   defaultOpen = false,
   disableAutoOpen = false,
   disabled = false,
+  onSelect,
 }: DiscordSelectProps) {
   const [isOpen, setIsOpen] = useState<boolean>(defaultOpen);
   const [selected, setSelected] = useState<string>(placeholder);
@@ -59,6 +61,15 @@ export function DiscordSelect({
   const normalizedOptions: { label: string; iconSrc?: string }[] = options.map((opt) =>
     typeof opt === "string" ? { label: opt } : opt
   );
+
+  // Remove duplicate labels while preserving first-seen order so selections
+  // don't render duplicated entries (e.g., header + repeated option).
+  const seen = new Set<string>();
+  const uniqueOptions = normalizedOptions.filter((o) => {
+    if (seen.has(o.label)) return false;
+    seen.add(o.label);
+    return true;
+  });
 
   const renderLabel = (label: string) => {
     const nodes: React.ReactNode[] = [];
@@ -101,8 +112,8 @@ export function DiscordSelect({
   };
 
   const selectedFirstOptions = [
-    ...normalizedOptions.filter((o) => o.label === selected),
-    ...normalizedOptions.filter((o) => o.label !== selected),
+    ...uniqueOptions.filter((o) => o.label === selected),
+    ...uniqueOptions.filter((o) => o.label !== selected),
   ];
 
   useEffect(() => {
@@ -162,7 +173,28 @@ export function DiscordSelect({
         className="w-full rounded-md border border-[#cfd3da] bg-[#ebedef] dark:border-[#3f4147] dark:bg-[#2f3136]"
       >
         <div className="flex h-9 items-center justify-between px-3 text-[12px] text-[#4f5660] dark:text-[#c5c9ce]">
-          <span className="truncate">{selected}</span>
+          {(() => {
+            const sel = uniqueOptions.find((o) => o.label === selected);
+
+            if (sel) {
+              return (
+                <span className="flex min-w-0 items-center gap-2">
+                  {sel.iconSrc && (
+                    <Image
+                      src={sel.iconSrc}
+                      alt=""
+                      className="h-4 w-4 shrink-0 object-contain"
+                      width={16}
+                      height={16}
+                    />
+                  )}
+                  <span className="truncate text-left">{renderLabel(sel.label)}</span>
+                </span>
+              );
+            }
+
+            return <span className="truncate">{renderLabel(selected)}</span>;
+          })()}
           <motion.div
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
@@ -201,6 +233,7 @@ export function DiscordSelect({
                       onClick={() => {
                         setSelected(opt.label);
                         setIsOpen(false);
+                        onSelect?.(opt);
                       }}
                       className={`flex w-full cursor-pointer items-center justify-between rounded-sm px-3 text-[12px] text-[#2e3338] dark:text-[#f2f3f5] h-9 ${
                         isSelected

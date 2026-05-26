@@ -13,6 +13,17 @@ interface DiscordMessageProps {
 export function DiscordMessage({ message }: DiscordMessageProps) {
   const avatarSrc = message.authorAvatar || "/images/runebot-ico.png";
   const [localTimestamp, setLocalTimestamp] = useState("Today at --:--");
+  const [accountSelected, setAccountSelected] = useState<string | null>(() => {
+    const managerEmbed = (message.embeds || []).find(
+      (e) => e.variant === "account-manager" || e.title === "Account Manager (Beta)"
+    );
+    if (!managerEmbed) return null;
+    const selectField = (managerEmbed.fields || []).find((f) => !f.inline && f.name === "Select Menu");
+    if (!selectField) return null;
+    const selectOptions = selectField.value.split("\n").map((s) => s.trim()).filter(Boolean);
+    const raw = selectOptions.slice(1);
+    return raw.length > 0 ? raw[0] : null;
+  });
   const isPriceMessage = (message.embeds || []).some(
     (embed) =>
       Boolean(embed.image) &&
@@ -80,27 +91,68 @@ export function DiscordMessage({ message }: DiscordMessageProps) {
                 const isAccountManager =
                   embed.variant === "account-manager" || embed.title === "Account Manager (Beta)";
 
-                const selectItems = isAccountManager
-                  ? rawSelectItems.map((s) => {
-                      if (s.includes("(Ironman)")) {
-                        return { label: s, iconSrc: "/images/features/emotes/ironman_helmet.png" };
-                      }
+                // Build select items (icons attached below when ordering).
 
-                      return s;
-                    })
-                  : rawSelectItems;
+                // Order accounts for embed display: selected first when applicable.
+                const orderedEmbedAccounts =
+                  isAccountManager && accountSelected && rawSelectItems.includes(accountSelected)
+                    ? [accountSelected, ...rawSelectItems.filter((v) => v !== accountSelected)]
+                    : rawSelectItems;
+
+                // For embed description lines, prefix Ironman accounts with the emote token
+                // so the renderer (`renderInline`) will show the same emote image used by the select.
+                const orderedEmbedAccountLines = orderedEmbedAccounts.map((s) =>
+                  s.includes("(Ironman)") ? `:ironman_helmet: ${s}` : s
+                );
+
+                // Order options for the dropdown (attach icons where needed).
+                const orderedSelectItems = orderedEmbedAccounts.map((s) => {
+                  if (s.includes("(Ironman)")) return { label: s, iconSrc: "/images/features/emotes/ironman_helmet.png" };
+                  return s;
+                });
 
                 return (
                   <div key={index}>
-                    <DiscordEmbed embed={embed} />
+                    {/* Render a possibly modified embed for Account Manager preview ordering */}
+                    {(() => {
+                      if (!isAccountManager) return <DiscordEmbed embed={embed} />;
+
+                      // Clone and replace the select field value and description to reflect ordering
+                      const newFields = (embed.fields || []).map((f) => {
+                        if (!f.inline && f.name === "Select Menu") {
+                          return { ...f, value: `${selectPlaceholder}\n${orderedSelectItems.map((i) => (typeof i === 'string' ? i : i.label)).join("\n")}` };
+                        }
+
+                        return f;
+                      });
+
+                      // Replace accounts block in description if present
+                      let newDescription = embed.description || "";
+                      if (newDescription && newDescription.includes("**Accounts")) {
+                        const lines = newDescription.split("\n");
+                        const idx = lines.findIndex((l) => l.startsWith("**Accounts"));
+                        if (idx !== -1) {
+                          const header = lines.slice(0, idx + 1);
+                          newDescription = [...header, ...orderedEmbedAccountLines].join("\n");
+                        }
+                      }
+
+                      const modifiedEmbed = { ...embed, fields: newFields, description: newDescription };
+
+                      return <DiscordEmbed embed={modifiedEmbed} />;
+                    })()}
 
                     {selectField ? (
                       <DiscordSelect
                         placeholder={selectPlaceholder}
-                        options={selectItems}
+                        options={orderedSelectItems}
                         compactMenu={isAccountManager}
                         defaultOpen={isAccountManager}
                         disableAutoOpen={isAccountManager}
+                        onSelect={(opt) => {
+                          const label = typeof opt === "string" ? opt : opt.label;
+                          setAccountSelected(label);
+                        }}
                       />
                     ) : isAccountManager ? (
                       <DiscordSelect

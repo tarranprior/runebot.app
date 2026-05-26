@@ -104,7 +104,7 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
             alt={emote}
             width={16}
             height={16}
-            className="inline-block align-text-bottom mr-1"
+            className="inline-block h-4 w-4 object-contain -mt-0.5 shrink-0 align-middle"
           />
         );
       } else if (m[4] && m[5]) {
