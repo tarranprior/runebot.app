@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { DiscordMessage as DiscordMessageType } from "@/types/discord";
+import { DiscordMessage as DiscordMessageType, DiscordButton } from "@/types/discord";
 import { DiscordEmbed } from "./discord-embed";
 import { DiscordSelect } from "./discord-select";
 
@@ -94,7 +94,7 @@ export function DiscordMessage({ message }: DiscordMessageProps) {
                   <div key={index}>
                     <DiscordEmbed embed={embed} />
 
-                    {selectField && (
+                    {selectField ? (
                       <DiscordSelect
                         placeholder={selectPlaceholder}
                         options={selectItems}
@@ -102,7 +102,16 @@ export function DiscordMessage({ message }: DiscordMessageProps) {
                         defaultOpen={isAccountManager}
                         disableAutoOpen={isAccountManager}
                       />
-                    )}
+                    ) : isAccountManager ? (
+                      <DiscordSelect
+                        placeholder={"You don't have any accounts."}
+                        options={[]}
+                        compactMenu={true}
+                        defaultOpen={false}
+                        disableAutoOpen={true}
+                        disabled
+                      />
+                    ) : null}
                   </div>
                 );
               })}
@@ -113,18 +122,41 @@ export function DiscordMessage({ message }: DiscordMessageProps) {
               <div className={isPriceMessage ? "mt-2.5 space-y-1.5" : "mt-2 space-y-1.5"}>
                 {message.buttons && message.buttons.length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
-                    {message.buttons.map((button, index) => {
-                      const base = "inline-flex items-center justify-center h-8 min-h-8 min-w-[60px] rounded-[8px] text-sm font-medium leading-4 px-2.5 transition-colors duration-150 select-none";
+                    {message.buttons.map((button: DiscordButton, index) => {
+                      const isDestructive = button.destructive === true;
+                      const isDisabled = button.disabled === true;
 
-                      const variantClass =
-                        button.variant === "primary"
-                          ? `${base} bg-[#5865f2] text-white text-[12px] border border-transparent hover:bg-[#4e5ad6] dark:bg-[#5865f2] dark:hover:bg-[#4e5ad6]`
-                          : button.variant === "link"
-                          ? `${base} bg-transparent text-[#00a8fc] text-[12px] hover:underline dark:text-[#00aff4]`
-                          : `${base} bg-[#eef0f2] text-[#111827] text-[12px] border border-[#d6d9df] hover:bg-[#e2e5e9] dark:bg-[#252429] dark:text-[#e6e9ed] dark:border-[#2f3338] dark:hover:bg-[#42464b]`;
+                      const baseState =
+                        "inline-flex items-center justify-center h-8 min-h-8 min-w-[60px] rounded-[8px] text-sm font-medium leading-4 px-2.5 transition-colors duration-150 select-none";
+
+                      const base = isDisabled
+                        ? `${baseState} opacity-60 cursor-not-allowed bg-[#f3f4f6] text-[#9aa0a6] border border-[#e5e7eb] dark:bg-[#242527] dark:text-[#6b6e73] dark:border-[#2b2d30]`
+                        : baseState;
+
+                      const variantClass = isDestructive
+                        ? `${base} bg-[#B72615] text-white text-[12px] border border-transparent hover:bg-[#9d2012]`
+                        : button.variant === "primary"
+                        ? `${base} bg-[#5865f2] text-white text-[12px] border border-transparent hover:bg-[#4e5ad6] dark:bg-[#5865f2] dark:hover:bg-[#4e5ad6]`
+                        : button.variant === "link"
+                        ? `${base} bg-transparent text-[#00a8fc] text-[12px] hover:underline dark:text-[#00aff4]`
+                        : `${base} bg-[#eef0f2] text-[#111827] text-[12px] border border-[#d6d9df] hover:bg-[#e2e5e9] dark:bg-[#252429] dark:text-[#e6e9ed] dark:border-[#2f3338] dark:hover:bg-[#42464b]`;
+
+                      if (button.href && !isDisabled) {
+                        return (
+                          <a
+                            key={index}
+                            className={variantClass}
+                            href={button.href}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {button.label}
+                          </a>
+                        );
+                      }
 
                       return (
-                        <button key={index} className={variantClass}>
+                        <button key={index} className={variantClass} disabled={isDisabled}>
                           {button.label}
                         </button>
                       );

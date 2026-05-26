@@ -13,7 +13,7 @@ The `/stats` command allows users to fetch player stats from the official hiscor
 ### Example
 
 ```
-/stats username: Firmwares account_type: normal
+/stats username: Zezima account_type: normal
 ```
 
 <DocsStatsPreview className="mt-12 mb-12" />
@@ -26,14 +26,32 @@ Use the buttons below the embed to switch between **different activities**, such
   This feature is **currently in beta**. Future enhancements are in active development.
 </Callout>
 
-You can manage your RuneScape accounts using the **Account Manager**, which allows you to set a default account and remove stale accounts.
+You can manage your Runebot accounts using the **Account Manager**, which allows players to view all of their saved accounts, set a default account, and remove stale accounts.
 
 ### Example
+
+<DocsEmbedPreview id="account-manager-empty" className="mt-6" ephemeral />
+
+Once an account is added, the **Account Manager** will display all of your saved accounts and allow you to set a default for quick access in `/stats`:
 
 <DocsAccountManagerPreview className="mt-6" />
 
 <Callout type="info" className="mb-6">
   **This is an ephemeral message, meaning only you can see it**.
 </Callout>
+
+### Delete Accounts
+
+You can remove an account by selecting it from the dropdown and clicking the <kbd>Delete</kbd> button.
+
+The bot will automatically set the next account in the list as the new default. This means if you don't have any other accounts, you'll need to add a new account with `/setrsn` before using `/stats` again.
+
+<DocsErrorPreview id="account-delete-confirm" ephemeral className="mt-6" />
+
+<Callout type="info" className="mb-6">
+  **This is an ephemeral message, meaning only you can see it**.
+</Callout>
+
+You must confirm with the <kbd className="bg-red-700 text-white">Confirm</kbd> button to complete the deletion. If you click <kbd>Cancel</kbd> or do not respond within 30 seconds, the deletion will be cancelled.
 
 <br/>

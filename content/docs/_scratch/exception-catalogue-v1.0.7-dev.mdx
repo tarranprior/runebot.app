@@ -1,0 +1,343 @@
+---
+title: Exception catalogue — v1.0.7-dev
+description: Dev-only reference for Runebot exception messages and preview mocks.
+---
+
+This page is a maintainer reference for validating current Runebot exception messages, visibility, and Discord preview mocks during v1.0.7 polish. It is not final public troubleshooting copy.
+
+**Maintainer Note**: This page should feed the future public [Troubleshooting](../troubleshooting) docs, but public pages should be rewritten around user problems rather than Python exception names.
+
+
+## Search Tools — Exception Cases (Developer Reference)
+
+### `Nonexistence`
+
+- **Cause**: A Search Tools parser could not match the provided search query to an Old School RuneScape term or wiki/article result.
+
+- **User Message**:
+
+> The term you have searched for does not exist in Old School RuneScape. It may have never existed, or was added to RuneScape after the August 2007 Archive of RuneScape, which Old School RuneScape was based on, and has not been replicated.
+>
+> If you are searching for a future update, please look for it at [upcoming updates](https://oldschool.runescape.wiki/w/Upcoming_updates) or create an article about it, supplying definite sources and citations.
+
+- **Preview**:
+
+<DocsErrorPreview id="nonexistence" className="mt-6" />
+
+- **Visibility**: Public/non-ephemeral.
+- **Status**: Confirmed from current live Discord captures across Search Tools and bot source.
+
+---
+
+### `NoAlchemyData`
+
+- **Cause**: The `/alchemy` search did not return a matching AlchemyData entry for the provided term.
+
+- **User Message**:
+
+> The term you have searched for does not appear to have any `AlchemyData`. Try selecting one of the options from the list of autocomplete suggestions.
+>
+> **Usage**: `/alchemy <SEARCH_QUERY>`
+
+- **Preview**:
+
+<DocsErrorPreview id="no-alchemy-data" className="mt-6" />
+
+- **Visibility**: Public/non-ephemeral.
+- **Status**: Confirmed from current live Discord capture and bot source.
+
+---
+
+### `NoMinigameData`
+
+- **Cause**: The `/minigames` search did not return a matching MinigameData entry for the provided term.
+
+- **User Message**:
+
+> The term you have searched for does not appear to have any `MinigameData`. Try selecting one of the options from the list of autocomplete suggestions, or visit [this page](https://oldschool.runescape.wiki/w/Minigames) for a full list of minigames.
+>
+> **Usage**: `/minigames <SEARCH_QUERY>`
+
+- **Preview**:
+
+<DocsErrorPreview id="no-minigame-data" className="mt-6" />
+
+- **Visibility**: Public/non-ephemeral.
+- **Status**: Confirmed from current live Discord capture and bot source.
+
+---
+
+### `NoMonsterData`
+
+- **Cause**: The `/bestiary` search did not return a matching MonsterData entry for the provided term.
+
+- **User Message**:
+
+> The term you have searched for does not appear to have any `MonsterData`. Try selecting one of the options from the list of autocomplete suggestions, or visit [this page](https://oldschool.runescape.wiki/w/Bestiary) for a full list of monsters.
+>
+> **Usage**: `/bestiary <SEARCH_QUERY>`
+
+- **Preview**:
+
+<DocsErrorPreview id="no-monster-data" className="mt-6" />
+
+- **Visibility**: Public/non-ephemeral.
+- **Status**: Confirmed from current live Discord capture and bot source.
+
+---
+
+### `NoQuestData`
+
+- **Cause**: The `/quests` search did not return a matching QuestData entry for the provided term.
+
+- **User Message**:
+
+> The term you have searched for does not have any `QuestData`. Try selecting one of the options from the list of autocomplete suggestions, or visit [this page](https://oldschool.runescape.wiki/w/Quests/List) for a full list of quests.
+>
+> **Usage**: `/quests <SEARCH_QUERY>`
+
+- **Preview**:
+
+<DocsErrorPreview id="no-quest-data" className="mt-6" />
+
+- **Visibility**: Public/non-ephemeral.
+- **Status**: Confirmed from current live Discord capture and bot source.
+
+---
+
+### `StubArticle`
+
+- **Cause**: A wiki/article response is considered a stub due to insufficient content for the requested article.
+
+- **User Message**:
+
+> This means there is insufficient information on this article to display. However, this does not mean the stub is not a legitimate article; it just needs to be expanded or may not be supported by Runebot at this time.
+
+- **Preview**:
+
+<DocsErrorPreview id="stub-article" className="mt-6" />
+
+- **Visibility**: Public/non-ephemeral.
+- **Status**: Confirmed from current live Discord capture and bot source.
+
+---
+
+## `/stats` — Exception Cases (Developer Reference)
+
+### `UsernameNonexistent`
+
+- **Cause**: `/stats` was run without a username and the command author does not have a saved/default RuneScape account.
+
+- **User Message**:
+
+> You don't have any accounts yet. Use `/setrsn` to add your first account, or add the `username` argument to `/stats`.
+>
+> **Usage**: `/stats` or `/stats <USERNAME> [ACCOUNT_TYPE (optional)]`
+
+- **Preview**:
+
+<DocsErrorPreview id="error-no-saved-accounts" ephemeral className="mt-6" />
+
+- **Visibility**: Ephemeral.
+- **Status**: Confirmed from current live Discord capture and bot source.
+- **Known Discrepancies**:
+    - If `/stats username: @DISCORD_USER` targets a Discord user with no saved/default account, the bot currently reuses this same message. This is misleading because it says “you don't have any accounts yet” even though the missing account belongs to the mentioned user. This should be split into a dedicated mention-lookup message/exception before public troubleshooting docs are finalised.
+
+---
+
+### `UsernameInvalid`
+
+- **Cause**: `/stats` was run with a username that exceeds length limits or contains disallowed characters.
+
+- **User Message**:
+
+> The username provided is not valid. Please check the length and allowed characters, then try again.
+
+- **Preview**:
+
+<DocsErrorPreview id="error-invalid-username" ephemeral className="mt-6" />
+
+- **Visibility**: Ephemeral.
+- **Status**: Confirmed from current live Discord capture and bot source.
+
+---
+
+### `NoHiscoreData`
+
+- **Cause**: Hiscores returns 404/unparseable data for the username or the hiscores API is down.
+
+- **User Message**:
+
+> The player you have searched for doesn't appear to exist on the **Hiscores**, or the **API** is currently unavailable. Please try another username or try again later.
+
+- **Preview**:
+
+<DocsErrorPreview id="error-no-hiscore" className="mt-6" />
+
+- **Visibility**: Public/non-ephemeral.
+- **Status**: Confirmed from current live Discord capture and bot source.
+
+---
+
+### `NoGameModeData`
+
+- **Cause**: `/stats` was run with a valid username, but the selected `account_type` does not match the account found on the Hiscores.
+
+- **User Message**:
+
+> The username provided doesn't appear to exist under this `account_type`. Please select a different `account_type`, or try another username.
+>
+> **Usage**: `/stats` or `/stats <USERNAME> [ACCOUNT_TYPE (optional)]`
+
+- **Preview**:
+
+<DocsErrorPreview id="stats-no-gamemode-data" className="mt-6" />
+
+- **Visibility**: Public/non-ephemeral for direct `/stats` lookup. Component refresh/navigation paths edit the original stats response.
+- **Status**: Confirmed from current live Discord capture and bot source.
+- **Known Discrepancies**:
+    - The Usage line may still be simplified or moved into the main `/stats` usage docs before public troubleshooting docs are finalised.
+
+---
+
+### `WikiRequestFailed`
+
+- **Cause**: Runebot could not reach an upstream Old School RuneScape Wiki/API endpoint because of rate limiting, blocking, or temporary availability issues.
+
+- **User Message**:
+
+> The Old School RuneScape Wiki could not be reached for this request. This may be due to rate limiting, temporary blocking, or an upstream availability issue. Please try again shortly.
+
+- **Preview**:
+
+<DocsErrorPreview id="error-wiki-request-failed" className="mt-6" />
+
+- **Visibility**: Public/non-ephemeral when surfaced through the normal `/stats` expected-failure handler.
+- **Status**: Code-backed from current bot source. Live capture is not required for this `/stats` catalogue pass because this path depends on upstream blocking/rate-limit conditions that are difficult to trigger reliably.
+- **Known Discrepancies**:
+    - The message specifically references the Old School RuneScape Wiki. If this exception is surfaced from a Hiscores/API path, the wording may confuse users and should be reviewed during exception copy polish.
+
+---
+
+### `invalid_stats_component`
+
+- **Cause**: `/stats` component interaction could not be safely parsed or matched to the expected stats message state.
+
+- **User Message**:
+
+> This stats control is no longer valid. Please run `/stats` again.
+
+- **Preview**:
+
+<DocsErrorPreview id="stats-invalid-component" ephemeral className="mt-6" />
+
+- **Visibility**: Ephemeral.
+- **Status**: Code-backed from current bot source. Live capture is not required for this catalogue pass because this path is difficult to reproduce reliably while persistent controls remain valid.
+
+---
+
+### `account_delete_no_default`
+
+- **Cause**: The Account Manager delete action was triggered without a default account selected.
+
+- **User Message**:
+
+> You do not have a default account to delete.
+
+- **Preview**:
+
+<DocsErrorPreview id="account-delete-no-default" ephemeral className="mt-6" />
+
+- **Visibility**: Ephemeral.
+- **Status**: Code-backed from current bot source.
+- **Implementation Note**: This is a defensive Account Manager guard. Normal UX should prevent it because the Delete button is disabled when no default account exists.
+
+
+## `/setrsn` — Account Setup Cases (Developer Reference)
+
+### `MaximumAccountsReached`
+
+- **Cause**: `/setrsn` was used when the command author already had the maximum number of saved accounts.
+
+- **User Message**:
+
+> You have reached the maximum of **5 accounts** for your Discord account. Remove an existing account before adding a new one.
+
+- **Preview**:
+
+<DocsErrorPreview id="maximum-accounts-reached" ephemeral className="mt-6" />
+
+- **Visibility**: Ephemeral.
+- **Status**: Confirmed from current live Discord capture and bot source.
+
+
+## Administrator Commands — Exception Cases (Developer Reference)
+
+### `NoAdministratorPermissions`
+
+- **Cause**: A non-administrator attempted to run an administrator-only command.
+
+- **User Message**:
+
+> This command can only be used by **administrators**. For more information on commands, use `/help`.
+
+- **Preview**:
+
+<DocsErrorPreview id="no-administrator-permissions" ephemeral className="mt-6" />
+
+- **Visibility**: Ephemeral.
+- **Status**: Code-backed from current bot source.
+
+
+## Shared Acknowledgements — Interaction / Runtime (Developer Reference)
+
+These entries are shared acknowledgement paths used across commands or component interactions. They are listed separately so command-specific exception sections stay focused on their own user flows.
+
+### `wrong_component_user`
+
+- **Cause**: A user other than the original command author clicked a component tied to another user's interaction.
+
+- **User Message**:
+
+> Only the original author can use these buttons.
+
+- **Preview**:
+
+<DocsErrorPreview id="wrong-component-user" ephemeral className="mt-6" />
+
+- **Visibility**: Ephemeral.
+- **Status**: Code-backed from current bot source.
+- **Implementation Note**: Owner-mismatch component acknowledgements are now handled by the shared `ack_wrong_component_user(...)` helper.
+
+---
+
+### `runtime_failure`
+
+- **Cause**: An unexpected runtime error occurred while Runebot was handling a command or component interaction.
+
+- **User Message**:
+
+> Something went wrong while handling that request. Please try again.
+
+- **Preview**:
+
+<DocsErrorPreview id="runtime-failure" ephemeral className="mt-6" />
+
+- **Visibility**: Ephemeral.
+- **Status**: Code-backed from current bot source.
+- **Implementation Note**: Runtime failure acknowledgements now use the shared `ack_runtime_failure(...)` helper. Existing error-level logging remains in each command handler; the helper only sends the neutral user-facing embed.
+
+
+## Dev Notes
+
+These notes track source cleanup, capture gaps, and preview-parity checks discovered during the v1.0.7-dev catalogue pass. They are not blockers for committing the current website state.
+
+### Capture Gaps
+
+- `NoPriceData` — needs capture for both initial lookup failure and component refresh failure, because the flows differ.
+
+### Optional Validation
+
+- `WikiRequestFailed` — code-backed preview exists, but live capture can still validate colour, thumbnail, and exact upstream-failure wording if/when the condition is reproduced.
+- `wrong_component_user` — documented and code-backed; optional live capture remains blocked by test-account limitations.
+- `invalid_stats_component` — documented and code-backed; optional live capture remains difficult because older controls usually remain valid during live testing.

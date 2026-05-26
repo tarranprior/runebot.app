@@ -53,9 +53,14 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
   const todayStats = ["Today"];
   const rangeStats = ["30 Days", "90 Days", "180 Days"];
 
-  const renderInline = (text: string, context?: string) => {
+  const renderInline = (
+    text: string,
+    context?: string,
+    isTip: boolean = false,
+    isUsage: boolean = false
+  ) => {
     const nodes: Array<React.ReactNode> = [];
-    const re = /`([^`]+)`|\*\*([^*]+)\*\*/g;
+    const re = /`([^`]+)`|\*\*([^*]+)\*\*|:([A-Za-z0-9_+-]+):|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(\/[^\s`*]+)/g;
     let lastIndex = 0;
     let keyIdx = 0;
     let m: RegExpExecArray | null;
@@ -65,13 +70,15 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
         nodes.push(text.slice(lastIndex, m.index));
       }
 
+      const contextStripped = (context || "").replace(/\*/g, "");
+      const isUsageLocal = isUsage || /\bUsage\b\s*:/i.test(contextStripped);
+
       if (m[1]) {
         const content = m[1];
         const isSlash = content.trim().startsWith("/");
-        const isUsage = context?.includes("**Usage:**");
 
         nodes.push(
-          isSlash && !isUsage ? (
+          isSlash && !isUsageLocal && !isTip ? (
             <SlashMention key={`slash-${keyIdx++}`}>{content}</SlashMention>
           ) : (
             <InlineCode key={`code-${keyIdx++}`}>{content}</InlineCode>
@@ -85,6 +92,45 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
           >
             {m[2]}
           </strong>
+        );
+      } else if (m[3]) {
+        // Emote token, e.g. :account:
+        const emote = m[3];
+
+        nodes.push(
+          <Image
+            key={`emote-${keyIdx++}`}
+            src={`/images/features/emotes/${emote}.png`}
+            alt={emote}
+            width={16}
+            height={16}
+            className="inline-block align-text-bottom mr-1"
+          />
+        );
+      } else if (m[4] && m[5]) {
+        const label = m[4];
+        const url = m[5];
+
+        nodes.push(
+          <a
+            key={`link-${keyIdx++}`}
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#1e90ff] underline"
+          >
+            {label}
+          </a>
+        );
+      } else if (m[6]) {
+        const content = m[6];
+
+        nodes.push(
+          isUsageLocal || isTip ? (
+            <InlineCode key={`code-${keyIdx++}`}>{content}</InlineCode>
+          ) : (
+            <SlashMention key={`slash-${keyIdx++}`}>{content}</SlashMention>
+          )
         );
       }
 
@@ -101,7 +147,10 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
   const renderDescription = () => {
     if (!embed.description) return null;
 
-    const description = embed.description.replace(/\\n/g, "\n");
+    const description = embed.description.replace(/\n/g, "\n");
+
+    const isTipSingle = description.trim().startsWith("-#");
+    const blocks = description.split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean);
 
     if (!description.includes("\n")) {
       return (
@@ -110,20 +159,15 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
             isPriceEmbed ? "mb-2" : "mb-2.5"
           } text-[13px] leading-[1.4] text-[#4f5660] dark:text-[#dbdee1]`}
         >
-          {renderInline(description, description)}
+          {renderInline(description, description, isTipSingle, isTipSingle || /\bUsage:\b/i.test(description))}
         </p>
       );
     }
-
-    const blocks = description
-      .trim()
-      .split(/\n{2,}/)
-      .map((block) => block.trim())
-      .filter(Boolean);
-
     return (
       <div className="mb-2.5 space-y-3 text-[13px] leading-[1.4] text-[#4f5660] dark:text-[#dbdee1]">
         {blocks.map((block, blockIdx) => {
+          const isTipBlock = block.startsWith("-#");
+
           const lines = block
             .split("\n")
             .map((line) => line.trim())
@@ -134,11 +178,24 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
               key={blockIdx}
               className={isAccountManagerEmbed ? "space-y-0" : "space-y-0.5"}
             >
-              {lines.map((line, lineIdx) => (
-                <div key={lineIdx} className="leading-[17px]">
-                  {renderInline(line, block)}
+              {isTipBlock ? (
+                <div className="text-sm text-[#6b6e73] dark:text-[#b5bac1]">
+                          {lines.map((line, lineIdx) => {
+                            const displayLine = line.replace(/^-#\s*/, "");
+                            return (
+                              <div key={lineIdx} className="leading-[17px]">
+                                {renderInline(displayLine, block, true, /\bUsage:\b/i.test(block))}
+                              </div>
+                            );
+                          })}
                 </div>
-              ))}
+              ) : (
+                lines.map((line, lineIdx) => (
+                  <div key={lineIdx} className="leading-[17px]">
+                    {renderInline(line, block, false, /\bUsage:\b/i.test(block))}
+                  </div>
+                ))
+              )}
             </div>
           );
         })}
@@ -291,7 +348,7 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
                       {field.name}
                     </div>
                     <div className="mt-0.5 text-[13px] leading-[1.2] text-[#4f5660] dark:text-[#dbdee1]">
-                      {field.value}
+                      {renderInline(field.value)}
                     </div>
                   </div>
                 ))}
@@ -306,7 +363,7 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
                       {field.name}
                     </div>
                     <div className="mt-0.5 text-[12px] text-[#4f5660] dark:text-[#dbdee1]">
-                      {field.value}
+                      {renderInline(field.value)}
                     </div>
                   </div>
                 ))}

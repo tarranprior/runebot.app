@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Check } from "lucide-react";
+import { InlineCode, SlashMention } from "@/components/ui/discord-inline";
 
 type DiscordSelectOption =
   | string
@@ -19,6 +20,7 @@ interface DiscordSelectProps {
   compactMenu?: boolean;
   defaultOpen?: boolean;
   disableAutoOpen?: boolean;
+  disabled?: boolean;
 }
 
 const optionListVariants = {
@@ -45,6 +47,7 @@ export function DiscordSelect({
   compactMenu = false,
   defaultOpen = false,
   disableAutoOpen = false,
+  disabled = false,
 }: DiscordSelectProps) {
   const [isOpen, setIsOpen] = useState<boolean>(defaultOpen);
   const [selected, setSelected] = useState<string>(placeholder);
@@ -56,6 +59,46 @@ export function DiscordSelect({
   const normalizedOptions: { label: string; iconSrc?: string }[] = options.map((opt) =>
     typeof opt === "string" ? { label: opt } : opt
   );
+
+  const renderLabel = (label: string) => {
+    const nodes: React.ReactNode[] = [];
+    const re = /`([^`]+)`|\*\*([^*]+)\*\*|(\/[^\s`*]+)/g;
+    let lastIndex = 0;
+    let m: RegExpExecArray | null;
+
+    while ((m = re.exec(label)) !== null) {
+      if (m.index > lastIndex) nodes.push(label.slice(lastIndex, m.index));
+
+      if (m[1]) {
+        const content = m[1];
+        const isSlash = content.trim().startsWith("/");
+        const isUsage = false; // select labels use inline-style; treat /commands as SlashMention
+
+        nodes.push(
+          isSlash && !isUsage ? (
+            <SlashMention key={m.index}>{content}</SlashMention>
+          ) : (
+            <InlineCode key={m.index}>{content}</InlineCode>
+          )
+        );
+      } else if (m[2]) {
+        nodes.push(
+          <strong key={m.index} className="font-semibold">
+            {m[2]}
+          </strong>
+        );
+      } else if (m[3]) {
+        // plain slash mention in label
+        nodes.push(<SlashMention key={m.index}>{m[3]}</SlashMention>);
+      }
+
+      lastIndex = re.lastIndex;
+    }
+
+    if (lastIndex < label.length) nodes.push(label.slice(lastIndex));
+
+    return <span className="truncate">{nodes}</span>;
+  };
 
   const selectedFirstOptions = [
     ...normalizedOptions.filter((o) => o.label === selected),
@@ -89,6 +132,26 @@ export function DiscordSelect({
       if (timer) window.clearTimeout(timer);
     };
   }, [defaultOpen, disableAutoOpen]);
+
+  if (disabled) {
+    return (
+      <div className="mt-2 w-full max-w-[440px]">
+        <button
+          type="button"
+          disabled
+          aria-disabled
+          className="w-full rounded-md border border-[#cfd3da] bg-[#f3f4f6] text-[#6b6e73] dark:border-[#3f4147] dark:bg-[#222325]"
+        >
+          <div className="flex h-9 items-center justify-between px-3 text-[12px] text-[#4f5660] dark:text-[#c5c9ce]">
+            <span className="truncate">{placeholder}</span>
+            <motion.div className="text-[#747f8d] dark:text-[#b5bac1]">
+              <ChevronDown className="h-5 w-5 stroke-[2.25]" />
+            </motion.div>
+          </div>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="mt-2 w-full max-w-[440px]">
@@ -155,7 +218,7 @@ export function DiscordSelect({
                             height={16}
                           />
                         )}
-                        <span className="truncate text-left">{opt.label}</span>
+                        <span className="truncate text-left">{renderLabel(opt.label)}</span>
                       </span>
                       {isSelected ? (
                         <span className="ml-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#3b82f6] text-white">

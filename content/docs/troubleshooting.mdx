@@ -4,16 +4,14 @@ title: Troubleshooting
 
 This page lists common issues and suggestions for troubleshooting Runebot.
 
-## Stats
-
-### `NonexistentAccount` Exception
+### No Default Account Set
 
 This response appears when you run `/stats` without providing a username, and you do not have a default RuneScape account yet.
 
 <DocsErrorPreview id="error-no-saved-accounts" ephemeral className="mt-6" />
 
 <Callout type="info" className="mb-6">
-  **This is an ephemeral exception, meaning only you can see it**.
+  **This is an ephemeral message, meaning only you can see it**.
 </Callout>
 
 **Solution**: Use `/setrsn` to save your default account, or provide a username directly when running `/stats`:
@@ -24,7 +22,7 @@ This response appears when you run `/stats` without providing a username, and yo
 
 <br/>
 
-### `InvalidUsername` Exception
+### Invalid Username
 
 In cases where the provided **username is invalid** (i.e., **incorrect length**, **disallowed characters** like `@` or `#`, etc.),
 Runebot will result in the following error message:
@@ -32,7 +30,7 @@ Runebot will result in the following error message:
 <DocsErrorPreview id="error-invalid-username" ephemeral className="mt-6" />
 
 <Callout type="info" className="mb-6">
-  **This is an ephemeral exception, meaning only you can see it**.
+  **This is an ephemeral message, meaning only you can see it**.
 </Callout>
 
 **Solution**: Ensure the username is between **1 and 12 characters long** and only contains **acceptable characters** (letters, numbers, spaces, and underscores).

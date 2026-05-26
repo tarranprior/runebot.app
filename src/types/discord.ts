@@ -2,6 +2,8 @@ export interface DiscordButton {
   label: string;
   href?: string;
   variant?: "primary" | "secondary" | "link";
+  destructive?: boolean;
+  disabled?: boolean;
 }
 
 export interface DiscordField {
