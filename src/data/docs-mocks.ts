@@ -355,7 +355,7 @@ export const docsEmbedMockRegistry = {
         embedColor: "#5865F2",
         title: "Account has been set.",
         description:
-          "Your default account has now been set to **Zezima**.\n\nYou can set a new default at any time by using `/setrsn`, or use the :account: Account Manager under `/stats` to manage all of your accounts.",
+          "Your default account has now been set to **Zezima**.\n\nYou can set a new default at any time by using `/setrsn`, or use the\n:account: Account Manager under `/stats` to manage all of your accounts.",
         footer: { text: `Runebot v${DOCS_VERSION_TEXT} • Today at 00:00` },
       },
     ],

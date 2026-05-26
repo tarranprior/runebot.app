@@ -67,7 +67,7 @@ export const docsMdxComponents: MDXComponents = {
         overflowWrap: "normal",
         hyphens: "none",
       }}
-      className={`items-center align-baseline rounded border px-1.5 py-0.5 text-[0.85em] font-medium leading-none ${
+      className={`items-center align-baseline rounded border px-1.5 py-0.5 text-[0.85em] font-medium leading-none focus:outline-none focus-visible:ring-0 ${
         className ?? ""
       }`}
     >

@@ -92,7 +92,6 @@ export function DiscordMessage({ message }: DiscordMessageProps) {
                   embed.variant === "account-manager" || embed.title === "Account Manager (Beta)";
 
                 // Build select items (icons attached below when ordering).
-
                 // Order accounts for embed display: selected first when applicable.
                 const orderedEmbedAccounts =
                   isAccountManager && accountSelected && rawSelectItems.includes(accountSelected)

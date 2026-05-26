@@ -117,7 +117,7 @@ export function DiscordEmbed({ embed }: DiscordEmbedProps) {
             href={url}
             target="_blank"
             rel="noreferrer"
-            className="text-[#1e90ff] underline"
+            className="text-[#1e90ff] no-underline hover:underline focus-visible:underline"
           >
             {label}
           </a>
