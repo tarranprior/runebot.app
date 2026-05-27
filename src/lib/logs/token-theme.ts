@@ -39,6 +39,18 @@ export const LOG_TOKEN_THEME: Record<string, LogTokenPresentation> = {
     title: "User token",
     className: USER_CLASSNAME,
   },
+  "discord-user": {
+    kind: "user",
+    label: "discord-user",
+    title: "Discord user mention",
+    className: USER_CLASSNAME,
+  },
+  discord_user: {
+    kind: "user",
+    label: "discord-user",
+    title: "Discord user mention",
+    className: USER_CLASSNAME,
+  },
 
   // command/action operations
   lookup: {
