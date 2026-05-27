@@ -140,8 +140,23 @@ This page is a maintainer reference for validating current Runebot exception mes
 
 - **Visibility**: Ephemeral.
 - **Status**: Confirmed from current live Discord capture and bot source.
-- **Known Discrepancies**:
-    - If `/stats username: @DISCORD_USER` targets a Discord user with no saved/default account, the bot currently reuses this same message. This is misleading because it says “you don't have any accounts yet” even though the missing account belongs to the mentioned user. This should be split into a dedicated mention-lookup message/exception before public troubleshooting docs are finalised.
+
+---
+
+### `MentionedUserAccountNonexistent`
+
+- **Cause**: `/stats` was run with a Discord user mention, but the mentioned Discord user does not have a saved/default RuneScape account.
+
+- **User Message**:
+
+> The user you mentioned does not have a default RuneScape account set. Ask them to use `/setrsn` to set a default account, or search with a RuneScape username.
+
+- **Preview**:
+
+<DocsErrorPreview id="mentioned-user-account-nonexistent" ephemeral className="mt-6" />
+
+- **Visibility**: Ephemeral.
+- **Status**: Confirmed from current live Discord capture and bot source.
 
 ---
 

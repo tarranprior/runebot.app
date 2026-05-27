@@ -56,11 +56,30 @@ const noSavedAccountsMock = {
   buttons: [{ label: "Support Server ↗", variant: "secondary", href: "https://discord.com/invite/FWjNkNuTzv" }],
 } satisfies DiscordMessage;
 
+const mentionedUserAccountNonexistentMock = {
+  authorName: AUTHOR_NAME,
+  authorAvatar: AUTHOR_AVATAR,
+  isBot: true,
+  timestamp: "Today at 00:00",
+  embeds: [
+    {
+      embedColor: "#8B8B8B",
+      title: "Nothing interesting happens.",
+      description:
+        "The user you mentioned does not have a default RuneScape account set. " +
+        "Ask them to use `/setrsn` to set a default account, or search with a RuneScape username.",
+      footer: { text: `Runebot v${DOCS_VERSION_TEXT} • Today at 00:00` },
+    },
+  ],
+  buttons: [{ label: "Support Server ↗", variant: "secondary", href: "https://discord.com/invite/FWjNkNuTzv" }],
+} satisfies DiscordMessage;
+
 export const docsEmbedMockRegistry = {
   "price-old-school-bond": priceOldSchoolBondMock,
   "wiki-infernal-cape": wikiInfernalCapeMock,
   "error-invalid-username": invalidUsernameMock,
   "error-no-saved-accounts": noSavedAccountsMock,
+  "mentioned-user-account-nonexistent": mentionedUserAccountNonexistentMock,
   "account-manager": {
     authorName: AUTHOR_NAME,
     authorAvatar: AUTHOR_AVATAR,
