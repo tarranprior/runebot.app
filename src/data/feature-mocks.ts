@@ -2,7 +2,7 @@ import { DiscordMessage, DiscordStatsMock } from "@/types/discord";
 
 const AUTHOR_NAME = "Runebot";
 const AUTHOR_AVATAR = "/images/runebot-ico.png";
-const VERSION_TEXT = "1.0.7-dev.2";
+const VERSION_TEXT = "1.0.7-dev.3";
 
 export const wikiLookupMocks: DiscordMessage[] = [
   {

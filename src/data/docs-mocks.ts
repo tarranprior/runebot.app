@@ -3,7 +3,7 @@ import { priceLookupMocks, wikiLookupMocks } from "@/data/feature-mocks";
 
 const AUTHOR_NAME = "Runebot";
 const AUTHOR_AVATAR = "/images/runebot-ico.png";
-const DOCS_VERSION_TEXT = "1.0.7-dev.2";
+const DOCS_VERSION_TEXT = "1.0.7-dev.3";
 
 const priceOldSchoolBondMock = priceLookupMocks.find(
   (mock) => mock.embeds?.[0]?.title === "Old school bond (ID: 13190)"
@@ -76,7 +76,13 @@ const mentionedUserAccountNonexistentMock = {
 
 export const docsEmbedMockRegistry = {
   "price-old-school-bond": priceOldSchoolBondMock,
-  "wiki-infernal-cape": wikiInfernalCapeMock,
+  "wiki-infernal-cape": {
+    ...wikiInfernalCapeMock,
+    embeds: wikiInfernalCapeMock.embeds?.map((embed) => ({
+      ...embed,
+      footer: { text: `Runebot v${DOCS_VERSION_TEXT} • Today at 00:00` },
+    })),
+  },
   "error-invalid-username": invalidUsernameMock,
   "error-no-saved-accounts": noSavedAccountsMock,
   "mentioned-user-account-nonexistent": mentionedUserAccountNonexistentMock,
@@ -84,7 +90,7 @@ export const docsEmbedMockRegistry = {
     authorName: AUTHOR_NAME,
     authorAvatar: AUTHOR_AVATAR,
     isBot: true,
-    timestamp: "Today at 20:50",
+    timestamp: "Today at 00:00",
     embeds: [ 
       {
         embedColor: "#5865F2",
@@ -201,7 +207,7 @@ export const docsEmbedMockRegistry = {
     authorName: AUTHOR_NAME,
     authorAvatar: AUTHOR_AVATAR,
     isBot: true,
-    timestamp: "Today at 20:50",
+    timestamp: "Today at 00:00",
     embeds: [
       {
         embedColor: "#5865F2",
