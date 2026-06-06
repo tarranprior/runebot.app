@@ -152,6 +152,20 @@ body.custom-cursor-enabled * {
   border-color: #3b3f45;
 }
 
+#nd-docs-layout article kbd[data-emote]::before,
+#nd-page article kbd[data-emote]::before,
+[data-pagefind-body] kbd[data-emote]::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex: 0 0 auto;
+  background-image: var(--runebot-emote-url);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
 #nd-docs-layout kbd,
 #nd-page kbd,
 [data-pagefind-body] kbd {

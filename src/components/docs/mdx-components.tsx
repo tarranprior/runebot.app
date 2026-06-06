@@ -1,4 +1,4 @@
-import type React from "react";
+import * as React from "react";
 
 import type { MDXComponents } from "mdx/types";
 import defaultMdxComponents from "fumadocs-ui/mdx";
@@ -32,6 +32,9 @@ const preventKbdWrap = (children: React.ReactNode): React.ReactNode => {
 };
 
 type KbdProps = React.ComponentPropsWithoutRef<"kbd">;
+type EmoteKbdProps = React.ComponentPropsWithoutRef<"kbd"> & {
+  emote: string;
+};
 type DefaultCardProps = React.ComponentProps<typeof DefaultCard>;
 type CardPropsWithTarget = DefaultCardProps & { target?: string };
 
@@ -53,27 +56,38 @@ function CardWrapper(props: CardPropsWithTarget) {
   );
 }
 
-export const docsMdxComponents: MDXComponents = {
-  ...defaultMdxComponents,
+function EmoteKbd({
+  emote,
+  children,
+  className,
+  style,
+  ...props
+}: EmoteKbdProps) {
+  void className;
+  void style;
 
-  kbd: ({ children, className, style, ...props }: KbdProps) => (
+  return (
     <kbd
       {...props}
-      style={{
-        ...style,
-        display: "inline-flex",
-        whiteSpace: "nowrap",
-        wordBreak: "keep-all",
-        overflowWrap: "normal",
-        hyphens: "none",
-      }}
-      className={`items-center align-baseline rounded border px-1.5 py-0.5 text-[0.85em] font-medium leading-none focus:outline-none focus-visible:ring-0 ${
-        className ?? ""
-      }`}
+      data-emote={emote}
+      style={
+        {
+          "--runebot-emote-url": `url(/images/features/emotes/${emote}.png)`,
+        } as React.CSSProperties
+      }
     >
       {preventKbdWrap(children)}
     </kbd>
+  );
+}
+
+export const docsMdxComponents: MDXComponents = {
+  ...defaultMdxComponents,
+  kbd: ({ children, ...props }: KbdProps) => (
+    <kbd {...props}>{preventKbdWrap(children)}</kbd>
   ),
+
+  EmoteKbd,
   Accordions,
   Accordion,
   Tabs,
