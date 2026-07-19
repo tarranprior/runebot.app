@@ -32,7 +32,6 @@ const invalidUsernameMock = {
       title: "Nothing interesting happens.",
       description:
         "The username provided is not valid. Please check the length and allowed characters, then try again.",
-      thumbnail: "https://oldschool.runescape.wiki/images/Bank_filler_detail.png",
       footer: { text: `Runebot v${DOCS_VERSION_TEXT} • Today at 00:00` },
     },
   ],
@@ -347,7 +346,6 @@ export const docsEmbedMockRegistry = {
         title: "Nothing interesting happens.",
         description:
           "The player you have searched for doesn't appear to exist on the **Hiscores**, or the **API** is currently unavailable. Please try another username or try again later.",
-        thumbnail: "/images/docs/error.png",
         footer: { text: `Runebot v${DOCS_VERSION_TEXT} • Today at 00:00` },
       },
     ],
@@ -364,7 +362,6 @@ export const docsEmbedMockRegistry = {
         title: "Nothing interesting happens.",
         description:
           "The Old School RuneScape Wiki could not be reached for this request. This may be due to rate limiting, temporary blocking, or an upstream availability issue. Please try again shortly.",
-        thumbnail: "/images/docs/error.png",
         footer: { text: `Runebot v${DOCS_VERSION_TEXT} • Today at 00:00` },
       },
     ],
@@ -403,7 +400,6 @@ export const docsEmbedMockRegistry = {
         title: "Nothing interesting happens.",
         description:
           "You have reached the maximum of **5 accounts** for your Discord account. Remove an existing account before adding a new one.",
-        thumbnail: "/images/docs/error.png",
         footer: { text: `Runebot v${DOCS_VERSION_TEXT} • Today at 00:00` },
       },
     ],
@@ -420,7 +416,6 @@ export const docsEmbedMockRegistry = {
         title: "Nothing interesting happens.",
         description:
           "This command can only be used by **administrators**. For more information on commands, use `/help`.",
-        thumbnail: "/images/docs/error.png",
         footer: { text: `Runebot v${DOCS_VERSION_TEXT} • Today at 00:00` },
       },
     ],
