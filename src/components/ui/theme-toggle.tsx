@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +10,7 @@ type ThemeToggleProps = {
 };
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
-  const { resolvedTheme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -37,19 +37,38 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
     );
   }
 
-  const isDark = resolvedTheme !== "light";
+  const currentTheme = theme === "light" || theme === "dark" ? theme : "system";
+  const nextTheme =
+    currentTheme === "system"
+      ? "light"
+      : currentTheme === "light"
+        ? "dark"
+        : "system";
+
+  const labels = {
+    system: "Use system theme",
+    light: "Switch to light mode",
+    dark: "Switch to dark mode",
+  } as const;
 
   return (
     <button
       type="button"
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      aria-label={labels[nextTheme]}
+      title={labels[nextTheme]}
+      onClick={() => setTheme(nextTheme)}
       className={cn(
         "inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-surface-border bg-surface/70 text-foreground transition hover:bg-surface",
         className,
       )}
     >
-      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {nextTheme === "system" ? (
+        <Monitor className="h-4 w-4" />
+      ) : nextTheme === "light" ? (
+        <Sun className="h-4 w-4" />
+      ) : (
+        <Moon className="h-4 w-4" />
+      )}
     </button>
   );
 }
