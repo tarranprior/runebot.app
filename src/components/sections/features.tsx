@@ -47,7 +47,7 @@ const features: Array<{
   {
     title: "Built around modern Discord UX.",
     description:
-      "Runebot embraces Discord’s current platform features, including slash commands, interactive components, and smoother flows that feel native to how communities use Discord today. That means less friction, better discoverability, and a more polished experience overall.",
+      "Runebot embraces Discord’s latest platform features, including slash commands, interactive components, and smoother flows that feel native to how communities use Discord today. That means less friction, better discoverability, and a more polished experience overall.",
     visualType: "message",
     mockDataset: utilityMocks,
     reverse: false,
@@ -141,7 +141,7 @@ export function Features() {
                       {feature.title}
                     </h3>
 
-                    <p className="mt-5 text-base leading-8 text-foreground/65 sm:text-[17px]">
+                    <p className="mt-6 text-base leading-8 text-foreground/65 sm:text-lg">
                       {feature.description}
                     </p>
                   </div>

@@ -1,11 +1,74 @@
+## July 19, 2026
+**Runebot v1.0.7-dev.3** [Commit](https://github.com/tarranprior/runebot/commit/3d5fe2ea9bd0c75b8e0744283779625aa9a7282a)
+
+* {https://github.com/tarranprior/runebot/commit/3d5fe2ea9bd0c75b8e0744283779625aa9a7282a} [fixed] 🪲 Update /Runebot/: fix(price) force runtime fallback ephemeral
+    - make `ack_runtime_failure` always send ephemeral responses.
+    - resolve the `/price` Feeling Lucky selection before deferring so fallback acknowledgements remain valid.
+* {https://github.com/tarranprior/runebot/commit/13a8047c83c19aa6bbc72a16acea2a7bcf95745e} [fixed] 🪲 Update /Runebot/: fix(stats) add Maggot King boss mapping
+* {https://github.com/tarranprior/runebot/commit/2216c4126697aa3edaed9449f8991ad54fc7d7d4} [improved] 🪲 Update /Runebot/: fix(logging) log colour extraction fallbacks
+    - add `log_colour_extraction_failure` for handled colour fallback warnings.
+    - record command context, image host, exception type, and `fallback_colour` without interrupting user responses.
+* {https://github.com/tarranprior/runebot/commit/7e2ad6b1ca56740c4250dcdb8c6111ca36731f48} [changed] ⚙️ Update /Runebot/: refactor(components) centralise stale control acknowledgements
+    - route stale `/stats` and `/price` controls through `ack_component_failure`.
+    - remove duplicate acknowledgement and structured logging implementations.
+* {https://github.com/tarranprior/runebot/commit/fcd33b748e692ce8742ae11ae8d43911fc45ca8b} [removed] ⚙️ Update /Runebot/: refactor(config) remove obsolete fallback thumbnails
+* {https://github.com/tarranprior/runebot/commit/2a5dc77ecc7645fad7f11a779c7a73f137f77c3c} [fixed] 🪲 Update /Runebot/: fix(commands) highlight wiki request failures
+* {https://github.com/tarranprior/runebot/commit/f66b40d167f1ed45c3f722e69d9fe6d660bb33de} [fixed] 🪲 Update /Runebot/: fix(stats) correct hiscores request exception mapping
+    - map hiscores request failures to `NoHiscoreData`.
+    - stop routing stats transport failures through `WikiRequestFailed`.
+* {https://github.com/tarranprior/runebot/commit/17536e80b1ac0a7a32b804c9ba1d46d49f3762db} [improved] ⚙️ Update /Runebot/: fix(wikipedia) add embed footer timestamp parity
+* {https://github.com/tarranprior/runebot/commit/f017a571b4719663ef3fe6d6c351ff8e14a34f57} [fixed] 🪲 Update /Runebot/: fix(logging) disable rich traceback diagnostics
+    - disable rich traceback diagnostics for runtime exception logging.
+    - prevent local-variable capture in persisted file and internal log output.
+* {https://github.com/tarranprior/runebot/commit/7d1c2e02b7efb7887faf86960c3e7f5ec2b3d3b2} [fixed] 🪲 Update /Runebot/: fix(setrsn) handle max. accounts failure
+    - handle `MaximumAccountsReached` as an expected user-visible failure.
+    - return the failure response ephemerally without falling through to runtime handling.
+* {https://github.com/tarranprior/runebot/commit/de5d8ff8887fe56cca671cf25fa62f6fa9fce099} [fixed] 🪲 Update /Runebot/: fix(stats) split user account failures
+    - distinguish a mentioned Discord user without a saved default account using `MentionedUserAccountNonexistent`.
+    - keep mentioned-user lookup failures on the expected ephemeral failure path.
+* {https://github.com/tarranprior/runebot/commit/32c304b2b0d2481ea22adc3e87b2fe1634b2974d} [improved] 🪲 Update /Runebot/: fix(exceptions) polish usage and permission copy
+* {https://github.com/tarranprior/runebot/commit/9a1ea6b70f93eb00a2a7f5035df7272fe9890b82} [added] 🪲 Update /Runebot/: fix(commands) add runtime failure acknowledgement helper
+    - add `ack_runtime_failure` for unexpected command failures.
+    - reuse the helper across player and search commands for consistent ephemeral acknowledgements.
+* {https://github.com/tarranprior/runebot/commit/c60a64c40fb7f750f9d66ae55e218f33f5ed3600} [added] 🪲 Update /Runebot/: fix(components) add reusable failure acknowledgements
+    - add `ack_component_failure` for handled component interaction failures.
+    - standardise neutral ephemeral responses and failure logging.
+* {https://github.com/tarranprior/runebot/commit/1467f91f21a51d89d23ef328369acb7bb4f66b39} [added] 🪲 Update /Runebot/: fix(components) add owner mismatch acknowledgement helper
+    - add `ack_wrong_component_user` for controls used by a different Discord user.
+    - return a neutral ephemeral acknowledgement and preserve structured component metadata.
+* {https://github.com/tarranprior/runebot/commit/65fa62d101d77265d6b5c59efd6b1eba0fb8c652} [improved] 🪲 Update /Runebot/: fix(commands) refine ephemeral responses
+* {https://github.com/tarranprior/runebot/commit/e0a563da141c97da2ee98a3a2014a5c5c4f5b3d0} [improved] 🪲 Update /Runebot/: fix(stats) refine ephemeral setup embeds
+* {https://github.com/tarranprior/runebot/commit/9bb3543e4152a2a879ee769190f5163e88e53894} [fixed] 🪲 Update /Runebot/: fix(components) acknowledge stale component payloads
+    - acknowledge expired `/stats` and `/price` controls with neutral ephemeral responses.
+    - capture component prefix and action metadata for structured invalid-component logs.
+* {https://github.com/tarranprior/runebot/commit/f0250d3ba674371fd973f0841d955eacd9acc01d} [fixed] 🪲 Update /Runebot/: fix(price) blacklist known `NoPrice` candidates
+* {https://github.com/tarranprior/runebot/commit/255e841740c0e9bb1ed1e73dc39f1e88d6c6ed35} [fixed] 🪲 Update /Runebot/: fix(price) add validation to item names
+    - validate catalogue item names before slugifying refresh metadata.
+    - map missing or empty item names to the existing `NoPrice` soft failure path.
+* {https://github.com/tarranprior/runebot/commit/81c7f3e1eed630fec029ede933fc8a7ec4b3ea43} [improved] ⚙️ Update /Runebot/: fix(embeds) add `/setrsn` mention to empty accounts prompt
+
+---
+
+## May 19, 2026
+**Runebot v1.0.7-dev.2** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.7-dev.2) [Commit](https://github.com/tarranprior/runebot/commit/80b667d352ca43d87f76d54245cb336800b824ad)
+
+* {https://github.com/tarranprior/runebot/commit/9dc95dbb2430aa763902c457732c2a600e8a7f2e} [fixed] 🪲 Update /Runebot/: fix(wikipedia) restore stub article embed
+* {https://github.com/tarranprior/runebot/commit/b5fe86efecf9fdb687f7a6e5a9fb7c0d636d6688} [fixed] 🪲 Update /Runebot/: fix(stats) restore account type mismatch failures
+* {https://github.com/tarranprior/runebot/commit/4c92ea53c4f055ea3564308df0e14cbabbfece27} [added] ⚙️ Update /Runebot/: refactor(logging) add shared internal log emission
+    - centralise internal log emission behind the shared logging helper.
+    - preserve structured context while reducing repeated logging setup across cogs.
+* {https://github.com/tarranprior/runebot/commit/fd10becd29701950f7433b54f0ef7deca9a8913b} [changed] ⚙️ Update /Runebot/: refactor(logging) reduce logger boilerplate across `./cogs`
+
+---
+
 ## May 17, 2026
 **Runebot v1.0.7-dev.1** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.7-dev.1) [Commit](https://github.com/tarranprior/runebot/commit/6e2ee80e01e37712b4c81ec3f8e0931358b1d19d)
 
-* {https://github.com/tarranprior/runebot/commit/2c3eb721994c1afb0a52339cfd6638119c40f7ab} [notice] 🪲 Update /Runebot/: fix(logging) make internal log ingest idempotent
-* {https://github.com/tarranprior/runebot/commit/73a525372feba0852460b5f0c92570f51755c6bb} [notice] 🪲 Update /Runebot/: fix(logging) harden internal log SQLite connections
+* {https://github.com/tarranprior/runebot/commit/2c3eb721994c1afb0a52339cfd6638119c40f7ab} [fixed] 🪲 Update /Runebot/: fix(logging) make internal log ingest idempotent
+* {https://github.com/tarranprior/runebot/commit/73a525372feba0852460b5f0c92570f51755c6bb} [fixed] 🪲 Update /Runebot/: fix(logging) harden internal log SQLite connections
     - apply `busy_timeout` consistently across internal log database connections
     - keep WAL setup scoped to schema initialisation
-* {https://github.com/tarranprior/runebot/commit/2bdff0b894effbffbbe504f1a0d1159a63b2f2a9} [notice] 🪲 Update /Runebot/: fix(api) structure internal API failure logs
+* {https://github.com/tarranprior/runebot/commit/2bdff0b894effbffbbe504f1a0d1159a63b2f2a9} [fixed] 🪲 Update /Runebot/: fix(api) structure internal API failure logs
     - handle client disconnects during JSON response writes as structured warnings
     - add structured context to internal API timeout, persistence, and query failure logs
 * {https://github.com/tarranprior/runebot/commit/b56c250dae621f493f6fb454bd299671a5866b98} [added] ⚙️ Update /Runebot/: feat(logging) add guild lifecycle visibility
@@ -32,7 +95,7 @@
 ### March 16, 2026
 **Runebot v1.0.6-dev.3** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.6-dev.3) [Commit](https://github.com/tarranprior/runebot/commit/8029d2fff02836508c422d3559d76cc51d1c5a2f)
 
-* {https://github.com/tarranprior/runebot/commit/8029d2fff02836508c422d3559d76cc51d1c5a2f} [notice] 🪲 Update /Runebot/: fix(price) resolve datetime namespace collision in price timestamps
+* {https://github.com/tarranprior/runebot/commit/8029d2fff02836508c422d3559d76cc51d1c5a2f} [fixed] 🪲 Update /Runebot/: fix(price) resolve datetime namespace collision in price timestamps
 * {https://github.com/tarranprior/runebot/commit/3a5598c91927149b14e1a0397e57bf7026c5aeb3} [improved] ✨ Update /Runebot/: feat(accounts) refine `/setrsn` and deprecate `/unsetrsn`
     - update `/setrsn` response to reflect default account
     - guide users to Account Manager for multi-account management
@@ -58,7 +121,7 @@
 ### March 15, 2026
 **Runebot v1.0.6-dev.2** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.6-dev.2) [Commit](https://github.com/tarranprior/runebot/commit/5cd88fb5b437a165e9dc39541988690f66430f96)
 
-* {https://github.com/tarranprior/runebot/commit/5cd88fb5b437a165e9dc39541988690f66430f96} [notice] 🪲 Update /Runebot/: fix(database) restore fresh-db username fallback, prevent case-variant account duplicates
+* {https://github.com/tarranprior/runebot/commit/5cd88fb5b437a165e9dc39541988690f66430f96} [fixed] 🪲 Update /Runebot/: fix(database) restore fresh-db username fallback, prevent case-variant account duplicates
     - remove completed multi-account migration runtime hook from startup
     - prevent duplicate saved accounts when username case is different
     - fix guild ID tuple flattening and suggestion return typing
