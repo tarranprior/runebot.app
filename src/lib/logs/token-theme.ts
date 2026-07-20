@@ -141,6 +141,12 @@ export const LOG_TOKEN_THEME: Record<string, LogTokenPresentation> = {
     title: "Parse hiscores operation",
     className: OPERATION_CLASSNAME,
   },
+  colour_extraction: {
+    kind: "operation",
+    label: "colour_extraction",
+    title: "Colour extraction operation",
+    className: OPERATION_CLASSNAME,
+  },
 
   // subjects/entities
   username: {
