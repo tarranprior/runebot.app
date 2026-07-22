@@ -497,6 +497,7 @@ function ReleaseSection({
 type ChangelogTimelineProps = {
   releases: ChangelogRelease[];
   expandBodiesByDefault?: boolean;
+  defaultExpandedReleaseId?: string;
 };
 
 function getDefaultExpandedKeys(releases: ChangelogRelease[]) {
@@ -526,10 +527,18 @@ function getDefaultExpandedKeys(releases: ChangelogRelease[]) {
   return expanded;
 }
 
-export function ChangelogTimeline({ releases, expandBodiesByDefault = false }: ChangelogTimelineProps) {
-  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(() =>
-    expandBodiesByDefault ? getDefaultExpandedKeys(releases) : new Set(),
-  );
+export function ChangelogTimeline({
+  releases,
+  expandBodiesByDefault = false,
+  defaultExpandedReleaseId,
+}: ChangelogTimelineProps) {
+  const [expandedKeys, setExpandedKeys] = useState<Set<string>>(() => {
+    const defaultExpandedReleases = expandBodiesByDefault
+      ? releases
+      : releases.filter((release) => release.id === defaultExpandedReleaseId);
+
+    return getDefaultExpandedKeys(defaultExpandedReleases);
+  });
 
   const toggleItem = (key: string) => {
     setExpandedKeys((prev) => {

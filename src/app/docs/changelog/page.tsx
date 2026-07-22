@@ -101,7 +101,10 @@ export default async function ChangelogPage() {
               </p>
             </DocsBody>
             <div className="not-prose">
-              <ChangelogTimeline releases={stableReleases} />
+              <ChangelogTimeline
+                releases={stableReleases}
+                defaultExpandedReleaseId={stableReleases[0]?.id}
+              />
             </div>
           </section>
         )}
