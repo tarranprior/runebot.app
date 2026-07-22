@@ -1,6 +1,36 @@
-## July 19, 2026
-**Runebot v1.0.7-dev.3** [Commit](https://github.com/tarranprior/runebot/commit/3d5fe2ea9bd0c75b8e0744283779625aa9a7282a)
+## July 22, 2026
+**Runebot v1.0.7** (Current) [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.7) [Commit](https://github.com/tarranprior/runebot/commit/e66f6bcdf8dee7e2fad3ec1c3c56d91ad99b8324)
 
+### July 22, 2026
+**Runebot v1.0.7-dev.3** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.7-dev.3) [Commit](https://github.com/tarranprior/runebot/commit/05b7508c8bc8114289ed10f298b528de082a8bd9)
+
+* {https://github.com/tarranprior/runebot/commit/05b7508c8bc8114289ed10f298b528de082a8bd9} [fixed] 🪲 Update /Runebot/: fix(stats) normalise account types
+* {https://github.com/tarranprior/runebot/commit/e0445ed2308344aca4f9d122de0e78ae7d475a61} [removed] 🛠️ Update /Runebot/: chore(database) remove legacy `remove_username()` helper
+* {https://github.com/tarranprior/runebot/commit/b9e9ca22b4c3dc91c4682022d661f0e311cf1115} [removed] 🛠️ Update /Runebot/: chore(commands) remove legacy unsetrsn cog
+* {https://github.com/tarranprior/runebot/commit/da335f40568ead6d4539a01b5e6ac47731b313ad} [fixed] 🪲 Update /Runebot/: fix(errors) acknowledge slash runtime failures
+* {https://github.com/tarranprior/runebot/commit/684f3817f098107f182955e1ad17fe982abd2178} [fixed] 🪲 Update /Runebot/: fix(accounts) serialise account mutations
+* {https://github.com/tarranprior/runebot/commit/8cf54cfa83e1d46c9055a101e9632f8c134268c2} [improved] 🪲 Update /Runebot/: fix(runtime) offload graph rendering
+* {https://github.com/tarranprior/runebot/commit/e2b7e480d96094711ac0e65f43a19c9fe426cbe6} [improved] 🪲 Update /Runebot/: fix(runtime) offload colour extraction
+* {https://github.com/tarranprior/runebot/commit/87d3d4a82bfd0c1a1958eb122440ca22fc872bfa} [fixed] 🪲 Update /Runebot/: fix(stats) preserve component runtime errors
+* {https://github.com/tarranprior/runebot/commit/7987c27dd779b0dbdc1510c749071d518d9e23eb} [improved] 🪲 Update /Runebot/: fix(runtime) offload Hiscores data parsing
+* {https://github.com/tarranprior/runebot/commit/3907c920cbcadd37e77f86df3ceb1db66205b88a} [improved] 🪲 Update /Runebot/: fix(runtime) offload price data parsing
+* {https://github.com/tarranprior/runebot/commit/058e0b6f8a1e2d48834c39887899ca99e450214e} [improved] 🪲 Update /Runebot/: fix(runtime) offload wiki page parsing
+* {https://github.com/tarranprior/runebot/commit/4475082bbaf2537aebf6f95e133e37120c380b85} [added] ⚙️ Update /Runebot/: feat(logging) add component duration telemetry
+    - add duration telemetry to authoritative component terminal events
+    - move component terminal ownership after successful Discord response delivery
+    - record fallback delivery failures as single runtime outcomes
+    - preserve slash-command terminal ownership across shared search helpers
+    - retain validated origin trace linkage for linked interactions
+* {https://github.com/tarranprior/runebot/commit/bddcff15f9fd72ea5cd23e69cf7b3067717fa5dc} [changed] ⚙️ Update /Runebot/: refactor(logging) pair component lifecycle events
+    - emit component lifecycle starts before fallible interaction work
+    - pair component starts and terminal outcomes with a fresh trace ID
+    - preserve validated origin trace metadata across linked interaction flows
+    - align stale, invalid, wrong-user, and account deletion outcomes
+    - standardise component type references
+* {https://github.com/tarranprior/runebot/commit/48c5f4fdb4fc67929e551d2e074213271cfb89c0} [added] ⚙️ Update /Runebot/: feat(logging) add slash command duration telemetry
+* {https://github.com/tarranprior/runebot/commit/4e82de9a233db6195fb4a282d8b351c23f42b664} [added] ⚙️ Update /Runebot/: feat(logging) add ping lifecycle telemetry
+* {https://github.com/tarranprior/runebot/commit/d2ec4427837baa20710f68ab45ee69a88081d687} [changed] 🛠️ Update /Runebot/: chore(metadata) align release version and project description
+* {https://github.com/tarranprior/runebot/commit/bd57d060e4f0e8d8f432d98f4239b130c74130c2} [fixed] 🪲 Update /Runebot/: fix(startup) force fail on extension load errors
 * {https://github.com/tarranprior/runebot/commit/3d5fe2ea9bd0c75b8e0744283779625aa9a7282a} [fixed] 🪲 Update /Runebot/: fix(price) force runtime fallback ephemeral
     - make `ack_runtime_failure` always send ephemeral responses.
     - resolve the `/price` Feeling Lucky selection before deferring so fallback acknowledgements remain valid.
@@ -47,9 +77,7 @@
     - map missing or empty item names to the existing `NoPrice` soft failure path.
 * {https://github.com/tarranprior/runebot/commit/81c7f3e1eed630fec029ede933fc8a7ec4b3ea43} [improved] ⚙️ Update /Runebot/: fix(embeds) add `/setrsn` mention to empty accounts prompt
 
----
-
-## May 19, 2026
+### May 19, 2026
 **Runebot v1.0.7-dev.2** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.7-dev.2) [Commit](https://github.com/tarranprior/runebot/commit/80b667d352ca43d87f76d54245cb336800b824ad)
 
 * {https://github.com/tarranprior/runebot/commit/9dc95dbb2430aa763902c457732c2a600e8a7f2e} [fixed] 🪲 Update /Runebot/: fix(wikipedia) restore stub article embed
@@ -59,9 +87,7 @@
     - preserve structured context while reducing repeated logging setup across cogs.
 * {https://github.com/tarranprior/runebot/commit/fd10becd29701950f7433b54f0ef7deca9a8913b} [changed] ⚙️ Update /Runebot/: refactor(logging) reduce logger boilerplate across `./cogs`
 
----
-
-## May 17, 2026
+### May 17, 2026
 **Runebot v1.0.7-dev.1** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.7-dev.1) [Commit](https://github.com/tarranprior/runebot/commit/6e2ee80e01e37712b4c81ec3f8e0931358b1d19d)
 
 * {https://github.com/tarranprior/runebot/commit/2c3eb721994c1afb0a52339cfd6638119c40f7ab} [fixed] 🪲 Update /Runebot/: fix(logging) make internal log ingest idempotent
@@ -90,7 +116,7 @@
 ---
 
 ## March 17, 2026
-**Runebot v1.0.6** (Current) [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.6) [Commit](https://github.com/tarranprior/runebot/commit/8029d2fff02836508c422d3559d76cc51d1c5a2f)
+**Runebot v1.0.6** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.6) [Commit](https://github.com/tarranprior/runebot/commit/8029d2fff02836508c422d3559d76cc51d1c5a2f)
 
 ### March 16, 2026
 **Runebot v1.0.6-dev.3** [Tag](https://github.com/tarranprior/runebot/releases/tag/v1.0.6-dev.3) [Commit](https://github.com/tarranprior/runebot/commit/8029d2fff02836508c422d3559d76cc51d1c5a2f)
