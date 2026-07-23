@@ -25,11 +25,40 @@ export function getNewsReleaseId(release: Pick<NewsRelease, "version">) {
 
 export const newsReleases: NewsRelease[] = [
   {
+    version: "v1.0.7",
+    title: "Logging & Performance Improvements",
+    date: "July 22, 2026",
+    summary: "",
+    latest: true,
+    changes: [
+      {
+        type: "improved",
+        items: [
+          "Command and component lifecycle logging now includes paired outcomes, trace linkage, and duration telemetry.",
+          "Stats and account interactions now behave more consistently across commands, buttons, and account selections.",
+        ],
+      },
+      {
+        type: "fixed",
+        items: [
+          "Runtime errors now receive a consistent user-facing acknowledgement across all commands.",
+          "`/stats` component failures now preserve the correct runtime outcome and interaction state.",
+          "Account types such as `ironman` are normalised before endpoint selection.",
+        ],
+      },
+      {
+        type: "notice",
+        items: [
+          "The deprecated `/unsetrsn` command has been fully removed in favour of the Account Manager.",
+        ],
+      },
+    ],
+  },
+  {
     version: "v1.0.6",
     title: "Account Manager & Refresh Controls",
     date: "March 17, 2026",
     summary: "",
-    latest: true,
     changes: [
       {
         type: "new",
@@ -62,7 +91,7 @@ export const newsReleases: NewsRelease[] = [
   },
   {
     version: "v1.0.5",
-    title: "Verified Application & Stats Improvements",
+    title: "Verified Application & UI/UX Improvements",
     date: "October 14, 2023",
     summary: "",
     changes: [
